@@ -1,0 +1,7 @@
+/chessprog
+/Chess.o
+/.cproject
+/.project
+src/.gitignore
+tests/.gitignore
+
