@@ -1,0 +1,6 @@
+clear
+set <a,1> white pawn
+start
+set <b,2> white king
+set <b,8> black king
+start

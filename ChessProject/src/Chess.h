@@ -1,8 +1,6 @@
 #ifndef CHESS_
 #define CHESS_
 
-#include<stdio.h>
-
 #define WHITE_P 'm'
 #define WHITE_B 'b'
 #define WHITE_N 'n'
@@ -41,13 +39,27 @@
 
 #define TIE "The game ends in a tie\n"
  
-#define perror_message(func_name) (perror("Error: standard function %s has failed", func_name));
 #define print_message(message) (printf("%s", message));
+
+
 
 //ours
 #include <stdio.h>
 #include <stdlib.h>
 
+
+struct Position{
+	int x;
+	int y;
+	struct Position* next;
+};
+typedef struct Position Position;
+
+struct Move{
+	Position* first;
+	int eats;
+	struct Move* next;
+};
 typedef struct Move Move;
 
 typedef struct Moves {
@@ -57,11 +69,12 @@ typedef struct Moves {
 
 typedef struct Game {
 	char board[BOARD_SIZE][BOARD_SIZE];
+	int isRunning;
 	int minmaxDepth;
 	int isUserWhite;
-	int isRunning;
-	char isUserTurn;
+	char isWhiteTurn;
 	int isConsoleMode;
+	int isTwoPlayersMode;
 	int minmaxScore;
 	Move* minmaxMove;
 } Game;
