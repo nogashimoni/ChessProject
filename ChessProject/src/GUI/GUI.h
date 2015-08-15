@@ -9,4 +9,9 @@
 //macros for files
 #define WELCOME_WINDOW "images/welcome_window.bmp"
 
+//funcs
+int initGUI();
+
 #endif /* GUI_H_ */
+
+

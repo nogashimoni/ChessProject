@@ -46,6 +46,10 @@
 //ours
 #include <stdio.h>
 #include <stdlib.h>
+#include <SDL.h>
+#include <SDL_video.h>
+#include "../GUI/GUI.h"
+#include "../services/ErrorHandling.h"
 
 
 struct Position{
@@ -78,5 +82,36 @@ typedef struct Game {
 	int minmaxScore;
 	Move* minmaxMove;
 } Game;
+
+
+//**** functions declarations *******//
+//main flow
+int setupGame(Game* game, int argc, char** argv);
+void play(Game*);
+void quit();
+// board init and print
+void print_line();
+void print_board(char board[BOARD_SIZE][BOARD_SIZE]);
+void init_board(char board[BOARD_SIZE][BOARD_SIZE]);
+int countPeices(Game* game, char peice);
+unsigned int yToJ(unsigned int y);
+unsigned int xToI(char x);
+int jToY(int j);
+char iToX(int i);
+int isInvalidXY(char x, unsigned int y);
+int isInvalidIJ(unsigned int i, unsigned int j);
+// cmd parsing
+void getCmdFromUser(char* output);
+void removeSpaces(char* string);
+// setup
+void setGameMode(Game* game, char input);
+void setDifficulty(Game* game, char* input);
+void setUserColor(Game* game, char color);
+void loadGameFromXML(Game* game, char* path);
+void clearBoard(Game* game);
+void removeDisk(Game* game, char x, int y);
+void setDisk(Game* game, char x, int y, char color, char* type);
+int isLegalPeiceAddition(Game* game, char peice);
+
 
 #endif

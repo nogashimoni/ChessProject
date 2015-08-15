@@ -1,43 +1,4 @@
 #include "Chess.h"
-#include "GUI.h"
-#include "GUI.c"
-
-#include <SDL.h>
-#include <SDL_video.h>
-
-//main flow
-int setupGame(Game* game, int argc, char** argv);
-void play(Game*);
-void quit();
-
-// board init and print
-void print_line();
-void print_board(char board[BOARD_SIZE][BOARD_SIZE]);
-void init_board(char board[BOARD_SIZE][BOARD_SIZE]);
-int countPeices(Game* game, char peice);
-unsigned int yToJ(unsigned int y);
-unsigned int xToI(char x);
-int jToY(int j);
-char iToX(int i);
-int isInvalidXY(char x, unsigned int y);
-int isInvalidIJ(unsigned int i, unsigned int j);
-
-// error handeling
-void functionFailure(char*);
-
-// cmd parsing
-void getCmdFromUser(char* output);
-void removeSpaces(char* string);
-
-// setup
-void setGameMode(Game* game, char input);
-void setDifficulty(Game* game, char* input);
-void setUserColor(Game* game, char color);
-void loadGameFromXML(Game* game, char* path);
-void clearBoard(Game* game);
-void removeDisk(Game* game, char x, int y);
-void setDisk(Game* game, char x, int y, char color, char* type);
-int isLegalPeiceAddition(Game* game, char peice);
 
 int main(int argc, char **argv) {
 	Game game;
@@ -133,7 +94,7 @@ void getCmdFromUser(char* output) {
 	char current;
 	while ((current = getchar()) != '\n' && current != EOF) {
 		if (ferror(stdin))
-			functionFailure("gerchar");
+			notifyFunctionFailure("gerchar");
 		*output = current;
 		output++;
 	}
@@ -165,8 +126,11 @@ int setupGame(Game* game, int argc, char** argv) {
 		//openGUI();
 	}
 
+	notifyFunctionFailure("lie");
+
 	printf(ENTER_SETTINGS);
 	char cmd[51];
+
 
 	while (1) {
 		getCmdFromUser(cmd);
@@ -350,7 +314,7 @@ void quit() {
 void functionFailure(char* failedFunction) {
 	/* Prints an error message saying faildFunction has failed. failesFunction name should not exceed 74 chars.*/
 	char error_msg[100];
-	sprintf(error_msg, "ERROR: standard function %s has failed. Exiting.",
+	sprintf(error_msg, "ERROR: standard function %s has failed. Exiting",
 			failedFunction);
 	perror(error_msg);
 	quit();

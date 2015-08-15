@@ -1,13 +1,24 @@
+CFLAGS=-Wall -std=c99 -pedantic-errors -lm -g
+OFILES= Chess.o GUI.o ErrorHandling.o
+SDL_L=`sdl-config --libs`
+SDL_C=`sdl-config --cflags`
+
 all: chessprog test
 
 clean:
-	-rm Chess.o chessprog
+	-rm chessprog $(OFILES)
 
-chessprog: Chess.o
-	gcc  -o chessprog Chess.o -lm -std=c99 -pedantic-errors -g  `sdl-config --libs`
+chessprog: $(OFILES)
+	gcc -o $@ $^ $(CFLAGS) $(SDL_L)
 
-Chess.o: src/Chess.h src/Chess.c
-	gcc -std=c99 -pedantic-errors -c -Wall -g -lm src/Chess.c `sdl-config --cflags`
+Chess.o: src/main/Chess.c src/main/Chess.h src/GUI/GUI.h src/services/ErrorHandling.h
+	gcc -c $(CFLAGS) src/main/$*.c $(SDL_C)
+
+GUI.o: src/GUI/GUI.c src/GUI/GUI.h
+	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C)
+
+ErrorHandling.o: src/services/ErrorHandling.c src/services/ErrorHandling.h
+	gcc -c $(CFLAGS) src/services/$*.c $(SDL_C)
 
 test:
-	bash tests/Test.sh
+	bash ./tests/Test.sh
