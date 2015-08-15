@@ -123,10 +123,9 @@ int setupGame(Game* game, int argc, char** argv) {
 	print_board(game->board);
 
 	if (game->isConsoleMode) {
-		//openGUI();
+		GUIMain();
 	}
 
-	notifyFunctionFailure("lie");
 
 	printf(ENTER_SETTINGS);
 	char cmd[51];
