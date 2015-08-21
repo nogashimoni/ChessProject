@@ -469,7 +469,7 @@ Moves* getMoves(Game* game, int x, int y){
 	if (isCurrentPlayerPeice(game, x, y)){
 		//Player is white
 		if (game->board[x][y] == WHITE_P){
-			getPMoves(game, moves, x, y);
+			getPawnMoves(game, moves, x, y);
 		}
 		//Player is black.
 		if (game->board[x][y] == BLACK_P){
@@ -493,38 +493,11 @@ Moves* getMoves(Game* game, int x, int y){
 		}
 	}
 
-
-//	int i;
-//	int j;
-//	for (i=0; i< BOARD_SIZE; i++){
-//		for (j=0; j<BOARD_SIZE; j++){//TODO add special pawn move.
-//			if ( !isCurrentPlayerPeice(game,i,j) ) {
-//				continue;
-//			}
-//			Position* position = malloc(sizeof(Position));
-//			if ( position == NULL ) {
-//				quit("getMoves");
-//			}
-//			addToAllAllocs(position);
-//
-//			position->x = i;
-//			position->y = j;
-//			position->next = NULL;
-//
-//			if ( game->board[i][j] == WHITE_M || game->board[i][j] == BLACK_M )
-//				performSoldierTurn(game,moves, position);
-//			else {
-//				performKingTurn(game, moves, position);
-//			}
-//			freeNullAndRemove(position);
-//		}
-//	}
-//	removeUnreleventMoves(moves);
 	return moves;
 }
 
 //TODO add special pawn move.
-Moves* getPMoves(Game* game, Moves* moves, int x, int y){
+Moves* getPawnMoves(Game* game, Moves* moves, int x, int y){
 	//Pawn is white and there is no eat.
 	if ((game->isWhiteTurn && game->isUserWhite) && game->board[x][y+1] == EMPTY){
 		Position* position = calloc(sizeof(Position), 1);
@@ -540,7 +513,7 @@ Moves* getPMoves(Game* game, Moves* moves, int x, int y){
 		addToMoves(moves,move);
 	}
 	//Pawn is white and there is a right eat.
-	if ((game->isWhiteTurn && game->isUserWhite) && !isCurrentPlayerPeice(game, x+1,y+1)){
+	if ((game->isWhiteTurn && game->isUserWhite) && (!game->isWhiteTurn==isCurrentPlayerPeice(game, x+1,y+1))){
 		Position* position = calloc(sizeof(Position), 1);
 		position->x = x;
 		position->y = y;

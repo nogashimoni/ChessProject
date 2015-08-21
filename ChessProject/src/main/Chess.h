@@ -121,7 +121,7 @@ void setDisk(Game* game, char x, int y, char color, char* type);
 int isLegalPeiceAddition(Game* game, char peice);
 //game
 Moves* getMoves(Game* game, int x, int y);
-Moves* getPMoves(Game* game, Moves* moves, int x, int y);
+Moves* getPawnMoves(Game* game, Moves* moves, int x, int y);
 void addToMoves(Moves* moves, Move* newMove);
 void removeUnreleventMoves(Moves* moves);
 int isCurrentPlayerPeice(Game* game, int i, int j);
