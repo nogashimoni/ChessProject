@@ -10,22 +10,23 @@
 //macros for files
 #define WELCOME_WINDOW "images/welcome_window.bmp"
 
-
 //includes
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL.h>
 #include <SDL_video.h>
+#include <SDL_image.h>
+#include <SDL/SDL_image.h>
 
 //funcs
 SDL_Surface* initGUI();
 int createWelcomePage(SDL_Surface* screen);
 int closeImage(SDL_Surface* image);
 int quitSDL();
-int applyImageOnScreen(SDL_Surface* screen, SDL_Surface* image);
+//int applyImageOnScreen(SDL_Surface* screen, SDL_Surface* image);
 SDL_Surface* openImage(char* imagePath);
 int GUIMain();
+void applySurface(int x, int y, SDL_Surface* source, SDL_Surface* destination);
 
 #endif /* GUI_H_ */
-
 
