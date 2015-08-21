@@ -74,11 +74,16 @@ typedef struct Moves {
 typedef struct Game {
 	char board[BOARD_SIZE][BOARD_SIZE];
 	int isRunning;
-	int minmaxDepth;
-	int isUserWhite;
-	char isWhiteTurn;
 	int isConsoleMode;
 	int isTwoPlayersMode;
+
+	// user-user
+	int isWhiteTurn;
+
+	// computer-user
+	int minmaxDepth;
+	int isComputerTurn;
+	int isUserWhite;
 	int minmaxScore;
 	Move* minmaxMove;
 } Game;
@@ -112,6 +117,9 @@ void clearBoard(Game* game);
 void removeDisk(Game* game, char x, int y);
 void setDisk(Game* game, char x, int y, char color, char* type);
 int isLegalPeiceAddition(Game* game, char peice);
-
+//game
+void switchTurns(Game* game);
+void computerTurn(Game* game);
+void userTurn(Game* game);
 
 #endif

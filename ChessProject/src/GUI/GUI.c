@@ -57,7 +57,7 @@ int applyImageOnScreen(SDL_Surface* screen, SDL_Surface* image) {
 	//Update Screen
 	SDL_Flip( screen );
 	//Pause
-	SDL_Delay( 20000 );
+	SDL_Delay( 100 );
 	return 1;
 }
 

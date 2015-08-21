@@ -282,8 +282,10 @@ void setUserColor(Game* game, char color) {
 	}
 	if (color == 'b') {
 		game->isUserWhite = 0;
+		game->isComputerTurn=1;
 	} else if (color == 'w') {
-		game->isUserWhite = 0;
+		game->isUserWhite = 1;
+		game->isComputerTurn=0;
 	} else {
 		print_message(ILLEGAL_COMMAND);
 	}
@@ -301,7 +303,40 @@ void clearBoard(Game* game) {
 }
 
 void play(Game* game) {
+	if (game->isTwoPlayersMode) {
+		while ( game->isRunning ) {
+			userTurn(game);
+			switchTurns(game);
+		}
+	}
+	else { //computer-user
 
+		while ( game->isRunning ) {
+			if ( game->isComputerTurn ) {
+				computerTurn(game);
+				switchTurns(game);
+			}
+			userTurn(game);
+			switchTurns(game);
+		}
+	}
+}
+
+void computerTurn(Game* game){
+	printf("computer\n");
+}
+
+void userTurn(Game* game) {
+	printf("user : %s \n", game->isWhiteTurn);
+}
+
+void switchTurns(Game* game) {
+	if (game->isTwoPlayersMode) {
+		game->isWhiteTurn=!game->isWhiteTurn;
+	}
+	else {
+		game->isComputerTurn=!game->isComputerTurn;
+	}
 }
 
 void quit() {
