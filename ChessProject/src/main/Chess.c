@@ -441,10 +441,9 @@ Move* createMoveFromString(char* cmd) {
 
 
 void switchTurns(Game* game) {
-	if (game->isTwoPlayersMode) {
-		game->isWhiteTurn=!game->isWhiteTurn;
-	}
-	else {
+	game->isWhiteTurn=!game->isWhiteTurn;
+
+	if (!(game->isTwoPlayersMode) ) {
 		game->isComputerTurn=!game->isComputerTurn;
 	}
 }
