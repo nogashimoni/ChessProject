@@ -113,7 +113,7 @@ void removeSpaces(char* string) {
 }
 
 int setupGame(Game* game, int argc, char** argv) {
-	game->isConsoleMode = ((argc == 2) && (strcmp(argv[0], "gui")) ? 1 : 0);
+	game->isGUIMode = ((argc == 2) && (strcmp(argv[0], "gui")) ? 1 : 0);
 	game->minmaxDepth = 1;
 	game->isWhiteTurn = 1;
 	game->isTwoPlayersMode = 1;
@@ -122,7 +122,7 @@ int setupGame(Game* game, int argc, char** argv) {
 	init_board(game->board);
 	print_board(game->board);
 
-	if (game->isConsoleMode) {
+	if (game->isGUIMode) {
 		GUIMain();
 	}
 
@@ -325,9 +325,120 @@ void computerTurn(Game* game){
 //	printf("computer\n");
 }
 
-void userTurn(Game* game) {
-//	printf("user : %d \n", game->isWhiteTurn);
+void userTurn(Game* game){
+	/* Receives user commands, stops when user inputs a valid move - and performes it */
+	char cmd[51];
+	int isStillCurrentUserTurn = 1;
+	while ( isStillCurrentUserTurn ) {
+		char* userColor = ( (!game->isTwoPlayersMode && game->isUserWhite) || (game->isTwoPlayersMode && game->isWhiteTurn) ? "White" : "Black" );
+		printf("%s%s",userColor,ENTER_MOVE);
+		getCmdFromUser(cmd);
+		removeSpaces(cmd);
+		if ( !strncmp(cmd,"get_moves",9) ) {
+			int i = xToI(*(cmd+10));
+			int intY = (int)strtol(cmd+12,(char**)NULL,10);
+			int j = yToJ(intY);
+			Moves* moves = getMoves(game, i, j);
+			Move* currMove = moves->first;
+			while ( currMove != NULL ) {
+				printMove(currMove);
+				Move* prevMove=currMove;
+				currMove = currMove->next;
+				freeMove(prevMove);
+			}
+			freeAndNull(moves);
+		} else if ( !strcmp(cmd,"quit") ) {
+			quit();
+		} else if ( !strncmp(cmd,"move",4) ) {
+			Move* move = createMoveFromString(cmd);
+			int isValid = isValidMove(game, move); //validMove also prints if invalid
+			if (isValid) {
+				doMove(game, move);
+				isStillCurrentUserTurn = 0;
+			}
+			freeMove(move);
+
+		} else {
+			print_message(ILLEGAL_COMMAND);
+		}
+
+	}
+	print_board(game->board);
+//	int didSomeoneWin = checkIfNextWinsAndPrint(game,manager);
+//	if ( didSomeoneWin )
+//		game->isRunning = 0;
+//	game->whosTurn = 'c';
+
 }
+
+int isValidMove(Game* game, Move* move) {
+	return 1;
+}
+
+void doMove(Game* game, Move* move) {
+	printMove(move);
+}
+
+Move* createMoveFromString(char* cmd) {
+	Move* move = malloc(sizeof(move));
+	if ( move == NULL ) {
+		notifyFunctionFailure("createMoveFromString");
+		quit();
+	}
+
+	Position* first = malloc(sizeof(Position));
+	if ( first == NULL ) {
+		notifyFunctionFailure("createMoveFromString");
+		quit();
+	}
+
+	move->first = first;
+	char* c = cmd;
+	// first node
+	while ( *c != '<' ) {
+		c ++;
+	}
+	//c is now on first <
+	c++;
+	first->x = xToI(*c);
+	c += 2;
+	if ( *(c+1) != '>' ) {
+		first->y = 9;
+	}
+	else {
+		int intY = (int)strtol(c,(char**)NULL,10);
+		first->y = yToJ(intY);
+	}
+	// all other positions
+	Position* prev = first;
+	Position* curr;
+	while ( *c != '\0' ) {
+		if ( *c == '<') {
+			curr = malloc(sizeof(Position));
+			if ( curr == NULL ) {
+				notifyFunctionFailure("createMoveFromString");
+				quit();
+			}
+
+			c ++;
+			curr->x = xToI(*c);
+			c += 2;
+			if ( *(c+1) != '>' ) {
+				curr->y = 9;
+			}
+			else {
+				int intY = (int)strtol(c,(char**)NULL,10);
+				curr->y = yToJ(intY);
+			}
+			prev->next = curr;
+			prev = curr;
+		}
+		c++;
+	}
+	curr->next = NULL;
+	return move;
+}
+
 
 void switchTurns(Game* game) {
 	if (game->isTwoPlayersMode) {
@@ -341,6 +452,8 @@ void switchTurns(Game* game) {
 /* Returns all legal moves for a certian piece */
 
 Moves* getMoves(Game* game, int x, int y){
+
+	printf("%d %d\n", x,y);
 
 	Moves* moves = calloc(sizeof(Moves),1);
 	if ( moves == NULL ) {
@@ -356,7 +469,7 @@ Moves* getMoves(Game* game, int x, int y){
 	if (isCurrentPlayerPeice(game, x, y)){
 		//Player is white
 		if (game->board[x][y] == WHITE_P){
-//			getWhitePMoves(game, x, y);
+			getPMoves(game, moves, x, y);
 		}
 		//Player is black.
 		if (game->board[x][y] == BLACK_P){
@@ -384,7 +497,7 @@ Moves* getMoves(Game* game, int x, int y){
 //	int i;
 //	int j;
 //	for (i=0; i< BOARD_SIZE; i++){
-//		for (j=0; j<BOARD_SIZE; j++){
+//		for (j=0; j<BOARD_SIZE; j++){//TODO add special pawn move.
 //			if ( !isCurrentPlayerPeice(game,i,j) ) {
 //				continue;
 //			}
@@ -410,6 +523,106 @@ Moves* getMoves(Game* game, int x, int y){
 	return moves;
 }
 
+//TODO add special pawn move.
+Moves* getPMoves(Game* game, Moves* moves, int x, int y){
+	//Pawn is white and there is no eat.
+	if ((game->isWhiteTurn && game->isUserWhite) && game->board[x][y+1] == EMPTY){
+		Position* position = calloc(sizeof(Position), 1);
+		position->x = x;
+		position->y = y;
+		Move* move = calloc(sizeof(Move), 1);
+		move->first = position;
+		Position* newPosition = calloc(sizeof(Position), 1);
+		newPosition->x = x;
+		newPosition->y = y+1;
+		move->first->next = newPosition;
+		move->eats=0;
+		addToMoves(moves,move);
+	}
+	//Pawn is white and there is a right eat.
+	if ((game->isWhiteTurn && game->isUserWhite) && !isCurrentPlayerPeice(game, x+1,y+1)){
+		Position* position = calloc(sizeof(Position), 1);
+		position->x = x;
+		position->y = y;
+		Move* move = calloc(sizeof(Move), 1);
+		move->first = position;
+		Position* newPosition = calloc(sizeof(Position), 1);
+		newPosition->x = x+1;
+		newPosition->y = y+1;
+		move->first->next = newPosition;
+		move->eats=1;
+		addToMoves(moves,move);
+	}
+	//Pawn is while and there is a left eat.
+	if ((game->isWhiteTurn && game->isUserWhite) && !isCurrentPlayerPeice(game, x-1,y+1)){
+		Position* position = calloc(sizeof(Position), 1);
+		position->x = x;
+		position->y = y;
+		Move* move = calloc(sizeof(Move), 1);
+		move->first = position;
+		Position* newPosition = calloc(sizeof(Position), 1);
+		newPosition->x = x-1;
+		newPosition->y = y+1;
+		move->first->next = newPosition;
+		move->eats=1;
+		addToMoves(moves,move);
+	}
+	//Pawn is black.
+	if ((!game->isWhiteTurn && !game->isUserWhite) && game->board[x][y-1] == EMPTY){
+		Position* position = calloc(sizeof(Position), 1);
+		position->x = x;
+		position->y = y;
+		Move* move = calloc(sizeof(Move), 1);
+		move->first = position;
+		Position* newPosition = calloc(sizeof(Position), 1);
+		newPosition->x = x;
+		newPosition->y = y-1;
+		move->first->next = newPosition;
+		move->eats=0;
+		addToMoves(moves,move);
+	}
+	//Pawn is black and there is a right eat.
+	if ((!game->isWhiteTurn && !game->isUserWhite) && !isCurrentPlayerPeice(game, x+1,y-1)){
+		Position* position = calloc(sizeof(Position), 1);
+		position->x = x;
+		position->y = y;
+		Move* move = calloc(sizeof(Move), 1);
+		move->first = position;
+		Position* newPosition = calloc(sizeof(Position), 1);
+		newPosition->x = x+1;
+		newPosition->y = y-1;
+		move->first->next = newPosition;
+		move->eats=1;
+		addToMoves(moves,move);
+	}
+	//Pawn is black and there is a left eat.
+	if ((!game->isWhiteTurn && !game->isUserWhite) && !isCurrentPlayerPeice(game, x-1,y-1)){
+		Position* position = calloc(sizeof(Position), 1);
+		position->x = x;
+		position->y = y;
+		Move* move = calloc(sizeof(Move), 1);
+		move->first = position;
+		Position* newPosition = calloc(sizeof(Position), 1);
+		newPosition->x = x-1;
+		newPosition->y = y-1;
+		move->first->next = newPosition;
+		move->eats=1;
+		addToMoves(moves,move);
+	}
+	return moves;
+}
+
+void addToMoves(Moves* moves, Move* newMove){
+	/* Add a move to the linked list moves */
+	Move* temp = moves->first;
+	moves->first = newMove;
+	newMove->next = temp;
+
+	if (newMove->eats > moves->maxEats){
+		moves->maxEats = newMove->eats;
+	}
+}
+
 void removeUnreleventMoves(Moves* moves){
 	/* Out of all possible move, removes moves with not enough eats and frees them */
 	Move* prev = moves->first;
@@ -421,7 +634,7 @@ void removeUnreleventMoves(Moves* moves){
 	while (prev->eats < moves->maxEats){
 			moves->first = prev->next;
 			Move* tmpPrev = prev;
-			prev = prev->next;
+//			prev = prev->next;
 //			freeNullAndRemove(tmpPrev);
 		}
 
@@ -433,18 +646,13 @@ void removeUnreleventMoves(Moves* moves){
 			Move* tmpCurr = curr;
 			curr = curr->next;
 //			freeNullAndRemove(tmpCurr);
-			continue;
+//			continue;
 		}
-		prev = curr;
+//		prev = curr;
 		curr = curr->next;
 
 	}
 }
-
-
-//Moves getWhitePMoves(Game* game, int x, int y){
-//
-//}
 
 
 int isCurrentPlayerPeice(Game* game, int i, int j) {
@@ -491,18 +699,36 @@ int getPieceColor(Game* game, int i, int j){
 //	}
 //	return 'b';
 //}
+void freeMove(Move* move) {
+	Position* curr = move->first;
+	while ( curr != NULL ) {
+		Position* next = curr->next;
+		freeAndNull(curr);
+		curr = next;
+	}
+	freeAndNull(move);
+}
 
+void printMove(Move* move){
+	printf("<%c,%u> to ",iToX((move->first)->x),jToY((move->first)->y));
+	Position* currPosition = (move->first)->next;
+	while ( currPosition != NULL ) {
+		printf("<%c,%u>", iToX(currPosition->x) ,jToY(currPosition->y));
+		currPosition = currPosition->next;
+	}
+	printf("\n");
+}
+
+void freeAndNull(void* obj) {
+	if ( obj != NULL ) {
+		free(obj);
+	}
+	obj = NULL;
+}
 void quit() {
 //	free all
 //TODO
 	exit(0);
 }
 
-void functionFailure(char* failedFunction) {
-	/* Prints an error message saying faildFunction has failed. failesFunction name should not exceed 74 chars.*/
-	char error_msg[100];
-	sprintf(error_msg, "ERROR: standard function %s has failed. Exiting",
-			failedFunction);
-	perror(error_msg);
-	quit();
-}
+

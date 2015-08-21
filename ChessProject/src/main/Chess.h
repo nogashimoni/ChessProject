@@ -31,6 +31,7 @@
 #define NO_PIECE "Setting this piece creates an invalid board\n"  
 #define WROND_BOARD_INITIALIZATION "Wrong board initialization\n"
 
+#define ENTER_MOVE " player - enter your move:\n"
 #define ILLEGAL_COMMAND "Illegal command, please try again\n"
 #define ILLEGAL_MOVE "Illegal move\n"
  
@@ -74,7 +75,7 @@ typedef struct Moves {
 typedef struct Game {
 	char board[BOARD_SIZE][BOARD_SIZE];
 	int isRunning;
-	int isConsoleMode;
+	int isGUIMode;
 	int isTwoPlayersMode;
 
 	// user-user
@@ -105,6 +106,7 @@ int jToY(int j);
 char iToX(int i);
 int isInvalidXY(char x, unsigned int y);
 int isInvalidIJ(unsigned int i, unsigned int j);
+void printMove(Move* move);
 // cmd parsing
 void getCmdFromUser(char* output);
 void removeSpaces(char* string);
@@ -119,11 +121,19 @@ void setDisk(Game* game, char x, int y, char color, char* type);
 int isLegalPeiceAddition(Game* game, char peice);
 //game
 Moves* getMoves(Game* game, int x, int y);
+Moves* getPMoves(Game* game, Moves* moves, int x, int y);
+void addToMoves(Moves* moves, Move* newMove);
 void removeUnreleventMoves(Moves* moves);
 int isCurrentPlayerPeice(Game* game, int i, int j);
 void switchTurns(Game* game);
 void computerTurn(Game* game);
 int getPieceColor(Game* game, int i, int j);
 void userTurn(Game* game);
+Move* createMoveFromString(char* cmd);
+int isValidMove(Game* game, Move* move);
+void doMove(Game* game, Move* move);
+//free
+void freeAndNull(void* obj);
+void freeMove(Move* move);
 
 #endif
