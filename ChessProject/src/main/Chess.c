@@ -126,7 +126,6 @@ int setupGame(Game* game, int argc, char** argv) {
 		GUIMain();
 	}
 
-
 	printf(ENTER_SETTINGS);
 	char cmd[51];
 
@@ -323,11 +322,11 @@ void play(Game* game) {
 }
 
 void computerTurn(Game* game){
-	printf("computer\n");
+//	printf("computer\n");
 }
 
 void userTurn(Game* game) {
-	printf("user : %s \n", game->isWhiteTurn);
+//	printf("user : %d \n", game->isWhiteTurn);
 }
 
 void switchTurns(Game* game) {
@@ -338,6 +337,154 @@ void switchTurns(Game* game) {
 		game->isComputerTurn=!game->isComputerTurn;
 	}
 }
+
+/* Returns all legal moves for a certian piece */
+
+Moves* getMoves(Game* game, int x, int y){
+
+	Moves* moves = calloc(sizeof(Moves),1);
+	if ( moves == NULL ) {
+		quit("getMoves");
+	}
+
+	addToAllAllocs(moves);
+
+	moves->maxEats = 0;
+
+	moves->first = NULL;
+
+	if (isCurrentPlayerPeice(game, x, y)){
+		//Player is white
+		if (game->board[x][y] == WHITE_P){
+			getWhitePMoves(game, x, y);
+		}
+		//Player is black.
+		if (game->board[x][y] == BLACK_P){
+			getPBlackMoves(game, x, y);
+		}
+
+		if (game->board[x][y] == WHITE_N || game->board[x][y] == BLACK_N){
+			getNMoves(game, x, y);
+		}
+		if (game->board[x][y] == WHITE_K || game->board[x][y] == BLACK_K){
+			getKMoves(game, x, y);
+		}
+		if (game->board[x][y] == WHITE_B || game->board[x][y] == BLACK_B){
+			getBMoves(game, x, y);
+		}
+		if (game->board[x][y] == WHITE_Q || game->board[x][y] == BLACK_Q){
+			getQMoves(game, x, y);
+		}
+		if (game->board[x][y] == WHITE_R || game->board[x][y] == BLACK_R){
+			getRMoves(game, x, y);
+		}
+	}
+
+
+//	int i;
+//	int j;
+//	for (i=0; i< BOARD_SIZE; i++){
+//		for (j=0; j<BOARD_SIZE; j++){
+//			if ( !isCurrentPlayerPeice(game,i,j) ) {
+//				continue;
+//			}
+//			Position* position = malloc(sizeof(Position));
+//			if ( position == NULL ) {
+//				quit("getMoves");
+//			}
+//			addToAllAllocs(position);
+//
+//			position->x = i;
+//			position->y = j;
+//			position->next = NULL;
+//
+//			if ( game->board[i][j] == WHITE_M || game->board[i][j] == BLACK_M )
+//				performSoldierTurn(game,moves, position);
+//			else {
+//				performKingTurn(game, moves, position);
+//			}
+//			freeNullAndRemove(position);
+//		}
+//	}
+	removeUnreleventMoves(moves);
+	return moves;
+}
+
+void removeUnreleventMoves(Moves* moves){
+	/* Out of all possible move, removes moves with not enough eats and frees them */
+	Move* prev = moves->first;
+
+	if ( prev == NULL ) {
+		return;
+	}
+
+	while (prev->eats < moves->maxEats){
+			moves->first = prev->next;
+			Move* tmpPrev = prev;
+			prev = prev->next;
+			freeNullAndRemove(tmpPrev);
+		}
+
+	Move* curr = prev->next;
+
+	while (curr != NULL){
+		if (curr->eats < moves->maxEats){
+			prev->next = curr->next;
+			Move* tmpCurr = curr;
+			curr = curr->next;
+			freeNullAndRemove(tmpCurr);
+			continue;
+		}
+		prev = curr;
+		curr = curr->next;
+
+	}
+}
+
+int isCurrentPlayerPeice(Game* game, int i, int j) {
+	/* receives a legal i,j and checks if it's the current player's piece */
+	if (game->board[i][j] == EMPTY){
+		return 0;
+	}
+	if ( (game->isUserWhite) && (game->isWhiteTurn) && ((game->isUserWhite == getColor(game,i,j)))) {
+		return 1;
+	}
+	if ( (!game->isUserWhite) && (!game->isWhiteTurn) && ((game->isUserWhite == getColor(game,i,j))) ) {
+		return 1;
+	}
+	return 0;
+
+}
+
+int getPieceColor(Game* game, int i, int j){
+	//The piece is white.
+	if (game->board[i][j] == WHITE_P ||
+	                   game->board[i][j] == WHITE_B ||
+	                                  game->board[i][j] == WHITE_N
+	                                		  ||game->board[i][j] == WHITE_R ||
+	                                		                   game->board[i][j] == WHITE_Q ||
+	                                		                                  game->board[i][j] == WHITE_K){
+		return 1;
+	}
+	//The piece is black.
+	if (game->board[i][j] == BLACK_P ||
+	                   game->board[i][j] == BLACK_B ||
+	                                  game->board[i][j] == BLACK_N
+	                                		  ||game->board[i][j] == BLACK_R ||
+	                                		                   game->board[i][j] == BLACK_Q ||
+	                                		                                  game->board[i][j] == BLACK_K){
+		return 0;
+	}
+	return -1; //The square is empty.
+
+}
+
+//char currentUserColor(Game* game) {
+//	if ( ( ( game->whosTurn == 'u') && ( game->userColor == 'w') )|| ( ( game->whosTurn != 'u') && (game->userColor == 'b')) ) {
+//		return 'w';
+//	}
+//	return 'b';
+//}
 
 void quit() {
 //	free all
