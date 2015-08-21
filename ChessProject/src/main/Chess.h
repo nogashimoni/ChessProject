@@ -118,7 +118,9 @@ void removeDisk(Game* game, char x, int y);
 void setDisk(Game* game, char x, int y, char color, char* type);
 int isLegalPeiceAddition(Game* game, char peice);
 //game
-Moves* getMoves(Game* game, int i, int j)
+Moves* getMoves(Game* game, int x, int y);
+void removeUnreleventMoves(Moves* moves);
+int isCurrentPlayerPeice(Game* game, int i, int j);
 void switchTurns(Game* game);
 void computerTurn(Game* game);
 int getPieceColor(Game* game, int i, int j);

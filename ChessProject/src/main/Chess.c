@@ -347,7 +347,7 @@ Moves* getMoves(Game* game, int x, int y){
 		quit("getMoves");
 	}
 
-	addToAllAllocs(moves);
+//	addToAllAllocs(moves);
 
 	moves->maxEats = 0;
 
@@ -356,27 +356,27 @@ Moves* getMoves(Game* game, int x, int y){
 	if (isCurrentPlayerPeice(game, x, y)){
 		//Player is white
 		if (game->board[x][y] == WHITE_P){
-			getWhitePMoves(game, x, y);
+//			getWhitePMoves(game, x, y);
 		}
 		//Player is black.
 		if (game->board[x][y] == BLACK_P){
-			getPBlackMoves(game, x, y);
+//			getBlackPMoves(game, x, y);
 		}
 
 		if (game->board[x][y] == WHITE_N || game->board[x][y] == BLACK_N){
-			getNMoves(game, x, y);
+//			getNMoves(game, x, y);
 		}
 		if (game->board[x][y] == WHITE_K || game->board[x][y] == BLACK_K){
-			getKMoves(game, x, y);
+//			getKMoves(game, x, y);
 		}
 		if (game->board[x][y] == WHITE_B || game->board[x][y] == BLACK_B){
-			getBMoves(game, x, y);
+//			getBMoves(game, x, y);
 		}
 		if (game->board[x][y] == WHITE_Q || game->board[x][y] == BLACK_Q){
-			getQMoves(game, x, y);
+//			getQMoves(game, x, y);
 		}
 		if (game->board[x][y] == WHITE_R || game->board[x][y] == BLACK_R){
-			getRMoves(game, x, y);
+//			getRMoves(game, x, y);
 		}
 	}
 
@@ -406,7 +406,7 @@ Moves* getMoves(Game* game, int x, int y){
 //			freeNullAndRemove(position);
 //		}
 //	}
-	removeUnreleventMoves(moves);
+//	removeUnreleventMoves(moves);
 	return moves;
 }
 
@@ -422,7 +422,7 @@ void removeUnreleventMoves(Moves* moves){
 			moves->first = prev->next;
 			Move* tmpPrev = prev;
 			prev = prev->next;
-			freeNullAndRemove(tmpPrev);
+//			freeNullAndRemove(tmpPrev);
 		}
 
 	Move* curr = prev->next;
@@ -432,7 +432,7 @@ void removeUnreleventMoves(Moves* moves){
 			prev->next = curr->next;
 			Move* tmpCurr = curr;
 			curr = curr->next;
-			freeNullAndRemove(tmpCurr);
+//			freeNullAndRemove(tmpCurr);
 			continue;
 		}
 		prev = curr;
@@ -441,15 +441,21 @@ void removeUnreleventMoves(Moves* moves){
 	}
 }
 
+
+//Moves getWhitePMoves(Game* game, int x, int y){
+//
+//}
+
+
 int isCurrentPlayerPeice(Game* game, int i, int j) {
 	/* receives a legal i,j and checks if it's the current player's piece */
 	if (game->board[i][j] == EMPTY){
 		return 0;
 	}
-	if ( (game->isUserWhite) && (game->isWhiteTurn) && ((game->isUserWhite == getColor(game,i,j)))) {
+	if ( (game->isUserWhite) && (game->isWhiteTurn) && ((game->isUserWhite == getPieceColor(game,i,j)))) {
 		return 1;
 	}
-	if ( (!game->isUserWhite) && (!game->isWhiteTurn) && ((game->isUserWhite == getColor(game,i,j))) ) {
+	if ( (!game->isUserWhite) && (!game->isWhiteTurn) && ((game->isUserWhite == getPieceColor(game,i,j))) ) {
 		return 1;
 	}
 	return 0;
