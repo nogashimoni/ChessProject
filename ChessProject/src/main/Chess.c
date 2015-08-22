@@ -448,14 +448,14 @@ void removeUnreleventMoves(Moves* moves){
 
 
 int isCurrentPlayerPeice(Game* game, int i, int j) {
-	/* receives a legal i,j and checks if it's the current player's piece */
+	/* receives a legal i,j and returns 1 if it's the current player's piece */
 	if (game->board[i][j] == EMPTY){
 		return 0;
 	}
-	if ( (game->isUserWhite) && (game->isWhiteTurn) && ((game->isUserWhite == getPieceColor(game,i,j)))) {
+	if ( game->isWhiteTurn && getPieceColor(game,i,j)) {
 		return 1;
 	}
-	if ( (!game->isUserWhite) && (!game->isWhiteTurn) && ((game->isUserWhite == getPieceColor(game,i,j))) ) {
+	if ( (!game->isUserWhite) && ((game->isUserWhite == getPieceColor(game,i,j))) ) {
 		return 1;
 	}
 	return 0;
@@ -463,7 +463,7 @@ int isCurrentPlayerPeice(Game* game, int i, int j) {
 }
 
 int getPieceColor(Game* game, int i, int j){
-	//The piece is white.
+	//The piece is white - returns 1.
 	if (game->board[i][j] == WHITE_P ||
 	                   game->board[i][j] == WHITE_B ||
 	                                  game->board[i][j] == WHITE_N
@@ -472,7 +472,7 @@ int getPieceColor(Game* game, int i, int j){
 	                                		                                  game->board[i][j] == WHITE_K){
 		return 1;
 	}
-	//The piece is black.
+	//The piece is black - returns 0.
 	if (game->board[i][j] == BLACK_P ||
 	                   game->board[i][j] == BLACK_B ||
 	                                  game->board[i][j] == BLACK_N
