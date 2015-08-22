@@ -495,93 +495,52 @@ Moves* getMoves(Game* game, int x, int y){
 	return moves;
 }
 
+
 //TODO add special pawn move.
 Moves* getPawnMoves(Game* game, Moves* moves, int x, int y){
-	//Pawn is white and there is no eat.
-	if ((game->isWhiteTurn && game->isUserWhite) && game->board[x][y+1] == EMPTY){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x;
-		newPosition->y = y+1;
-		move->first->next = newPosition;
+	//Pawn is white - standard move.
+	if (game->isWhiteTurn && game->board[x][y+1] == EMPTY){
+		Move* move = creatNewMove(x, y, x, y+1);
 		move->eats=0;
 		addToMoves(moves,move);
 	}
-	//Pawn is white and there is a right eat.
-	if ((game->isWhiteTurn && game->isUserWhite) && (!game->isWhiteTurn==isCurrentPlayerPeice(game, x+1,y+1))){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x+1;
-		newPosition->y = y+1;
-		move->first->next = newPosition;
-		move->eats=1;
-		addToMoves(moves,move);
+	//Pawn is white - check for eats.
+	for (int i=-1 ; i<=1;i+=2){
+		if (game->isWhiteTurn && !isCurrentPlayerPeice(game, x+i,y+1)){
+			Move* move = creatNewMove(x, y, x+i, y+1);
+			move->eats=1;
+			addToMoves(moves,move);
+		}
 	}
-	//Pawn is while and there is a left eat.
-	if ((game->isWhiteTurn && game->isUserWhite) && !isCurrentPlayerPeice(game, x-1,y+1)){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x-1;
-		newPosition->y = y+1;
-		move->first->next = newPosition;
-		move->eats=1;
-		addToMoves(moves,move);
-	}
-	//Pawn is black.
-	if ((!game->isWhiteTurn && !game->isUserWhite) && game->board[x][y-1] == EMPTY){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x;
-		newPosition->y = y-1;
-		move->first->next = newPosition;
+
+	//Pawn is black - standard move.
+	if ((!game->isWhiteTurn) && game->board[x][y-1] == EMPTY){
+		Move* move = creatNewMove(x, y, x, y-1);
 		move->eats=0;
 		addToMoves(moves,move);
 	}
-	//Pawn is black and there is a right eat.
-	if ((!game->isWhiteTurn && !game->isUserWhite) && !isCurrentPlayerPeice(game, x+1,y-1)){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x+1;
-		newPosition->y = y-1;
-		move->first->next = newPosition;
-		move->eats=1;
-		addToMoves(moves,move);
-	}
-	//Pawn is black and there is a left eat.
-	if ((!game->isWhiteTurn && !game->isUserWhite) && !isCurrentPlayerPeice(game, x-1,y-1)){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x-1;
-		newPosition->y = y-1;
-		move->first->next = newPosition;
-		move->eats=1;
-		addToMoves(moves,move);
+	//Pawn is black - check for eats
+	for (int i=-1 ; i<=1;i+=2){
+		if ((!game->isWhiteTurn) && !isCurrentPlayerPeice(game, x+i,y-1)){
+			Move* move = creatNewMove(x, y, x+i, y+1);
+			move->eats=1;
+			addToMoves(moves,move);
+		}
 	}
 	return moves;
+}
+
+Move* creatNewMove(int startX, int startY, int endX, int endY){
+	Position* position = calloc(sizeof(Position), 1);
+	position->x = startX;
+	position->y = startY;
+	Move* move = calloc(sizeof(Move), 1);
+	move->first = position;
+	Position* newPosition = calloc(sizeof(Position), 1);
+	newPosition->x = endX;
+	newPosition->y = endY;
+	move->first->next = newPosition;
+	return move;
 }
 
 void addToMoves(Moves* moves, Move* newMove){
