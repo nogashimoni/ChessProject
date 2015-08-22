@@ -9,7 +9,7 @@ clean:
 	-rm chessprog $(OFILES)
 
 chessprog: $(OFILES)
-	gcc -o $@ $^ $(CFLAGS) $(SDL_L) 
+	gcc -o $@ $^ $(CFLAGS) $(SDL_L) -lSDL_image
 
 Chess.o: src/main/Chess.c src/main/Chess.h src/GUI/GUI.h src/services/ErrorHandling.h
 	gcc -c $(CFLAGS) src/main/$*.c $(SDL_C) -lSDL_image
