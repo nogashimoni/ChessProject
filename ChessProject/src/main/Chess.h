@@ -125,6 +125,7 @@ Moves* getPawnMoves(Game* game, Moves* moves, int x, int y);
 Moves* getKnightMoves(Game* game, Moves* moves, int x, int y);
 Moves* getKingMoves(Game* game, Moves* moves, int x, int y);
 Moves* getBishpMoves(Game* game, Moves* moves, int x, int y);
+Moves* getRookMoves(Game* game, Moves* moves, int x, int y);
 Move* creatNewMove(int startX, int startY, int endX, int endY);
 void addToMoves(Moves* moves, Move* newMove);
 void removeUnreleventMoves(Moves* moves);
