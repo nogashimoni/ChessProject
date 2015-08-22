@@ -481,7 +481,7 @@ Moves* getMoves(Game* game, int x, int y){
 			getBishpMoves(game, moves, x, y);
 		}
 		if (game->board[x][y] == WHITE_Q || game->board[x][y] == BLACK_Q){
-//			getQMoves(game, x, y);
+			getQueenMoves(game, moves, x, y);
 		}
 		if (game->board[x][y] == WHITE_R || game->board[x][y] == BLACK_R){
 			getRookMoves(game, moves, x, y);
@@ -616,6 +616,51 @@ Moves* getRookMoves(Game* game, Moves* moves, int x, int y){
 			}
 		}
 	}
+
+	return moves;
+}
+
+Moves* getQueenMoves(Game* game, Moves* moves, int x, int y){
+	for (int j=-1; j<=1;j+=2){
+		for (int i=1; i<=BOARD_SIZE;i++){
+
+			if (!isCurrentPlayerPeice(game, x+i*j,y) && isValidIJ(x+i*j,y)){
+				Move* move = creatNewMove(x, y, x+i*j,y);
+				if (getPieceColor(game, x+i*j,y) != -1){
+					move->eats=1;
+					addToMoves(moves,move);
+					break;
+				}
+				addToMoves(moves,move);
+			}
+			if (!isCurrentPlayerPeice(game, x,y+i*j) && isValidIJ(x,y+i*j)){
+				Move* move = creatNewMove(x, y, x,y+i*j);
+				if (getPieceColor(game, x,y+i*j) != -1){
+					move->eats=1;
+					addToMoves(moves,move);
+					break;
+				}
+				addToMoves(moves,move);
+			}
+		}
+	}
+
+	for (int r=-1; r<=1;r+=2){
+		for (int j=-1; j<=1;j+=2){
+			for (int i=1; i<=BOARD_SIZE;i++){
+				if (!isCurrentPlayerPeice(game, x+i*j,y+i*r) && isValidIJ(x+i*j,y+i*r)){
+					Move* move = creatNewMove(x, y, x+i*j,y+i*r);
+					if (getPieceColor(game, x+i*j,y+i*r) != -1){
+						move->eats=1;
+						addToMoves(moves,move);
+						break;
+					}
+					addToMoves(moves,move);
+				}
+			}
+		}
+	}
+
 	return moves;
 }
 
