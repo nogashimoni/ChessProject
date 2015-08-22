@@ -466,23 +466,19 @@ Moves* getMoves(Game* game, int x, int y){
 	moves->first = NULL;
 
 	if (isCurrentPlayerPeice(game, x, y)){
-		//Player is white
-		if (game->board[x][y] == WHITE_P){
+		//Piece is a Pawn
+		if (game->board[x][y] == WHITE_P || game->board[x][y] == BLACK_P){
 			getPawnMoves(game, moves, x, y);
 		}
-		//Player is black.
-		if (game->board[x][y] == BLACK_P){
-//			getBlackPMoves(game, x, y);
-		}
-
+		//Piece is a Knight.
 		if (game->board[x][y] == WHITE_N || game->board[x][y] == BLACK_N){
-//			getNMoves(game, x, y);
+			getKnightMoves(game, moves, x, y);
 		}
 		if (game->board[x][y] == WHITE_K || game->board[x][y] == BLACK_K){
-//			getKMoves(game, x, y);
+			getKingMoves(game, moves, x, y);
 		}
 		if (game->board[x][y] == WHITE_B || game->board[x][y] == BLACK_B){
-//			getBMoves(game, x, y);
+			getBishpMoves(game, moves, x, y);
 		}
 		if (game->board[x][y] == WHITE_Q || game->board[x][y] == BLACK_Q){
 //			getQMoves(game, x, y);
@@ -495,93 +491,122 @@ Moves* getMoves(Game* game, int x, int y){
 	return moves;
 }
 
+
 //TODO add special pawn move.
 Moves* getPawnMoves(Game* game, Moves* moves, int x, int y){
-	//Pawn is white and there is no eat.
-	if ((game->isWhiteTurn && game->isUserWhite) && game->board[x][y+1] == EMPTY){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x;
-		newPosition->y = y+1;
-		move->first->next = newPosition;
+	//Pawn is white - standard move.
+	if (game->isWhiteTurn && (game->board[x][y+1] == EMPTY) && isValidIJ(x,y+1)){
+		Move* move = creatNewMove(x, y, x, y+1);
 		move->eats=0;
 		addToMoves(moves,move);
 	}
-	//Pawn is white and there is a right eat.
-	if ((game->isWhiteTurn && game->isUserWhite) && (!game->isWhiteTurn==isCurrentPlayerPeice(game, x+1,y+1))){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x+1;
-		newPosition->y = y+1;
-		move->first->next = newPosition;
-		move->eats=1;
-		addToMoves(moves,move);
+	//Pawn is white - check for eats.
+	for (int i=-1 ; i<=1;i+=2){
+		if (game->isWhiteTurn && (!game->isWhiteTurn==getPieceColor(game, x+i,y+1)) && isValidIJ(x+i,y+1)){
+			Move* move = creatNewMove(x, y, x+i, y+1);
+			move->eats=1;
+			addToMoves(moves,move);
+		}
 	}
-	//Pawn is while and there is a left eat.
-	if ((game->isWhiteTurn && game->isUserWhite) && !isCurrentPlayerPeice(game, x-1,y+1)){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x-1;
-		newPosition->y = y+1;
-		move->first->next = newPosition;
-		move->eats=1;
-		addToMoves(moves,move);
-	}
-	//Pawn is black.
-	if ((!game->isWhiteTurn && !game->isUserWhite) && game->board[x][y-1] == EMPTY){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x;
-		newPosition->y = y-1;
-		move->first->next = newPosition;
+
+	//Pawn is black - standard move.
+	if ((!game->isWhiteTurn) && game->board[x][y-1] == EMPTY && isValidIJ(x,y-1)){
+		Move* move = creatNewMove(x, y, x, y-1);
 		move->eats=0;
 		addToMoves(moves,move);
 	}
-	//Pawn is black and there is a right eat.
-	if ((!game->isWhiteTurn && !game->isUserWhite) && !isCurrentPlayerPeice(game, x+1,y-1)){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x+1;
-		newPosition->y = y-1;
-		move->first->next = newPosition;
-		move->eats=1;
-		addToMoves(moves,move);
-	}
-	//Pawn is black and there is a left eat.
-	if ((!game->isWhiteTurn && !game->isUserWhite) && !isCurrentPlayerPeice(game, x-1,y-1)){
-		Position* position = calloc(sizeof(Position), 1);
-		position->x = x;
-		position->y = y;
-		Move* move = calloc(sizeof(Move), 1);
-		move->first = position;
-		Position* newPosition = calloc(sizeof(Position), 1);
-		newPosition->x = x-1;
-		newPosition->y = y-1;
-		move->first->next = newPosition;
-		move->eats=1;
-		addToMoves(moves,move);
+	//Pawn is black - check for eats
+	for (int i=-1 ; i<=1;i+=2){
+		if ((!game->isWhiteTurn) && (!game->isWhiteTurn==getPieceColor(game, x+i,y+1)) && isValidIJ(x+i,y-1)){
+			Move* move = creatNewMove(x, y, x+i, y-1);
+			move->eats=1;
+			addToMoves(moves,move);
+		}
 	}
 	return moves;
+}
+
+Moves* getKnightMoves(Game* game, Moves* moves, int x, int y){
+
+	for (int i=-1;i<=1;i+=2){
+		for (int j=-1; j<=1; j+=2){
+			if (!isCurrentPlayerPeice(game, x+1*i,y+2*j)
+					&& isValidIJ(x+1*i,y+2*j)){
+				Move* move = creatNewMove(x, y, x+1*i,y+2*j);
+				if (getPieceColor(game, x+2*i,y+1*j) != -1){
+					move->eats=1;
+				}
+				addToMoves(moves,move);
+			}
+			if (!isCurrentPlayerPeice(game, x+2*i,y+1*j)
+					&& isValidIJ(x+2*i,y+1*j)){
+				Move* move = creatNewMove(x, y, x+2*i,y+1*j);
+				if (getPieceColor(game, x+2*i,y+1*j) != -1){
+					move->eats=1;
+				}
+				addToMoves(moves,move);
+			}
+		}
+	}
+	return moves;
+}
+
+Moves* getKingMoves(Game* game, Moves* moves, int x, int y){
+	for (int i=-1 ; i<=1;i++){
+		for (int j=-1; j<=1;j++){
+			if (i==j && j==0){
+				continue;
+			}
+			if (!isCurrentPlayerPeice(game, x+i,y+j)
+					&& isValidIJ(x+i,y+j)){
+				Move* move = creatNewMove(x, y, x+i,y+j);
+				if (getPieceColor(game, x+i,y+j) != -1){
+					move->eats=1;
+				}
+				addToMoves(moves,move);
+			}
+		}
+
+	}
+	return moves;
+}
+
+Moves* getBishpMoves(Game* game, Moves* moves, int x, int y){
+
+	for (int r=-1; r<=1;r+=2){
+		for (int j=-1; j<=1;j+=2){
+			for (int i=1; i<=BOARD_SIZE;i++){
+				if (!isValidIJ(x+i*j,y+i*r)){
+					continue;
+				}
+				if (!isCurrentPlayerPeice(game, x+i*j,y+i*r)
+						&& isValidIJ(x+i*j,y+i*r)){
+					Move* move = creatNewMove(x, y, x+i*j,y+i*r);
+					if (getPieceColor(game, x+i*j,y+i*r) != -1){
+						move->eats=1;
+						addToMoves(moves,move);
+						break;
+					}
+					addToMoves(moves,move);
+				}
+			}
+		}
+	}
+	return moves;
+}
+
+
+Move* creatNewMove(int startX, int startY, int endX, int endY){
+	Position* position = calloc(sizeof(Position), 1);
+	position->x = startX;
+	position->y = startY;
+	Move* move = calloc(sizeof(Move), 1);
+	move->first = position;
+	Position* newPosition = calloc(sizeof(Position), 1);
+	newPosition->x = endX;
+	newPosition->y = endY;
+	move->first->next = newPosition;
+	return move;
 }
 
 void addToMoves(Moves* moves, Move* newMove){
@@ -606,7 +631,7 @@ void removeUnreleventMoves(Moves* moves){
 	while (prev->eats < moves->maxEats){
 			moves->first = prev->next;
 			Move* tmpPrev = prev;
-//			prev = prev->next;
+			prev = prev->next;
 //			freeNullAndRemove(tmpPrev);
 		}
 
@@ -618,9 +643,9 @@ void removeUnreleventMoves(Moves* moves){
 			Move* tmpCurr = curr;
 			curr = curr->next;
 //			freeNullAndRemove(tmpCurr);
-//			continue;
+			continue;
 		}
-//		prev = curr;
+		prev = curr;
 		curr = curr->next;
 
 	}
@@ -628,14 +653,14 @@ void removeUnreleventMoves(Moves* moves){
 
 
 int isCurrentPlayerPeice(Game* game, int i, int j) {
-	/* receives a legal i,j and checks if it's the current player's piece */
+	/* receives a legal i,j and returns 1 if it's the current player's piece */
 	if (game->board[i][j] == EMPTY){
 		return 0;
 	}
-	if ( (game->isUserWhite) && (game->isWhiteTurn) && ((game->isUserWhite == getPieceColor(game,i,j)))) {
+	if ( game->isWhiteTurn && (getPieceColor(game,i,j)==1)) {
 		return 1;
 	}
-	if ( (!game->isUserWhite) && (!game->isWhiteTurn) && ((game->isUserWhite == getPieceColor(game,i,j))) ) {
+	if ( (!game->isWhiteTurn) && ((0 == getPieceColor(game,i,j))) ) {
 		return 1;
 	}
 	return 0;
@@ -643,7 +668,8 @@ int isCurrentPlayerPeice(Game* game, int i, int j) {
 }
 
 int getPieceColor(Game* game, int i, int j){
-	//The piece is white.
+	/*Returns 1 is white, 0 if black, -1 if empty */
+	//The piece is white - returns 1.
 	if (game->board[i][j] == WHITE_P ||
 	                   game->board[i][j] == WHITE_B ||
 	                                  game->board[i][j] == WHITE_N
@@ -652,7 +678,7 @@ int getPieceColor(Game* game, int i, int j){
 	                                		                                  game->board[i][j] == WHITE_K){
 		return 1;
 	}
-	//The piece is black.
+	//The piece is black - returns 0.
 	if (game->board[i][j] == BLACK_P ||
 	                   game->board[i][j] == BLACK_B ||
 	                                  game->board[i][j] == BLACK_N
@@ -663,6 +689,12 @@ int getPieceColor(Game* game, int i, int j){
 	}
 	return -1; //The square is empty.
 
+}
+
+int isValidIJ(unsigned int i, unsigned int j) {
+	if ( i < 0 || i > BOARD_SIZE-1 || j < 0 || j > BOARD_SIZE-1 )
+		return 0;
+	return 1;
 }
 
 //char currentUserColor(Game* game) {

@@ -122,9 +122,14 @@ int isLegalPeiceAddition(Game* game, char peice);
 //game
 Moves* getMoves(Game* game, int x, int y);
 Moves* getPawnMoves(Game* game, Moves* moves, int x, int y);
+Moves* getKnightMoves(Game* game, Moves* moves, int x, int y);
+Moves* getKingMoves(Game* game, Moves* moves, int x, int y);
+Moves* getBishpMoves(Game* game, Moves* moves, int x, int y);
+Move* creatNewMove(int startX, int startY, int endX, int endY);
 void addToMoves(Moves* moves, Move* newMove);
 void removeUnreleventMoves(Moves* moves);
 int isCurrentPlayerPeice(Game* game, int i, int j);
+int isValidIJ(unsigned int i, unsigned int j);
 void switchTurns(Game* game);
 void computerTurn(Game* game);
 int getPieceColor(Game* game, int i, int j);
