@@ -46,7 +46,7 @@ SDL_Surface* openImage(char* imagePath) {
 	//The optimized image that will be used
 	SDL_Surface* optimizedImage=NULL;
 	//Load image
-	loadedImage = SDL_LoadBMP( imagePath );
+	loadedImage = IMG_Load( imagePath );
 	 //If nothing went wrong in loading the image
 	if( loadedImage != NULL ) {
 		//Create an optimized image
