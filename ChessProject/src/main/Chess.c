@@ -1,4 +1,5 @@
 #include "Chess.h"
+Moves* moves = NULL;
 
 int main(int argc, char **argv) {
 	Game game;
@@ -123,7 +124,7 @@ int setupGame(Game* game, int argc, char** argv) {
 	print_board(game->board);
 
 	if (game->isGUIMode) {
-		GUIMain();
+//		GUIMain();
 	}
 
 	printf(ENTER_SETTINGS);
@@ -372,6 +373,31 @@ void userTurn(Game* game){
 }
 
 int isValidMove(Game* game, Move* move) {
+	for (int i=1;i<BOARD_SIZE;i++){
+		for (int j=1;j<BOARD_SIZE;j++){
+			moves = getMoves(game, i, j);
+			Move* first = moves->first;
+			while (first != NULL){
+				if (compareMoves(first,move)){
+					return 1;
+				}
+				first = first->next;
+			}
+		}
+	}
+	return 0;
+}
+
+int compareMoves(Move* m1, Move* m2){
+	int i = comparePositions(m1->first,m2->first);
+	int j =comparePositions(m1->first->next,m2->first->next);
+	return (i && j);
+}
+
+int comparePositions(Position* p1, Position* p2){
+	if ((p1->x != p2->x) || (p1->y != p2->y)){
+		return 0;
+	}
 	return 1;
 }
 
@@ -380,14 +406,17 @@ void doMove(Game* game, Move* move) {
 }
 
 Move* createMoveFromString(char* cmd) {
-	Move* move = malloc(sizeof(move));
+	Move* move = NULL;
+	move = malloc(sizeof(move));
 	if ( move == NULL ) {
-		notifyFunctionFailure("createMoveFromString");
+		notifyFunctionFailure("creatrMoveFromString");
 		quit();
 	}
 
 	Position* first = malloc(sizeof(Position));
 	if ( first == NULL ) {
+		free(move);
+		move = NULL;
 		notifyFunctionFailure("createMoveFromString");
 		quit();
 	}
@@ -414,8 +443,10 @@ Move* createMoveFromString(char* cmd) {
 	Position* curr;
 	while ( *c != '\0' ) {
 		if ( *c == '<') {
+			curr = NULL;
 			curr = malloc(sizeof(Position));
 			if ( curr == NULL ) {
+				freeMove(move);
 				notifyFunctionFailure("createMoveFromString");
 				quit();
 			}
@@ -452,14 +483,11 @@ void switchTurns(Game* game) {
 
 Moves* getMoves(Game* game, int x, int y){
 
-	printf("%d %d\n", x,y);
-
-	Moves* moves = calloc(sizeof(Moves),1);
+	moves = calloc(sizeof(Moves),1);
 	if ( moves == NULL ) {
-		quit("getMoves");
+		notifyFunctionFailure("getMoves");
+		quit();
 	}
-
-//	addToAllAllocs(moves);
 
 	moves->maxEats = 0;
 
@@ -495,14 +523,19 @@ Moves* getMoves(Game* game, int x, int y){
 //TODO add special pawn move.
 Moves* getPawnMoves(Game* game, Moves* moves, int x, int y){
 	//Pawn is white - standard move.
-	if (game->isWhiteTurn && (game->board[x][y+1] == EMPTY) && isValidIJ(x,y+1)){
-		Move* move = creatNewMove(x, y, x, y+1);
-		move->eats=0;
-		addToMoves(moves,move);
+	if (isValidIJ(x,y+1)){
+		if (game->isWhiteTurn && (game->board[x][y+1] == EMPTY)){
+			Move* move = creatNewMove(x, y, x, y+1);
+			move->eats=0;
+			addToMoves(moves,move);
+		}
 	}
 	//Pawn is white - check for eats.
 	for (int i=-1 ; i<=1;i+=2){
-		if (game->isWhiteTurn && (!game->isWhiteTurn==getPieceColor(game, x+i,y+1)) && isValidIJ(x+i,y+1)){
+		if (!isValidIJ(x+i,y+1)){
+			continue;
+		}
+		if (game->isWhiteTurn && (!game->isWhiteTurn==getPieceColor(game, x+i,y+1))){
 			Move* move = creatNewMove(x, y, x+i, y+1);
 			move->eats=1;
 			addToMoves(moves,move);
@@ -510,14 +543,19 @@ Moves* getPawnMoves(Game* game, Moves* moves, int x, int y){
 	}
 
 	//Pawn is black - standard move.
-	if ((!game->isWhiteTurn) && game->board[x][y-1] == EMPTY && isValidIJ(x,y-1)){
-		Move* move = creatNewMove(x, y, x, y-1);
-		move->eats=0;
-		addToMoves(moves,move);
+	if (isValidIJ(x,y-1)){
+		if ((!game->isWhiteTurn) && game->board[x][y-1] == EMPTY && isValidIJ(x,y-1)){
+			Move* move = creatNewMove(x, y, x, y-1);
+			move->eats=0;
+			addToMoves(moves,move);
+		}
 	}
 	//Pawn is black - check for eats
 	for (int i=-1 ; i<=1;i+=2){
-		if ((!game->isWhiteTurn) && (!game->isWhiteTurn==getPieceColor(game, x+i,y+1)) && isValidIJ(x+i,y-1)){
+		if (isValidIJ(x+i,y-1)){
+			continue;
+		}
+		if ((!game->isWhiteTurn) && (!game->isWhiteTurn==getPieceColor(game, x+i,y+1))){
 			Move* move = creatNewMove(x, y, x+i, y-1);
 			move->eats=1;
 			addToMoves(moves,move);
@@ -530,21 +568,23 @@ Moves* getKnightMoves(Game* game, Moves* moves, int x, int y){
 
 	for (int i=-1;i<=1;i+=2){
 		for (int j=-1; j<=1; j+=2){
-			if (!isCurrentPlayerPeice(game, x+1*i,y+2*j)
-					&& isValidIJ(x+1*i,y+2*j)){
-				Move* move = creatNewMove(x, y, x+1*i,y+2*j);
-				if (getPieceColor(game, x+2*i,y+1*j) != -1){
-					move->eats=1;
+			if (isValidIJ(x+1*i,y+2*j)){
+				if (!isCurrentPlayerPeice(game, x+1*i,y+2*j)){
+					Move* move = creatNewMove(x, y, x+1*i,y+2*j);
+					if (getPieceColor(game, x+1*i,y+2*j) != -1){
+						move->eats=1;
+					}
+					addToMoves(moves,move);
 				}
-				addToMoves(moves,move);
 			}
-			if (!isCurrentPlayerPeice(game, x+2*i,y+1*j)
-					&& isValidIJ(x+2*i,y+1*j)){
-				Move* move = creatNewMove(x, y, x+2*i,y+1*j);
-				if (getPieceColor(game, x+2*i,y+1*j) != -1){
-					move->eats=1;
+			if (isValidIJ(x+2*i,y+1*j)){
+				if (!isCurrentPlayerPeice(game, x+2*i,y+1*j)){
+					Move* move = creatNewMove(x, y, x+2*i,y+1*j);
+					if (getPieceColor(game, x+2*i,y+1*j) != -1){
+						move->eats=1;
+					}
+					addToMoves(moves,move);
 				}
-				addToMoves(moves,move);
 			}
 		}
 	}
@@ -557,8 +597,10 @@ Moves* getKingMoves(Game* game, Moves* moves, int x, int y){
 			if (i==j && j==0){
 				continue;
 			}
-			if (!isCurrentPlayerPeice(game, x+i,y+j)
-					&& isValidIJ(x+i,y+j)){
+			if (!isValidIJ(x+i,y+j)){
+				continue;
+			}
+			if (!isCurrentPlayerPeice(game, x+i,y+j)){
 				Move* move = creatNewMove(x, y, x+i,y+j);
 				if (getPieceColor(game, x+i,y+j) != -1){
 					move->eats=1;
@@ -576,6 +618,9 @@ Moves* getBishpMoves(Game* game, Moves* moves, int x, int y){
 	for (int r=-1; r<=1;r+=2){
 		for (int j=-1; j<=1;j+=2){
 			for (int i=1; i<=BOARD_SIZE;i++){
+				if (!isValidIJ(x+i*j,y+i*r)){
+					continue;
+				}
 				if (!isCurrentPlayerPeice(game, x+i*j,y+i*r) && isValidIJ(x+i*j,y+i*r)){
 					Move* move = creatNewMove(x, y, x+i*j,y+i*r);
 					if (getPieceColor(game, x+i*j,y+i*r) != -1){
@@ -595,24 +640,27 @@ Moves* getRookMoves(Game* game, Moves* moves, int x, int y){
 
 	for (int j=-1; j<=1;j+=2){
 		for (int i=1; i<=BOARD_SIZE;i++){
-
-			if (!isCurrentPlayerPeice(game, x+i*j,y) && isValidIJ(x+i*j,y)){
-				Move* move = creatNewMove(x, y, x+i*j,y);
-				if (getPieceColor(game, x+i*j,y) != -1){
-					move->eats=1;
+			if (isValidIJ(x+i*j,y)){
+				if (!isCurrentPlayerPeice(game, x+i*j,y)){
+					Move* move = creatNewMove(x, y, x+i*j,y);
+					if (getPieceColor(game, x+i*j,y) != -1){
+						move->eats=1;
+						addToMoves(moves,move);
+						break;
+					}
 					addToMoves(moves,move);
-					break;
 				}
-				addToMoves(moves,move);
 			}
-			if (!isCurrentPlayerPeice(game, x,y+i*j) && isValidIJ(x,y+i*j)){
-				Move* move = creatNewMove(x, y, x,y+i*j);
-				if (getPieceColor(game, x,y+i*j) != -1){
-					move->eats=1;
+			if (!isValidIJ(x,y+i*j)){
+				if (!isCurrentPlayerPeice(game, x,y+i*j)){
+					Move* move = creatNewMove(x, y, x,y+i*j);
+					if (getPieceColor(game, x,y+i*j) != -1){
+						move->eats=1;
+						addToMoves(moves,move);
+						break;
+					}
 					addToMoves(moves,move);
-					break;
 				}
-				addToMoves(moves,move);
 			}
 		}
 	}
@@ -666,15 +714,29 @@ Moves* getQueenMoves(Game* game, Moves* moves, int x, int y){
 
 
 Move* creatNewMove(int startX, int startY, int endX, int endY){
-	Position* position = calloc(sizeof(Position), 1);
+	Position* position = NULL;
+	position = calloc(sizeof(Position), 1);
+	if (position == NULL){
+		quit();
+	}
 	position->x = startX;
 	position->y = startY;
-	Move* move = calloc(sizeof(Move), 1);
+	Move* move = NULL;
+	move = calloc(sizeof(Move), 1);
+	if (move == NULL){
+		quit();
+	}
 	move->first = position;
-	Position* newPosition = calloc(sizeof(Position), 1);
+	Position* newPosition = NULL;
+	newPosition = calloc(sizeof(Position), 1);
+	if (newPosition == NULL){
+		freeMove(move);
+		quit();
+	}
 	newPosition->x = endX;
 	newPosition->y = endY;
 	move->first->next = newPosition;
+	move->eats = 0;
 	return move;
 }
 
@@ -723,6 +785,9 @@ void removeUnreleventMoves(Moves* moves){
 
 int isCurrentPlayerPeice(Game* game, int i, int j) {
 	/* receives a legal i,j and returns 1 if it's the current player's piece */
+	if (!isValidIJ(i,j)){
+		return 0;
+	}
 	if (game->board[i][j] == EMPTY){
 		return 0;
 	}
@@ -772,15 +837,6 @@ int isValidIJ(unsigned int i, unsigned int j) {
 //	}
 //	return 'b';
 //}
-void freeMove(Move* move) {
-	Position* curr = move->first;
-	while ( curr != NULL ) {
-		Position* next = curr->next;
-		freeAndNull(curr);
-		curr = next;
-	}
-	freeAndNull(move);
-}
 
 void printMove(Move* move){
 	printf("<%c,%u> to ",iToX((move->first)->x),jToY((move->first)->y));
@@ -799,9 +855,32 @@ void freeAndNull(void* obj) {
 	obj = NULL;
 }
 void quit() {
-//	free all
-//TODO
+	if (moves != NULL){
+	}
 	exit(0);
+}
+
+void freeMove(Move* move){
+	Position* curr = move->first;
+	while ( curr != NULL ) {
+		Position* next = curr->next;
+		free(curr);
+		curr = NULL;
+		curr = next;
+	}
+	free(move);
+	move = NULL;
+}
+
+void freeMoves(){
+	Move* currMove = moves->first;
+	while ( currMove != NULL ) {
+		Move* prevMove=currMove;
+		currMove = currMove->next;
+		freeMove(prevMove);
+	}
+	free(moves);
+	moves = NULL;
 }
 
 

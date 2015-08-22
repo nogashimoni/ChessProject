@@ -138,9 +138,12 @@ int getPieceColor(Game* game, int i, int j);
 void userTurn(Game* game);
 Move* createMoveFromString(char* cmd);
 int isValidMove(Game* game, Move* move);
+int compareMoves(Move* m1, Move* m2);
+int comparePositions(Position* p1, Position* p2);
 void doMove(Game* game, Move* move);
 //free
 void freeAndNull(void* obj);
 void freeMove(Move* move);
+void freeMoves();
 
 #endif
