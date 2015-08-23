@@ -124,7 +124,7 @@ Moves* getMoves(Game* game, int x, int y);
 Moves* getPawnMoves(Game* game, Moves* moves, int x, int y);
 Moves* getKnightMoves(Game* game, Moves* moves, int x, int y);
 Moves* getKingMoves(Game* game, Moves* moves, int x, int y);
-Moves* getBishpMoves(Game* game, Moves* moves, int x, int y);
+Moves* getBishopMoves(Game* game, Moves* moves, int x, int y);
 Moves* getRookMoves(Game* game, Moves* moves, int x, int y);
 Moves* getQueenMoves(Game* game, Moves* moves, int x, int y);
 Move* creatNewMove(int startX, int startY, int endX, int endY);
