@@ -345,9 +345,9 @@ void userTurn(Game* game){
 				printMove(currMove);
 				Move* prevMove=currMove;
 				currMove = currMove->next;
-				freeMove(prevMove);
+				//freeMove(prevMove);
 			}
-			freeAndNull(moves);
+			freeMoves();
 		} else if ( !strcmp(cmd,"quit") ) {
 			quit();
 		} else if ( !strncmp(cmd,"move",4) ) {
@@ -379,13 +379,15 @@ int isValidMove(Game* game, Move* move) {
 			Move* first = moves->first;
 			while (first != NULL){
 				if (compareMoves(first,move)){
+					freeMoves();
 					return 1;
 				}
 				first = first->next;
 			}
+			freeMoves();
 		}
 	}
-	print_message(ILLEGAL_CALTLING_MOVE);
+	print_message(ILLEGAL_MOVE);
 	return 0;
 }
 
@@ -404,6 +406,10 @@ int comparePositions(Position* p1, Position* p2){
 
 void doMove(Game* game, Move* move) {
 	printMove(move);
+	Position* first = move->first;
+	Position* last = first->next;
+	game->board[last->x][last->y] = game->board[first->x][first->y];
+	game->board[first->x][first->y] = EMPTY;
 }
 
 Move* createMoveFromString(char* cmd) {
@@ -702,6 +708,7 @@ Move* creatNewMove(int startX, int startY, int endX, int endY){
 	}
 	position->x = startX;
 	position->y = startY;
+	position->next = NULL;
 	Move* move = NULL;
 	move = calloc(sizeof(Move), 1);
 	if (move == NULL){
@@ -718,6 +725,7 @@ Move* creatNewMove(int startX, int startY, int endX, int endY){
 	newPosition->y = endY;
 	move->first->next = newPosition;
 	move->eats = 0;
+	move->next = NULL;
 	return move;
 }
 
@@ -835,8 +843,10 @@ void freeAndNull(void* obj) {
 	}
 	obj = NULL;
 }
+
 void quit() {
 	if (moves != NULL){
+		freeMoves();
 	}
 	exit(0);
 }
