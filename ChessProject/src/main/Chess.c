@@ -55,16 +55,11 @@ int jToY(int j) {
 	return j + 1;
 }
 
-int isInvalidIJ(unsigned int i, unsigned int j) {
-	if (i < 0 || i > BOARD_SIZE - 1 || j < 0 || j > BOARD_SIZE - 1)
-		return 1;
-	return 0;
-}
 int isInvalidXY(char x, unsigned int y) {
 	unsigned int i, j;
 	i = xToI(x);
 	j = yToJ(y);
-	return isInvalidIJ(i, j);
+	return isValidIJ(i,j);
 }
 void init_board(char board[BOARD_SIZE][BOARD_SIZE]) {
 	int i, j;
@@ -339,7 +334,7 @@ void userTurn(Game* game){
 			int i = xToI(*(cmd+10));
 			int intY = (int)strtol(cmd+12,(char**)NULL,10);
 			int j = yToJ(intY);
-			Moves* moves = getMoves(game, i, j);
+			Moves* moves = getMoves(game, i, j, 1);
 			Move* currMove = moves->first;
 			while ( currMove != NULL ) {
 				printMove(currMove);
@@ -347,7 +342,7 @@ void userTurn(Game* game){
 				currMove = currMove->next;
 				//freeMove(prevMove);
 			}
-			freeMoves();
+			freeMoves(moves);
 		} else if ( !strcmp(cmd,"quit") ) {
 			quit();
 		} else if ( !strncmp(cmd,"move",4) ) {
@@ -373,20 +368,17 @@ void userTurn(Game* game){
 }
 
 int isValidMove(Game* game, Move* move) {
-	for (int i=0;i<BOARD_SIZE;i++){
-		for (int j=0;j<BOARD_SIZE;j++){
-			moves = getMoves(game, i, j);
-			Move* first = moves->first;
-			while (first != NULL){
-				if (compareMoves(first,move)){
-					freeMoves();
-					return 1;
-				}
-				first = first->next;
-			}
-			freeMoves();
+
+	moves = getMoves(game, move->first->x, move->first->y, 1);
+	Move* first = moves->first;
+	while (first != NULL){
+		if (compareMoves(first,move)){
+			freeMoves(moves);
+			return 1;
 		}
+		first = first->next;
 	}
+	freeMoves(moves);
 	print_message(ILLEGAL_MOVE);
 	return 0;
 }
@@ -488,13 +480,20 @@ void switchTurns(Game* game) {
 
 /* Returns all legal moves for a certian piece */
 
-Moves* getMoves(Game* game, int x, int y){
+Moves* getMoves(Game* game, int x, int y, int isCheckRelevence){
 
-	moves = calloc(sizeof(Moves),1);
+	if (isCheckRelevence){
+		moves = calloc(sizeof(Moves),1);
+	}
+	else{
+		Moves* moves = calloc(sizeof(Moves),1);
+	}
+
 	if ( moves == NULL ) {
 		notifyFunctionFailure("getMoves");
 		quit();
 	}
+
 
 	moves->maxEats = 0;
 
@@ -523,11 +522,97 @@ Moves* getMoves(Game* game, int x, int y){
 		}
 	}
 
+	if (isCheckRelevence){
+		removeUnreleventMoves(game, moves);
+	}
 	return moves;
 }
 
 
 //TODO add special pawn move.
+void removeUnreleventMoves(Game* game, Moves* moves){
+	/* Out of all possible move, removes moves with not enough eats and frees them */
+
+	Move* prevMove = moves->first;
+
+	if (prevMove == NULL){
+		return;
+	}
+
+	if (!isNotCheckMove(game,prevMove)){
+		moves->first = prevMove->next;
+		Move* tmpPrev = prevMove;
+		prevMove = prevMove->next;
+		freeMove(tmpPrev);
+	}
+
+	Move* currMove = prevMove->next;
+
+	while (currMove != NULL){
+
+		if (!isNotCheckMove(game, currMove)){
+			prevMove->next = currMove->next;
+			Move* tmpCurr = currMove;
+			currMove = currMove->next;
+			freeMove(tmpCurr);
+			continue;
+		}
+		prevMove = currMove;
+		currMove = currMove->next;
+	}
+}
+
+
+int isNotCheckMove (Game* game, Move* move){
+	/*Checks if the move puts the player's king in a danger (check) */
+	Game* gameCopy = NULL;
+	gameCopy = calloc(sizeof(Game), 1);
+	if (gameCopy == NULL){
+		quit();
+	}
+	doMove(gameCopy, move);
+	switchTurns(gameCopy);
+	for (int i=0; i<BOARD_SIZE;i++){
+		for (int j=0; j< BOARD_SIZE; j++){
+			Moves* movesTemp = getMoves(gameCopy, i, j, 0);
+			Move* move = movesTemp->first;
+			while (move != NULL){
+				if (isEatingOpponentKing(gameCopy, move)){
+					freeMoves(movesTemp);
+					return 0;
+				}
+				move = move->next;
+			}
+			freeMoves(movesTemp);
+		}
+	}
+	free(gameCopy);
+	gameCopy = NULL;
+	return 0;
+}
+
+
+
+int isEatingOpponentKing(Game* game, Move* move){
+	/*Checks if the 'move' is eating the opponent's king */
+	if (isOpponentKingPosition(game, move->first->next->x, move->first->next->y)){
+		return 1;
+	}
+	return 0;
+}
+
+int isOpponentKingPosition(Game* game, int x, int y){
+	/*Checks if the Opponent's king is in position x,y */
+	if (game->isWhiteTurn && game->board[x][y] == BLACK_K){
+		return 1;
+	}
+	if (!game->isWhiteTurn && game->board[x][y] == WHITE_K){
+		return 1;
+	}
+	return 0;
+}
+
+
 Moves* getPawnMoves(Game* game, Moves* moves, int x, int y){
 	//Pawn is white - standard move.
 	if (isValidIJ(x,y+1)){
@@ -740,38 +825,6 @@ void addToMoves(Moves* moves, Move* newMove){
 	}
 }
 
-void removeUnreleventMoves(Moves* moves){
-	/* Out of all possible move, removes moves with not enough eats and frees them */
-	Move* prev = moves->first;
-
-	if ( prev == NULL ) {
-		return;
-	}
-
-	while (prev->eats < moves->maxEats){
-			moves->first = prev->next;
-			Move* tmpPrev = prev;
-			prev = prev->next;
-//			freeNullAndRemove(tmpPrev);
-		}
-
-	Move* curr = prev->next;
-
-	while (curr != NULL){
-		if (curr->eats < moves->maxEats){
-			prev->next = curr->next;
-			Move* tmpCurr = curr;
-			curr = curr->next;
-//			freeNullAndRemove(tmpCurr);
-			continue;
-		}
-		prev = curr;
-		curr = curr->next;
-
-	}
-}
-
-
 int isCurrentPlayerPeice(Game* game, int i, int j) {
 	/* receives a legal i,j and returns 1 if it's the current player's piece */
 	if (!isValidIJ(i,j)){
@@ -814,7 +867,7 @@ int getPieceColor(Game* game, int i, int j){
 
 }
 
-int isValidIJ(unsigned int i, unsigned int j) {
+int isValidIJ(int i, int j) {
 	if ( i < 0 || i > BOARD_SIZE-1 || j < 0 || j > BOARD_SIZE-1 )
 		return 0;
 	return 1;
@@ -846,7 +899,7 @@ void freeAndNull(void* obj) {
 
 void quit() {
 	if (moves != NULL){
-		freeMoves();
+		freeMoves(moves);
 	}
 	exit(0);
 }
@@ -863,7 +916,7 @@ void freeMove(Move* move){
 	move = NULL;
 }
 
-void freeMoves(){
+void freeMoves(Moves* moves){
 	Move* currMove = moves->first;
 	while ( currMove != NULL ) {
 		Move* prevMove=currMove;
