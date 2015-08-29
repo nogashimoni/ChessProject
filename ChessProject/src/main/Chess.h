@@ -120,16 +120,18 @@ void setDisk(Game* game, char x, int y, char color, char* type);
 int isLegalPeiceAddition(Game* game, char peice);
 //game
 Moves* getMoves(Game* game, int x, int y, int isCheckRelevence);
-Moves* getPawnMoves(Game* game, Moves* moves, int x, int y);
-Moves* getKnightMoves(Game* game, Moves* moves, int x, int y);
-Moves* getKingMoves(Game* game, Moves* moves, int x, int y);
-Moves* getBishopMoves(Game* game, Moves* moves, int x, int y);
-Moves* getRookMoves(Game* game, Moves* moves, int x, int y);
-Moves* getQueenMoves(Game* game, Moves* moves, int x, int y);
+void getMovesForPiece(Game* game, int x, int y, Moves* movesCopy);
+void getPawnMoves(Game* game, Moves* moves, int x, int y);
+void getKnightMoves(Game* game, Moves* moves, int x, int y);
+void getKingMoves(Game* game, Moves* moves, int x, int y);
+void getBishopMoves(Game* game, Moves* moves, int x, int y);
+void getRookMoves(Game* game, Moves* moves, int x, int y);
+void getQueenMoves(Game* game, Moves* moves, int x, int y);
 Move* creatNewMove(int startX, int startY, int endX, int endY);
 void addToMoves(Moves* moves, Move* newMove);
 void removeUnreleventMoves(Game* game, Moves* moves);
-int isNotCheckMove (Game* game, Move* move);
+Game* cloneGame(Game* game);
+int isEndangeringKingMove (Game* game, Move* move);
 int isEatingOpponentKing(Game* game, Move* move);
 int isOpponentKingPosition(Game* game, int x, int y);
 int isCurrentPlayerPeice(Game* game, int i, int j);
@@ -143,10 +145,11 @@ int isValidMove(Game* game, Move* move);
 int compareMoves(Move* m1, Move* m2);
 int comparePositions(Position* p1, Position* p2);
 
-void doMove(Game* game, Move* move);
+void doMove(Game* game, Move* move, int printMove);
+int currentPlayerLose(Game* game);
 //free
 void freeAndNull(void* obj);
 void freeMove(Move* move);
-void freeMoves(Moves* moves);
+void freeMoves();
 
 #endif
