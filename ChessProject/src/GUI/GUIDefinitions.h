@@ -10,9 +10,22 @@
 
 #define BOARD_SIZE 8
 
+//macros for files
+#define WELCOME_BACKGROUND "images/800_600.png"
+#define PLAYER_SELECTION_BACKGROUND "images/player_selection_panel_background.png"
+
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+#define SCREEN_BPP 32
+#define WINDOWS_COUNT 2
+#define POLLING_DELAY 10
+
+#define BUTTON_WIDTH 220
+#define BUTTON_HEIGHT 50
+
 typedef enum {
 	MAIN_MENU,
-	SETUP,
+	PLAYER_SELECTION,
 	QUIT
 } WindowId;
 
@@ -21,25 +34,27 @@ typedef enum {
 	PRESS_SECOND,
 	PRESS_THIRD,
 } EventID;
-typedef struct Node Node;
 
-struct Node {
-	Node** next;
+
+struct UITreeNode {
+    void *data;
+    struct UITreeNode* next;
+    struct UITreeNode* child;
+    struct UITreeNode* parent;
 };
+
+typedef struct UITreeNode UITreeNode;
 
 typedef struct Button Button;
 
 struct Button {
 	/* data members */
 	//The attributes of the button
-	SDL_Rect box; //The part of the button sprite sheet that will be shown
+	SDL_Rect relevantArea; //The part of the screen the button works in
 	SDL_Rect *clip;//*sprite_map;
 
 	/* methods */
-	char (*handle_events)(Button *control, int x_offset, int y_offset,
-			char board[BOARD_SIZE][BOARD_SIZE]);
-	void (*show)(Button *control, SDL_Surface *parent,
-			char board[BOARD_SIZE][BOARD_SIZE]);
+	int (*isButtonPressed)(Button *button, SDL_Event sdlEvent);
 };
 
 
@@ -48,12 +63,12 @@ typedef struct Window Window;
 struct Window {
 	/* data members */
 //	Game* game;
-	Node* UITreeHead; //ui tree
+	UITreeNode* UITreeHead; //ui tree
 	WindowId windowId;
 	/* methods */
+	int (*start) (Window* window, void* initData);
 	EventID (*translateEvent)(Window* window, SDL_Event* event);
 	int (*handleEvent)(Window* window, EventID event);
-	int (*start) (Window* window, void* initData);
 	void* (*stop) (Window* window);
 };
 

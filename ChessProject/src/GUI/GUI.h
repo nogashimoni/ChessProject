@@ -1,15 +1,6 @@
 #ifndef GUI_H_
 #define GUI_H_
 
-#define SCREEN_WIDTH = 640;
-#define SCREEN_HEIGHT = 480;
-#define SCREEN_BPP = 32;
-#define WINDOWS_COUNT 2
-#define POLLING_DELAY 10
-
-
-//macros for files
-#define BACKGROUND "images/background.png"
 
 //includes
 

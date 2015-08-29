@@ -2,22 +2,16 @@
 #define WINDOWFACTORY_H_
 
 #include "../main/Chess.h"
+#include "../services/ErrorHandling.h"
 #include "GUI.h"
 #include "GUIUtils.h"
-#include "../services/ErrorHandling.h"
 #include "GUIDefinitions.h"
+#include "StartFunctions.h"
+#include "TranslateFunctions.h"
+#include "HandleFunctions.h"
+#include "StopFunctions.h"
 
 Window initWindow(WindowId id);
-
-int welcomeWindowStart (Window* window, void* initData);
-void welcomeWindowClip( SDL_Rect* clip );
-int setupWindowStart (Window* window, void* initData);
-
-EventID welcomeWindowTranslateEvent(Window* window, SDL_Event* event);
-EventID setupWindowTranslateEvent(Window* window, SDL_Event* event);
-
-int welcomeWindowHandleEvent(Window* window, EventID eventID);
-int setupWindowHandleEvent(Window* window, EventID eventID);
 
 
 

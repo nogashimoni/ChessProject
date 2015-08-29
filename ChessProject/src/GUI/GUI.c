@@ -13,11 +13,11 @@ int GUIMain() {
 		/* initialize GUI structs mapping by state ids: */
 
 		windows[MAIN_MENU] = initWindow(MAIN_MENU);
-		windows[SETUP] = initWindow(SETUP);
+		windows[PLAYER_SELECTION] = initWindow(PLAYER_SELECTION);
 
 		/* Starting the default/initial GUI: */
 
-		Window activeWindow = windows[MAIN_MENU];
+		Window activeWindow = windows[PLAYER_SELECTION];
 		WindowId nextWindowId = MAIN_MENU;
 		activeWindow.start(&activeWindow, NULL);
 
