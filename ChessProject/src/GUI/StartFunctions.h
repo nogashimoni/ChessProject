@@ -16,8 +16,7 @@
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
 
-int welcomeWindowStart (Window* window, void* initData);
 void clipWelcomeOrPlayerSelection( SDL_Rect* clip );
-int playerSelectionWindowStart (Window* window, void* initData);
+int startWelcomeOrPlayerSelection (Window* window, void* initData);
 
 #endif /* STARTFUNCTIONS_H_ */

@@ -12,16 +12,15 @@ int GUIMain() {
 		Window windows[WINDOWS_COUNT];
 		/* initialize GUI structs mapping by state ids: */
 
-		windows[MAIN_MENU] = initWindow(MAIN_MENU);
+		windows[WELCOME] = initWindow(WELCOME);
 		windows[PLAYER_SELECTION] = initWindow(PLAYER_SELECTION);
 
 		/* Starting the default/initial GUI: */
 
-		Window activeWindow = windows[PLAYER_SELECTION];
-		WindowId nextWindowId = MAIN_MENU;
+		Window activeWindow = windows[WELCOME];
+		WindowId nextWindowId = WELCOME;
 		activeWindow.start(&activeWindow, NULL);
 
-		return 1;
 		while (!isError && nextWindowId != QUIT) {
 //			if (activeGUI.stateId == PLAY_GAME){ /* if we are currently playing the game */
 //				updateMachineMoveIfNeeded(activeGUI); /* make machine move if it is machibe turn */
@@ -32,28 +31,31 @@ int GUIMain() {
 			while (SDL_PollEvent(&event)) {
 
 				/* translating the SDL event to a logical event using the view: */
-				EventID eventID = activeWindow.translateEvent(&activeWindow, &event);
+				EventID eventID = activeWindow.translateEvent(&activeWindow, event);
 				if (isError) /* PHE function may result in an error */
 					break;
 
-				/* Handling the logical event using the presenter: */
-				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID);
-				if (isError) /* PHE function may result in an error */
-					break;
+				//TODO delete the next line
+				if (eventID == FIRST_PRESSED || eventID == SECOND_PRESSED || eventID == THIRD_PRESSED) printf("okk (((-:\n");
 
-				/* if state has changed, stop the active GUI and move to the next one: */
-				if (activeWindow.windowId != nextWindowId) {
-					if (nextWindowId == QUIT) {
-						break;
-					}
-					else {
-						void* nextWindowInitData = activeWindow.stop(&activeWindow);
-						if (isError) /* stop function may result in an error */
-							break;
-						activeWindow = windows[nextWindowId];
-						activeWindow.start(&activeWindow, nextWindowInitData);
-					}
-				}
+				/* Handling the event */
+//				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID);
+//				if (isError) /* PHE function may result in an error */
+//					break;
+//
+//				/* if state has changed, stop the active GUI and move to the next one: */
+//				if (activeWindow.windowId != nextWindowId) {
+//					if (nextWindowId == QUIT) {
+//						break;
+//					}
+//					else {
+//						void* nextWindowInitData = activeWindow.stop(&activeWindow);
+//						if (isError) /* stop function may result in an error */
+//							break;
+//						activeWindow = windows[nextWindowId];
+//						activeWindow.start(&activeWindow, nextWindowInitData);
+//					}
+//				}
 			}
 			SDL_Delay(POLLING_DELAY);
 		}

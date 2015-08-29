@@ -12,7 +12,9 @@
 
 //macros for files
 #define WELCOME_BACKGROUND "images/800_600.png"
-#define PLAYER_SELECTION_BACKGROUND "images/player_selection_panel_background.png"
+#define PLAYER_SELECTION_BACKGROUND "images/800_600.png"
+#define WELCOME_SPRITE "images/main_menu_sprite.png"
+#define PLAYER_SELECTION_SPRITE "images/player_selection_sprite.png"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -24,15 +26,16 @@
 #define BUTTON_HEIGHT 50
 
 typedef enum {
-	MAIN_MENU,
+	WELCOME,
 	PLAYER_SELECTION,
 	QUIT
 } WindowId;
 
 typedef enum {
-	PRESS_FIRST,
-	PRESS_SECOND,
-	PRESS_THIRD,
+	NOTHING_HAPPANED,
+	FIRST_PRESSED,
+	SECOND_PRESSED,
+	THIRD_PRESSED,
 } EventID;
 
 
@@ -67,7 +70,7 @@ struct Window {
 	WindowId windowId;
 	/* methods */
 	int (*start) (Window* window, void* initData);
-	EventID (*translateEvent)(Window* window, SDL_Event* event);
+	EventID (*translateEvent)(Window* window, SDL_Event event);
 	int (*handleEvent)(Window* window, EventID event);
 	void* (*stop) (Window* window);
 };

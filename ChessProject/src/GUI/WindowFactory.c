@@ -5,14 +5,14 @@ Window initWindow(WindowId id) {
 	window.windowId = id;
 
 	switch (id) {
-	case MAIN_MENU:
-		window.start = welcomeWindowStart;
-		window.translateEvent = welcomeWindowTranslateEvent;
+	case WELCOME:
+		window.start = startWelcomeOrPlayerSelection;
+		window.translateEvent = welcomeOrSelectionTranslateEvent;
 		window.handleEvent = welcomeWindowHandleEvent;
 		break;
 	case PLAYER_SELECTION:
-		window.start = playerSelectionWindowStart;
-		window.translateEvent = playerSelectionWindowTranslateEvent;
+		window.start = startWelcomeOrPlayerSelection;
+		window.translateEvent = welcomeOrSelectionTranslateEvent;
 		window.handleEvent = playerSelectionWindowHandleEvent;
 		break;
 
