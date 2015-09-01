@@ -349,7 +349,108 @@ void play(Game* game) {
 
 
 void computerTurn(Game* game){
-//	printf("computer\n");
+/* Perform computer turn. Note: we enter this function only if
+ * computer isn't stuck, meaning there's at least 1 move. */
+
+//	minmax(game,game->minmaxDepth, 1); //updates game->move
+//	doMove(game, game->minmaxMove);
+//
+//	printf("Computer: move ");
+//	printMove(game->minmaxMove);
+//	print_board(game->board);
+//	freeNullAndRemove(game->minmaxMove); // all other moves on tree will be freed only when quit
+////	game->minmaxScore = INT_MIN;
+//	game->minmaxMove = NULL; //just in case
+//
+//
+//	int didSomeoneWin = checkIfNextWinsAndPrint(game);
+//	if (didSomeoneWin){
+//		game->isRunning = 0;
+//	}
+}
+
+int scoringFunction(Game* game) {
+	/* Scoring function for the minimax. */
+	int result;
+
+	//someone lost
+	if ( isCurrentPlayerStuck(game) ) {
+		int sign;
+		if  (game->isComputerTurn) {
+			sign = -1;
+		}
+		else {
+			sign = 1;
+		}
+		return sign * 100;
+	}
+
+	// no one lost- we got to depth 0
+	int numOfWhitePawns = 0;
+	int numOfWhiteKnights = 0;
+	int numOfWhiteBishops = 0;
+	int numOfWhiteRooks = 0;
+	int numOfWhiteQueens = 0;
+	int numOfWhiteKings = 0;
+
+	int numOfBlackPawns = 0;
+	int numOfBlackKnights = 0;
+	int numOfBlackBishops = 0;
+	int numOfBlackRooks = 0;
+	int numOfBlackQueens = 0;
+	int numOfBlackKings = 0;
+	int i,j;
+	for ( i=0; i<BOARD_SIZE; i ++) {
+		for ( j=0; j<BOARD_SIZE; j++ ) {
+			 if ( game->board[i][j] == WHITE_P ) {
+				 numOfWhitePawns ++;
+			 }
+			 if ( game->board[i][j] == WHITE_N ) {
+				 numOfWhiteKnights ++;
+			 }
+			 if ( game->board[i][j] == WHITE_B ) {
+				 numOfWhiteBishops ++;
+			 }
+			 if ( game->board[i][j] == WHITE_R ) {
+				 numOfWhiteRooks ++;
+			 }
+			 if ( game->board[i][j] == WHITE_Q ) {
+				 numOfWhiteQueens ++;
+			 }
+			 if ( game->board[i][j] == WHITE_K ) {
+				 numOfWhiteKings ++;
+			 }
+
+			 if ( game->board[i][j] == BLACK_P ) {
+				 numOfBlackPawns ++;
+			 }
+			 if ( game->board[i][j] == BLACK_N ) {
+				 numOfBlackKnights ++;
+			 }
+			 if ( game->board[i][j] == BLACK_B ) {
+				 numOfBlackBishops ++;
+			 }
+			 if ( game->board[i][j] == BLACK_R ) {
+				 numOfBlackRooks ++;
+			 }
+			 if ( game->board[i][j] == BLACK_Q ) {
+				 numOfBlackQueens ++;
+			 }
+			 if ( game->board[i][j] == BLACK_K ) {
+				 numOfBlackKings ++;
+			 }
+		}
+	}
+	int whitePlayerScore = numOfWhitePawns + 3*(numOfWhiteKnights+numOfWhiteBishops) + 5*numOfWhiteRooks + 9*numOfWhiteQueens + 400*numOfWhiteKings;
+	int blackPlayerScore = numOfBlackPawns + 3*(numOfBlackKnights+numOfBlackBishops) + 5*numOfBlackRooks + 9*numOfBlackQueens + 400*numOfBlackKings;
+
+	if (!game->isWhiteTurn) {
+		result = whitePlayerScore - blackPlayerScore;
+	}
+	else {
+		result = blackPlayerScore - whitePlayerScore;
+	}
+	return result;
 }
 
 void userTurn(Game* game){
