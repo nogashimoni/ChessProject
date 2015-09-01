@@ -4,7 +4,7 @@ Moves* movesTemp = NULL;
 
 int main(int argc, char **argv) {
 	Game game;
-setupGame(&game, argc, argv);
+	setupGame(&game, argc, argv);
 	play(&game);
 	quit();
 	return EXIT_SUCCESS;
@@ -310,13 +310,16 @@ void play(Game* game) {
 			if ( currentPlayerLose(game) ){
 				game->isRunning = 0;
 				if (game->isWhiteTurn){
-					printf("Black player wins!");
+					printf("Black player wins! \n");
 				}
 				else{
-					printf("White player wins!");
+					printf("White player wins! \n");
 				}
 				break;
 			}
+//			if (OpponentKingInDanger()){
+//				printf("Check! \n");
+//			}
 			userTurn(game);
 			switchTurns(game);
 		}
@@ -327,10 +330,10 @@ void play(Game* game) {
 			if ( currentPlayerLose(game) ){
 				game->isRunning = 0;
 				if (game->isWhiteTurn){
-					printf("Black player wins!");
+					printf("Black player wins! \n");
 				}
 				else{
-					printf("White player wins!");
+					printf("White player wins! \n");
 				}
 				break;
 			}
@@ -410,7 +413,6 @@ int currentPlayerLose(Game* game){
 			freeMoves(0);
 		}
 	}
-
 	return 1;
 }
 
@@ -449,6 +451,7 @@ void doMove(Game* game, Move* move, int isPrintMove) {
 	if (isPrintMove){
 		printMove(move);
 	}
+
 	Position* first = move->first;
 	Position* last = first->next;
 	game->board[last->x][last->y] = game->board[first->x][first->y];
@@ -610,7 +613,7 @@ void removeUnreleventMoves(Game* game, Moves* moves){
 		return;
 	}
 
-	while (isEndangeringKingMove(game,prevMove)){
+	while (isEndangeringKingMove(game,prevMove) == 1){
 		moves->first = prevMove->next;
 		Move* tmpPrev = prevMove;
 		prevMove = prevMove->next;
@@ -646,9 +649,9 @@ int isEndangeringKingMove (Game* game, Move* move){
 	for (int i=0; i<BOARD_SIZE;i++){
 		for (int j=0; j<BOARD_SIZE; j++){
 			getMoves(gameCopy, i, j, 0);
-			Move* move = movesTemp->first;
-			while (move != NULL){
-				if (isEatingOpponentKing(gameCopy, move)){
+			Move* moveCurr = movesTemp->first;
+			while (moveCurr != NULL){
+				if (isEatingOpponentKing(gameCopy, moveCurr)){
 					if (gameCopy != NULL){
 						free(gameCopy);
 						gameCopy = NULL;
@@ -656,7 +659,7 @@ int isEndangeringKingMove (Game* game, Move* move){
 					freeMoves(1);
 					return 1;
 				}
-				move = move->next;
+				moveCurr = moveCurr->next;
 			}
 			freeMoves(1);
 		}
