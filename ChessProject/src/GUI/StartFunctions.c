@@ -1,21 +1,17 @@
 #include "StartFunctions.h"
 
 int startWelcomeOrPlayerSelection(Window* window, void* initData) {
+	SDL_Surface* image = NULL;
+	SDL_Surface* buttonsImages = NULL;
 	window->UITreeHead = NULL;
+
+	// create UI Tree root
 	window->UITreeHead = createNode(NULL); // TODO UI TREE!
 	if ( window->UITreeHead == NULL ) {
 		//TODO
 	}
-
-	SDL_Surface *screen = NULL;
-	screen = SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE );
-	//If there was an error in setting up the screen
-	if( screen == NULL )
-	     return 0;
-	SDL_WM_SetCaption( "Noa and Noga's World Of Fun!", NULL );
-
-	SDL_Surface *image = NULL;
-	SDL_Surface *menuImages = NULL;
+	// create screen
+	SDL_Surface* screen = createScreen();
 
 	// Apply background
 	image  = loadImage(window->windowId == WELCOME ? WELCOME_BACKGROUND: PLAYER_SELECTION_BACKGROUND);
@@ -25,63 +21,28 @@ int startWelcomeOrPlayerSelection(Window* window, void* initData) {
 	}
 	applySurface( 0, 0, image, screen, NULL );
 
-	// Create buttons and apply on screen
-	menuImages = loadImage(window->windowId == WELCOME ? WELCOME_SPRITE : PLAYER_SELECTION_SPRITE);
-	if( menuImages == NULL )
-		return 0;
-
+	// create arguments for buttons creaton
 	SDL_Rect clip[ 4 ];
 	clipWelcomeOrPlayerSelection(clip);
-
 	int xForButtons = 0.5*SCREEN_WIDTH-0.5*BUTTON_WIDTH;
 	int yFirstButton = 0.5*SCREEN_HEIGHT-1.5*BUTTON_HEIGHT;
+	buttonsImages = loadImage(window->windowId == WELCOME ? WELCOME_SPRITE : PLAYER_SELECTION_SPRITE);
+	if( buttonsImages == NULL )
+		return 0; //TOODO
 
 	// Create buttons
-	Button* newGameButton = NULL;
-	SDL_Rect box1 = { xForButtons, yFirstButton, BUTTON_WIDTH, BUTTON_HEIGHT };
-	newGameButton = createButton(box1);  //should the relevantArea also be alloced?
-	if ( newGameButton == NULL ) {
-		//quitGUI(); TODO
+	Button** buttonsArray = createVerticalButtonsArray(3, xForButtons, yFirstButton, buttonsImages, &clip[0], screen);
+	// insert buttons to UI Tree
+	UITreeNode* currButtonNode = addChildNode(window->UITreeHead, buttonsArray[0]);
+	for ( int i = 1; i<3; i++ ) {
+		currButtonNode = append(currButtonNode, buttonsArray[i]);
 	}
-	window->UITreeHead->child = createNode(newGameButton);
-	if (window->UITreeHead->child == NULL) {
-		//quiteGUI(); // TODO
-	}
-
-	Button* loadGameButton = NULL;
-	SDL_Rect box2 = { xForButtons, yFirstButton + BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT };
-	loadGameButton = createButton(box2);
-	if ( loadGameButton == NULL ) {
-		//quiteGUI(); TODO
-	}
-	window->UITreeHead->child->next = createNode(loadGameButton);
-	if (window->UITreeHead->child->next == NULL) {
-		// quiteGUI(); TODO
-	}
-
-	Button* quitButton;
-	SDL_Rect box3 = { xForButtons, yFirstButton + 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT };
-	quitButton = createButton(box3);
-	if ( quitButton == NULL ) {
-		//quiteGUI(); TODO
-	}
-	window->UITreeHead->child->next->next = createNode(quitButton);
-	if (window->UITreeHead->child->next->next == NULL) {
-		// quiteGUI(); TODO
-	}
-
-	// Apply button images on screen
-	applySurface( xForButtons, yFirstButton, menuImages, screen, &clip[0] );
-	applySurface( xForButtons , yFirstButton+BUTTON_HEIGHT, menuImages, screen, &clip[1] );
-	applySurface( xForButtons, yFirstButton+2*BUTTON_HEIGHT, menuImages, screen, &clip[2] );
 
 	// Update what we see on screen
 	if ( SDL_Flip(screen) ==  -1 ) {
 	 	printf("ERROR \n");
 		return 0;
 	}
-
-
 	return 1;
 }
 
