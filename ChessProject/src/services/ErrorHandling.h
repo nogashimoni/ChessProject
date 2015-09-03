@@ -1,9 +1,3 @@
-/*
- * ErrorHelper.h
- *
- *  Created on: Aug 15, 2015
- *      Author: nogalavi1
- */
 
 #ifndef ERRORHELPER_H_
 #define ERRORHELPER_H_
