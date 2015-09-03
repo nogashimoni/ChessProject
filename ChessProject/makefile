@@ -3,7 +3,7 @@ OFILES= Chess.o GUI.o ErrorHandling.o
 SDL_L=`sdl-config --libs` 
 SDL_C=`sdl-config --cflags`
 
-all: chessprog test
+all: chessprog #test
 
 clean:
 	-rm chessprog $(OFILES)

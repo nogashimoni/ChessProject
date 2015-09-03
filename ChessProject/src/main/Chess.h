@@ -42,8 +42,6 @@
  
 #define print_message(message) (printf("%s", message));
 
-
-
 //ours
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,6 +49,9 @@
 #include <SDL_video.h>
 #include "../GUI/GUI.h"
 #include "../services/ErrorHandling.h"
+
+//minmax
+#include <limits.h>
 
 
 struct Position{
@@ -146,7 +147,8 @@ int compareMoves(Move* m1, Move* m2);
 int comparePositions(Position* p1, Position* p2);
 
 void doMove(Game* game, Move* move, int printMove);
-int currentPlayerLose(Game* game);
+int isCurrentPlayerLose(Game* game);
+int isCurrentPlayersKingInDanger(Game* game);
 //free
 void freeAndNull(void* obj);
 void freeMove(Move* move);

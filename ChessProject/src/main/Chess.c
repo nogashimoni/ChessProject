@@ -307,15 +307,23 @@ void clearBoard(Game* game) {
 void play(Game* game) {
 	if (game->isTwoPlayersMode) { //user-user game.
 		while ( game->isRunning ) {
-			if ( currentPlayerLose(game) ){
+			if (isCurrentPlayerLose(game)){
 				game->isRunning = 0;
 				if (game->isWhiteTurn){
-					printf("Black player wins! \n");
+					printf("Check Mate! Black player wins! \n");
 				}
 				else{
-					printf("White player wins! \n");
+					printf("Check Mate! White player wins! \n");
 				}
 				break;
+			}
+			if (isCurrentPlayersKingInDanger(game)){
+				if (game->isWhiteTurn){
+					printf("Check! White king threatened!\n");
+				}
+				else{
+					printf("Check! Black king threatened! \n");
+				}
 			}
 //			if (OpponentKingInDanger()){
 //				printf("Check! \n");
@@ -327,13 +335,13 @@ void play(Game* game) {
 	else { //computer-user game.
 
 		while ( game->isRunning ) {
-			if ( currentPlayerLose(game) ){
+			if ( isCurrentPlayerLose(game) ){
 				game->isRunning = 0;
 				if (game->isWhiteTurn){
-					printf("Black player wins! \n");
+					printf("Check Mate! Black player wins! \n");
 				}
 				else{
-					printf("White player wins! \n");
+					printf("Check Mate! White player wins! \n");
 				}
 				break;
 			}
@@ -348,25 +356,236 @@ void play(Game* game) {
 }
 
 
+int isCurrentPlayerLose(Game* game){
+
+	for (int i=0; i<BOARD_SIZE; i++){
+		for (int j=0; j<BOARD_SIZE; j++){
+			getMoves(game, i, j, 1);
+			if (moves->first != NULL){
+				freeMoves(0);
+				return 0;
+			}
+			freeMoves(0);
+		}
+	}
+	return 1;
+}
+
+int isCurrentPlayersKingInDanger(Game* game){
+
+	Game* gameCopy = cloneGame(game);
+	switchTurns(gameCopy);
+
+	for (int i=0; i<BOARD_SIZE; i++){
+		for (int j=0; j<BOARD_SIZE; j++){
+			getMoves(gameCopy, i, j, 0);
+			Move* moveCurr = movesTemp->first;
+			while (moveCurr != NULL){
+				if (isEatingOpponentKing(gameCopy, moveCurr)){
+					if (gameCopy != NULL){
+						free(gameCopy);
+						gameCopy = NULL;
+					}
+					freeMoves(1);
+					return 1;
+				}
+				moveCurr = moveCurr->next;
+			}
+			freeMoves(1);
+		}
+	}
+
+	if (gameCopy != NULL){
+		free(gameCopy);
+		gameCopy = NULL;
+	}
+
+	return 0;
+}
+
 void computerTurn(Game* game){
 /* Perform computer turn. Note: we enter this function only if
  * computer isn't stuck, meaning there's at least 1 move. */
 
-//	minmax(game,game->minmaxDepth, 1); //updates game->move
-//	doMove(game, game->minmaxMove);
-//
-//	printf("Computer: move ");
-//	printMove(game->minmaxMove);
-//	print_board(game->board);
+	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
+	printf("Computer: move ");
+	doMove(game, game->minmaxMove, 1);
+
+	print_board(game->board);
 //	freeNullAndRemove(game->minmaxMove); // all other moves on tree will be freed only when quit
-////	game->minmaxScore = INT_MIN;
-//	game->minmaxMove = NULL; //just in case
-//
-//
+//	game->minmaxScore = INT_MIN;
+	game->minmaxMove = NULL; //just in case
+
+
 //	int didSomeoneWin = checkIfNextWinsAndPrint(game);
 //	if (didSomeoneWin){
 //		game->isRunning = 0;
 //	}
+}
+
+int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
+
+	//halting condition.
+	if ( depth == 0 || isCurrentPlayerLose(game) ) {
+		return scoringFunction(game);
+	}
+
+	//Current player is maximizing.
+	if ( isMaximizing ) {
+		Moves* allMoves = getAllMoves(game);
+		Move* move = allMoves->first;
+
+		int val;
+		int bestValue = INT_MIN;
+
+		while ( move != NULL ) {
+			Game* gameCopy = cloneGame(game); //doesn't clone move field
+			doMove(gameCopy, move);
+
+			// switch turns before recursive call
+			switchTurns(gameCopy);
+
+			//find score by rec call
+			val = minmax(gameCopy,depth-1,alpha,beta,0);
+
+			Move* tmpMove = move;
+			move = move->next;
+			if ( val > bestValue ) {
+				bestValue = val;
+				game->minmaxScore = bestValue;
+				if ( game->minmaxMove != NULL ) {
+					freeMove(game->minmaxMove); //frees only when not null
+				}
+				game->minmaxMove = tmpMove;
+			}
+			alpha = max(alpha, bestValue);
+			if (alpha >= beta){
+				break;
+			}
+		}
+		//free moves
+		freeNullAndRemove(allMoves); //to be modified.
+		return bestValue;
+	}
+
+	//Current player is minimizing
+	else {
+		Moves* moves = getAllMoves(game);
+		Move* move = moves->first;
+
+		int val;
+		int bestValue = INT_MAX;
+
+		while ( move != NULL ) {
+			Game* gameCopy = cloneGame(game); //doesn't clone minmax fields
+			gameCopy->minmaxScore = INT_MAX;
+			doMove(gameCopy, move);
+			// switch turns before recursive call
+
+			switchTurns(gameCopy);
+
+			//find score by rec call
+			val = minmax(gameCopy,depth-1,1);
+
+			Move* tmpMove = move;
+			move = move->next;
+			if ( val < bestValue ) {
+				bestValue = val;
+				game->minmaxScore = bestValue;
+				if ( game->minmaxMove != NULL ) {
+					freeMove(game->minmaxMove); //frees only when not null
+				}
+				game->minmaxMove = tmpMove;
+			}
+			beta = min(beta, bestValue);
+			if (alpha >= beta){
+				break;
+			}
+		}
+		//free moves
+		freeNullAndRemove(moves); // to be modified.
+		return bestValue;
+	}
+}
+
+Moves* getAllMoves(Game game){
+
+	Moves* allMoves = NULL;
+	allMoves = calloc(sizeof(Moves), 1);
+	if (allMoves != NULL){
+		quit();
+	}
+	allMoves->first = NULL;
+	allMoves->maxEats = 0;
+
+	for (int i=0; i<BOARD_SIZE;i++){
+		for (int j=0; j<BOARD_SIZE; j++){
+			getMoves(game, i, j, 1);
+			addMovesToAllMoves(allMoves);
+			freeMoves(0);
+		}
+	}
+
+	return allMoves;
+}
+
+void addMovesToAllMoves(Moves* allMoves){
+
+	if(moves->first == NULL){ // There are no moves in moves.
+		return;
+	}
+
+	if (allMoves->first == NULL){
+		Move* movesCurrMove = moves->first;
+		Move* allMovesCurrMove = allMoves->first;
+		allMovesCurrMove = cloneMove(movesCurrMove); //doesn't clone 'next'.
+		while (movesCurrMove != NULL){
+			allMovesCurrMove->next = cloneMove(movesCurrMove->next);
+			movesCurrMove = movesCurrMove->next;
+			allMovesCurrMove = allMovesCurrMove->next;
+		}
+	}
+
+	else{
+		Move* movesCurrMove = moves->first;
+		while (movesCurrMove != NULL){
+			Move* temp = allMoves->first;
+			allMoves->first = cloneMove(movesCurrMove);
+			movesCurrMove->next = temp;
+		}
+	}
+}
+
+Move* cloneMove(Move* move){
+
+	if (move == NULL){
+		return NULL;
+	}
+
+	Move* moveCopy = NULL;
+	moveCopy = calloc(sizeof(Move),1);
+	if (moveCopy == NULL){
+		quit();
+	}
+	moveCopy->eats = move->eats;
+	moveCopy->next = NULL;
+	moveCopy->first = clonePosition(move->first);
+	moveCopy->first->next = clonePosition(move->first->next);
+
+	return moveCopy;
+}
+
+Position* clonePosition(Position* position){
+
+	Position* positionCopy = NULL;
+	positionCopy = calloc(sizeof(Position), 1);
+	if (positionCopy == NULL){
+		quit();
+	}
+	positionCopy->x = position->x;
+	positionCopy->y = position->y;
+	positionCopy->next = NULL;
+	return positionCopy;
 }
 
 int scoringFunction(Game* game) {
@@ -374,7 +593,7 @@ int scoringFunction(Game* game) {
 	int result;
 
 	//someone lost
-	if ( isCurrentPlayerStuck(game) ) {
+	if ( isCurrentPlayerLose(game) ) {
 		int sign;
 		if  (game->isComputerTurn) {
 			sign = -1;
@@ -502,21 +721,6 @@ void userTurn(Game* game){
 
 }
 
-int currentPlayerLose(Game* game){
-
-	for (int i=0; i<BOARD_SIZE; i++){
-		for (int j=0; j<BOARD_SIZE; j++){
-			getMoves(game, i, j, 1);
-			if (moves->first != NULL){
-				freeMoves(0);
-				return 0;
-			}
-			freeMoves(0);
-		}
-	}
-	return 1;
-}
-
 int isValidMove(Game* game, Move* move) {
 
 	getMoves(game, move->first->x, move->first->y, 1);
@@ -627,7 +831,12 @@ Move* createMoveFromString(char* cmd) {
 
 
 void switchTurns(Game* game) {
-	game->isWhiteTurn=!game->isWhiteTurn;
+	if (game->isWhiteTurn){
+		game->isWhiteTurn = 0;
+	}
+	else{
+		game->isWhiteTurn = 1;
+	}
 
 	if (!(game->isTwoPlayersMode) ) {
 		game->isComputerTurn=!game->isComputerTurn;
@@ -714,11 +923,19 @@ void removeUnreleventMoves(Game* game, Moves* moves){
 		return;
 	}
 
-	while (isEndangeringKingMove(game,prevMove) == 1){
+	int isNotLegalMove = isEndangeringKingMove(game,prevMove);
+
+	while (isNotLegalMove){
 		moves->first = prevMove->next;
 		Move* tmpPrev = prevMove;
 		prevMove = prevMove->next;
 		freeMove(tmpPrev);
+		if (prevMove == NULL){
+			moves->first = NULL;
+			moves->maxEats = 0;
+			return;
+		}
+		isNotLegalMove = isEndangeringKingMove(game,prevMove);
 	}
 
 	Move* currMove = prevMove->next;
@@ -790,7 +1007,7 @@ Game* cloneGame(Game* game){
 	gameCopy->isRunning = game->isRunning;
 	gameCopy->isTwoPlayersMode = game->isRunning;
 	gameCopy->isUserWhite = game->isUserWhite;
-	gameCopy->isWhiteTurn = game->isUserWhite;
+	gameCopy->isWhiteTurn = game->isWhiteTurn;
 	gameCopy->minmaxDepth = game->minmaxDepth;
 	gameCopy->minmaxMove = game->minmaxMove;
 	gameCopy->minmaxScore = game->minmaxScore;
