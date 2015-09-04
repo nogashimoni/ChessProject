@@ -37,9 +37,6 @@ int GUIMain() {
 				if (isError) /* PHE function may result in an error */
 					break;
 
-				//TODO delete the next line
-				if (eventID == FIRST_PRESSED || eventID == SECOND_PRESSED || eventID == THIRD_PRESSED) printf("okk (((-:\n");
-
 				/* Handling the event */
 				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID);
 				if (isError) /* PHE function may result in an error */
