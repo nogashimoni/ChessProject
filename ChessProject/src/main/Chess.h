@@ -50,6 +50,17 @@
  
 #define print_message(message) (printf("%s", message));
 
+//ours
+#include <stdio.h>
+#include <stdlib.h>
+#include <SDL.h>
+#include <SDL_video.h>
+#include "../GUI/GUI.h"
+#include "../services/ErrorHandling.h"
+
+//minmax
+#include <limits.h>
+
 struct Position{
 	int x;
 	int y;
@@ -102,7 +113,6 @@ unsigned int xToI(char x);
 int jToY(int j);
 char iToX(int i);
 int isInvalidXY(char x, unsigned int y);
-int isInvalidIJ(unsigned int i, unsigned int j);
 void printMove(Move* move);
 // cmd parsing
 void getCmdFromUser(char* output);
@@ -117,25 +127,38 @@ void removeDisk(Game* game, char x, int y);
 void setDisk(Game* game, char x, int y, char color, char* type);
 int isLegalPeiceAddition(Game* game, char peice);
 //game
-Moves* getMoves(Game* game, int x, int y);
-Moves* getPawnMoves(Game* game, Moves* moves, int x, int y);
-Moves* getKnightMoves(Game* game, Moves* moves, int x, int y);
-Moves* getKingMoves(Game* game, Moves* moves, int x, int y);
-Moves* getBishpMoves(Game* game, Moves* moves, int x, int y);
+Moves* getMoves(Game* game, int x, int y, int isCheckRelevence);
+void getMovesForPiece(Game* game, int x, int y, Moves* movesCopy);
+void getPawnMoves(Game* game, Moves* moves, int x, int y);
+void getKnightMoves(Game* game, Moves* moves, int x, int y);
+void getKingMoves(Game* game, Moves* moves, int x, int y);
+void getBishopMoves(Game* game, Moves* moves, int x, int y);
+void getRookMoves(Game* game, Moves* moves, int x, int y);
+void getQueenMoves(Game* game, Moves* moves, int x, int y);
 Move* creatNewMove(int startX, int startY, int endX, int endY);
 void addToMoves(Moves* moves, Move* newMove);
-void removeUnreleventMoves(Moves* moves);
+void removeUnreleventMoves(Game* game, Moves* moves);
+Game* cloneGame(Game* game);
+int isEndangeringKingMove (Game* game, Move* move);
+int isEatingOpponentKing(Game* game, Move* move);
+int isOpponentKingPosition(Game* game, int x, int y);
 int isCurrentPlayerPeice(Game* game, int i, int j);
-int isValidIJ(unsigned int i, unsigned int j);
+int isValidIJ(int i, int j);
 void switchTurns(Game* game);
 void computerTurn(Game* game);
 int getPieceColor(Game* game, int i, int j);
 void userTurn(Game* game);
 Move* createMoveFromString(char* cmd);
 int isValidMove(Game* game, Move* move);
-void doMove(Game* game, Move* move);
+int compareMoves(Move* m1, Move* m2);
+int comparePositions(Position* p1, Position* p2);
+
+void doMove(Game* game, Move* move, int printMove);
+int isCurrentPlayerLose(Game* game);
+int isCurrentPlayersKingInDanger(Game* game);
 //free
 void freeAndNull(void* obj);
 void freeMove(Move* move);
+void freeMoves();
 
 #endif
