@@ -5,8 +5,8 @@
  *      Author: nogalavi1
  */
 
-#ifndef STARTFUNCTIONS_H_
-#define STARTFUNCTIONS_H_
+#ifndef STOPFUNCTIONS_H_
+#define STOPFUNCTIONS_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,4 +16,15 @@
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
 
-#endif /* STARTFUNCTIONS_H_ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <SDL.h>
+#include <SDL_video.h>
+#include <SDL/SDL_image.h>
+#include "GUIUtils.h"
+#include "GUIDefinitions.h"
+
+int stopWelcomeOrPlayerSelection (Window* window, void* initData);
+
+#endif /* STOPFUNCTIONS_H_ */

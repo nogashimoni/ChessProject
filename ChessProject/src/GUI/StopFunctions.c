@@ -7,3 +7,10 @@
 
 #include "StopFunctions.h"
 
+int stopWelcomeOrPlayerSelection (Window* window, void* initData) {
+
+
+	freeTree(window->UITreeHead);
+
+	return 1;
+}

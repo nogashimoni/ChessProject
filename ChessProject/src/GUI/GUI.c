@@ -39,23 +39,24 @@ int GUIMain() {
 				if (eventID == FIRST_PRESSED || eventID == SECOND_PRESSED || eventID == THIRD_PRESSED) printf("okk (((-:\n");
 
 				/* Handling the event */
-//				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID);
-//				if (isError) /* PHE function may result in an error */
-//					break;
-//
-//				/* if state has changed, stop the active GUI and move to the next one: */
-//				if (activeWindow.windowId != nextWindowId) {
-//					if (nextWindowId == QUIT) {
-//						break;
-//					}
-//					else {
+				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID);
+				if (isError) /* PHE function may result in an error */
+					break;
+
+				/* if state has changed, stop the active GUI and move to the next one: */
+				if (activeWindow.windowId != nextWindowId) {
+					if (nextWindowId == QUIT) {
+						break;
+					}
+					else {
+						void* nextWindowInitData = NULL;
 //						void* nextWindowInitData = activeWindow.stop(&activeWindow);
 //						if (isError) /* stop function may result in an error */
 //							break;
-//						activeWindow = windows[nextWindowId];
-//						activeWindow.start(&activeWindow, nextWindowInitData);
-//					}
-//				}
+						activeWindow = windows[nextWindowId];
+						activeWindow.start(&activeWindow, nextWindowInitData);
+					}
+				}
 			}
 			SDL_Delay(POLLING_DELAY);
 		}

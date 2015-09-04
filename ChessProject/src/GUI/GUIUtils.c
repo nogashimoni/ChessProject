@@ -12,7 +12,9 @@ SDL_Surface* createScreen() {
 }
 
 Button** createVerticalButtonsArray(int numOfButtons, int xForButtons,
-		int yFirstButton, SDL_Surface* buttonsImages, SDL_Rect* relevantFirstClip, SDL_Surface* screen) {
+		int yFirstButton, SDL_Surface* buttonsImages, SDL_Rect* clipArray,
+		int relevantFirstClipIndex, SDL_Surface* screen) {
+	/** assuming clips are serially organized as needed **/
 
 	Button** buttons = (Button**) malloc(sizeof(Button*) * numOfButtons);
 	int i;
@@ -21,7 +23,8 @@ Button** createVerticalButtonsArray(int numOfButtons, int xForButtons,
 		SDL_Rect box = { xForButtons, yFirstButton + i * BUTTON_HEIGHT,
 				BUTTON_WIDTH, BUTTON_HEIGHT };
 		button = createButton(box); //should the relevantArea also be alloced?
-		applySurface( xForButtons, yFirstButton+ i * BUTTON_HEIGHT, buttonsImages, screen, relevantFirstClip );
+		applySurface(xForButtons, yFirstButton + i * BUTTON_HEIGHT,
+				buttonsImages, screen, &clipArray[i]);
 		if (button == NULL) {
 			//quitGUI(); TODO
 		}
@@ -73,7 +76,8 @@ Button* createButton(SDL_Rect relevantArea) {
 		//TODO standardFunctionFailure("malloc"); /* exit unavoidable */
 		return NULL;
 	}
-
+	button->buttonsImages = NULL;
+	button->clip = NULL;
 	button->relevantArea = relevantArea;
 	button->isButtonPressed = isButtonPressed;
 	return button;
@@ -107,41 +111,39 @@ int isXYInRelevantArea(Button *button, int x, int y) {
 
 // Tree utilities
 
-UITreeNode* createNode(void* headData) {
-	UITreeNode* newTree = (UITreeNode*) malloc(sizeof(UITreeNode));
-	if (newTree == NULL) {
+UITreeNode* createNode(void* widget, WidgetType widgetType) {
+	UITreeNode* newNode = (UITreeNode*) malloc(sizeof(UITreeNode));
+	if (newNode == NULL) {
 //		perrorPrint("malloc"); TODO
 		return NULL;
 	}
-	/* data and next will point to NULL: */
-	newTree->data = NULL;
-	newTree->next = NULL;
-	newTree->child = NULL;
-	newTree->parent = NULL;
 
-	/* if headData is not NULL, put it in the list data field */
-	if (headData != NULL) {
-		newTree->data = headData;
-	}
-	return newTree;
+	newNode->widget = widget;
+	newNode->widgetType = widgetType;
+
+	newNode->next = NULL;
+	newNode->child = NULL;
+	newNode->parent = NULL;
+
+	return newNode;
 }
 
-UITreeNode* append(UITreeNode* list, void* data) {
-	if (data == NULL) {
+UITreeNode* append(UITreeNode* list, void* widget, WidgetType widgetType) {
+	if (widget == NULL) {
 		return list;
 	}
-	if (isEmpty(list)) {
-		/* an empty list is a one node list
-		 * that has its data pointer points to NULL. Thus adding the
-		 * data to an empty list will be done by changing the data
-		 * pointer to the new data. */
-		list->data = data;
-		return list;
-	} else { /* list is not empty */
-		UITreeNode* appendList = createNode(data); /* create a new list node */
-		if (appendList == NULL) { /* failed to create the list node */
+//	if (isEmpty(list)) {
+//		/* an empty list is a one node list
+//		 * that has its data pointer points to NULL. Thus adding the
+//		 * data to an empty list will be done by changing the data
+//		 * pointer to the new data. */
+//		list->widget = data;
+//		return list;
+//	} else { /* list is not empty */
+		UITreeNode* appendedNode = createNode(widget, widgetType); /* create a new list node */
+		if (appendedNode == NULL) { /* failed to create the list node */
 			return NULL;
-		}
+//		}
 		/* Loop until reached the last node of the list.
 		 * If the list passed to the function is the last node
 		 * of the list, then this loop will take O(1) time.
@@ -149,23 +151,23 @@ UITreeNode* append(UITreeNode* list, void* data) {
 		while (list->next != NULL) { /* while last node not reached */
 			list = list->next; /* advance to the next node */
 		}
-		list->next = appendList; /* append the node at the end of the list */
-		return appendList; /* return the node appended */
+		list->next = appendedNode; /* append the node at the end of the list */
+		return appendedNode; /* return the node appended */
 	}
 }
 
-int isEmpty(UITreeNode* list) {
-	if (list->data == NULL) { /* if the data pointer is NULL.*/
-		return 1;
-	}
-	return 0;
-}
+//int isEmpty(UITreeNode* list) {
+//	if (list->widget == NULL) { /* if the data pointer is NULL.*/
+//		return 1;
+//	}
+//	return 0;
+//}
 
 /*
  * adds a new child to a listNode, at the end of the child list, and return it
  */
-UITreeNode* addChildNode(UITreeNode* parent, void * data) {
-	UITreeNode* childNode = createNode(data); /* create a new child node */
+UITreeNode* addChildNode(UITreeNode* parent, void * widget, WidgetType widgetType) {
+	UITreeNode* childNode = createNode(widget, widgetType); /* create a new child node */
 	if (childNode == NULL) { /* failed to create the list node */
 		return NULL;
 	}
@@ -185,4 +187,45 @@ UITreeNode* addChildNode(UITreeNode* parent, void * data) {
 	}
 	childNode->parent = parent;
 	return childNode; /* return the node added */
+}
+
+/* freeTree frees the tree nodes and frees their data using a free data function */
+void freeTree(UITreeNode* root) {
+	if (root != NULL) {
+		UITreeNode* currChild = root->child;
+		while (currChild != NULL) { /* go over each child of the root */
+			UITreeNode* temp = currChild->next;
+			freeTree(currChild); /* make a recursive call on the root child */
+			currChild = temp;
+		}
+		if (root->widget != NULL) /* free the data  if it is not null */
+			freeWidget(root->widget, root->widgetType);
+		free(root); /* free the listRef itself */
+	}
+}
+
+void freeWidget(void* widget, WidgetType widgetType) {
+	switch (widgetType) {
+	case (BUTTON):
+		freeButton((Button*) widget);
+		break;
+	case (WINDOW):
+		freeWindow((Window*) widget);
+		break;
+	}
+}
+
+void freeButton(Button* button) {
+	if (button->buttonsImages != NULL) {
+		SDL_FreeSurface(button->buttonsImages);
+	}
+	if (button != NULL ) {
+		free(button);
+	}
+}
+
+void freeWindow(Window* window) {
+	if (window->background != NULL) {
+		SDL_FreeSurface(window->background);
+	}
 }

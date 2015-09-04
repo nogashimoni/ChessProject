@@ -1,12 +1,12 @@
 #include "StartFunctions.h"
 
 int startWelcomeOrPlayerSelection(Window* window, void* initData) {
-	SDL_Surface* image = NULL;
+	window->background = NULL;
 	SDL_Surface* buttonsImages = NULL;
 	window->UITreeHead = NULL;
 
 	// create UI Tree root
-	window->UITreeHead = createNode(NULL); // TODO UI TREE!
+	window->UITreeHead = createNode(window, BUTTON); // TODO UI TREE!
 	if ( window->UITreeHead == NULL ) {
 		//TODO
 	}
@@ -14,12 +14,12 @@ int startWelcomeOrPlayerSelection(Window* window, void* initData) {
 	SDL_Surface* screen = createScreen();
 
 	// Apply background
-	image  = loadImage(window->windowId == WELCOME ? WELCOME_BACKGROUND: PLAYER_SELECTION_BACKGROUND);
-	if( image == NULL ) {
+	window->background  = loadImage(window->windowId == WELCOME ? WELCOME_BACKGROUND: PLAYER_SELECTION_BACKGROUND);
+	if( window->background == NULL ) {
 		printf("Error");
 		return 0;
 	}
-	applySurface( 0, 0, image, screen, NULL );
+	applySurface( 0, 0, window->background, screen, NULL );
 
 	// create arguments for buttons creaton
 	SDL_Rect clip[ 4 ];
@@ -31,11 +31,13 @@ int startWelcomeOrPlayerSelection(Window* window, void* initData) {
 		return 0; //TOODO
 
 	// Create buttons
-	Button** buttonsArray = createVerticalButtonsArray(3, xForButtons, yFirstButton, buttonsImages, &clip[0], screen);
+	Button** buttonsArray = createVerticalButtonsArray(3, xForButtons, yFirstButton, buttonsImages, clip, 0, screen);
+	buttonsArray[0]->buttonsImages = buttonsImages; // Save the SDL_Surface that needs to be freed, only on the first button
 	// insert buttons to UI Tree
-	UITreeNode* currButtonNode = addChildNode(window->UITreeHead, buttonsArray[0]);
+	UITreeNode* currButtonNode = addChildNode(window->UITreeHead, buttonsArray[0], BUTTON);
 	for ( int i = 1; i<3; i++ ) {
-		currButtonNode = append(currButtonNode, buttonsArray[i]);
+		currButtonNode = append(currButtonNode, buttonsArray[i], BUTTON);
+		currButtonNode->widgetType = BUTTON;
 	}
 
 	// Update what we see on screen

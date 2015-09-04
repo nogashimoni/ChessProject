@@ -38,34 +38,28 @@ typedef enum {
 	THIRD_PRESSED,
 } EventID;
 
+typedef enum {
+	WINDOW,
+	BUTTON
+} WidgetType;
+
 
 struct UITreeNode {
-    void *data;
+    void *widget;
+    WidgetType widgetType;
     struct UITreeNode* next;
     struct UITreeNode* child;
     struct UITreeNode* parent;
 };
-
 typedef struct UITreeNode UITreeNode;
 
-typedef struct Button Button;
-
-struct Button {
-	/* data members */
-	//The attributes of the button
-	SDL_Rect relevantArea; //The part of the screen the button works in
-	SDL_Rect *clip;//*sprite_map;
-
-	/* methods */
-	int (*isButtonPressed)(Button *button, SDL_Event sdlEvent);
-};
-
+// GUI Structures
 
 typedef struct Window Window;
-
 struct Window {
 	/* data members */
 //	Game* game;
+	SDL_Surface* background;
 	UITreeNode* UITreeHead; //ui tree
 	WindowId windowId;
 	/* methods */
@@ -73,6 +67,21 @@ struct Window {
 	EventID (*translateEvent)(Window* window, SDL_Event event);
 	int (*handleEvent)(Window* window, EventID event);
 	void* (*stop) (Window* window);
+};
+
+
+
+typedef struct Button Button;
+struct Button {
+	SDL_Surface* buttonsImages;
+	/* data members */
+	int widgetType; // Every GUI struct will have this field that will help us know in runtime what's it's type
+	//The attributes of the button
+	SDL_Rect relevantArea; //The part of the screen the button works in
+	SDL_Rect *clip;//*sprite_map;
+
+	/* methods */
+	int (*isButtonPressed)(Button *button, SDL_Event sdlEvent);
 };
 
 

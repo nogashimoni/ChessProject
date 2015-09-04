@@ -12,7 +12,7 @@ EventID welcomeOrSelectionTranslateEvent(Window* window, SDL_Event event) {
 	UITreeNode* currentButtonNode = window->UITreeHead->child;
 	int buttonNumber = 0;
 	while ( currentButtonNode != NULL) {
-		Button* button = (Button*)currentButtonNode->data;
+		Button* button = (Button*)currentButtonNode->widget;
 		if ( button->isButtonPressed(button,event) ) {
 			if ( buttonNumber == 0) return FIRST_PRESSED;
 			if ( buttonNumber == 1) return SECOND_PRESSED;
