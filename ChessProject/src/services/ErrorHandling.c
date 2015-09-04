@@ -7,3 +7,7 @@ void notifyFunctionFailure(char* failedFunction) {
 			failedFunction);
 	perror(error_msg);
 }
+
+void notifyFailureGUI(char* message) {
+	//TODO
+}

@@ -11,7 +11,7 @@
 #include "HandleFunctions.h"
 #include "StopFunctions.h"
 
-Window initWindow(WindowId id);
+Window initWindow(WindowId id, SDL_Surface* screen);
 
 
 

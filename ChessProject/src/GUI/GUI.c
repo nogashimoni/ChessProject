@@ -8,17 +8,19 @@ int GUIMain() {
 			notifyFunctionFailure("GUIMain"); //TODO sdlErrorPrint("unable to init SDL");
 			return 0;
 		}
-		//atexit(SDL_Quit);
+		SDL_Surface* screen = openScreen();
+		atexit(SDL_Quit);
 		Window windows[WINDOWS_COUNT];
 		/* initialize GUI structs mapping by state ids: */
 
-		windows[WELCOME] = initWindow(WELCOME);
-		windows[PLAYER_SELECTION] = initWindow(PLAYER_SELECTION);
+		windows[WELCOME] = initWindow(WELCOME, screen);
+		windows[PLAYER_SELECTION] = initWindow(PLAYER_SELECTION, screen);
 
 		/* Starting the default/initial GUI: */
 
 		Window activeWindow = windows[WELCOME];
 		WindowId nextWindowId = WELCOME;
+
 		activeWindow.start(&activeWindow, NULL);
 
 		while (!isError && nextWindowId != QUIT) {
@@ -49,10 +51,9 @@ int GUIMain() {
 						break;
 					}
 					else {
-						void* nextWindowInitData = NULL;
-//						void* nextWindowInitData = activeWindow.stop(&activeWindow);
-//						if (isError) /* stop function may result in an error */
-//							break;
+						void* nextWindowInitData = activeWindow.stop(&activeWindow);
+						if (isError) /* stop function may result in an error */
+							break;
 						activeWindow = windows[nextWindowId];
 						activeWindow.start(&activeWindow, nextWindowInitData);
 					}

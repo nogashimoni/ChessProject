@@ -7,19 +7,24 @@
 
 #include "TranslateFunctions.h"
 
-EventID welcomeOrSelectionTranslateEvent(Window* window, SDL_Event event) {
+EventID translateEventWelcomeOrSelection(Window* window, SDL_Event event) {
 
-	UITreeNode* currentButtonNode = window->UITreeHead->child;
-	int buttonNumber = 0;
-	while ( currentButtonNode != NULL) {
-		Button* button = (Button*)currentButtonNode->widget;
-		if ( button->isButtonPressed(button,event) ) {
-			if ( buttonNumber == 0) return FIRST_PRESSED;
-			if ( buttonNumber == 1) return SECOND_PRESSED;
-			if ( buttonNumber == 2) return THIRD_PRESSED;
+	UITreeNode* buttonsNode = window->UITreeHead->child;
+	Buttons* buttons = ((Buttons*) buttonsNode->widget);
+
+	int buttonNumber;
+
+	for (buttonNumber = 0; buttonNumber < buttons->numOfButtons;
+			buttonNumber++) {
+		Button* button = buttons->buttonArray[buttonNumber];
+		if (button->isButtonPressed(button, event)) {
+			if (buttonNumber == 0)
+				return FIRST_PRESSED;
+			if (buttonNumber == 1)
+				return SECOND_PRESSED;
+			if (buttonNumber == 2)
+				return THIRD_PRESSED;
 		}
-		currentButtonNode = currentButtonNode->next;
-		buttonNumber ++;
 	}
 	return NOTHING_HAPPANED;
 }

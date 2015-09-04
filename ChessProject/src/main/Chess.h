@@ -1,6 +1,14 @@
 #ifndef CHESS_
 #define CHESS_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <SDL.h>
+#include <SDL_video.h>
+#include "../GUI/GUI.h"
+#include "../services/ErrorHandling.h"
+
+
 #define WHITE_P 'm'
 #define WHITE_B 'b'
 #define WHITE_N 'n'
@@ -41,17 +49,6 @@
 #define TIE "The game ends in a tie\n"
  
 #define print_message(message) (printf("%s", message));
-
-
-
-//ours
-#include <stdio.h>
-#include <stdlib.h>
-#include <SDL.h>
-#include <SDL_video.h>
-#include "../GUI/GUI.h"
-#include "../services/ErrorHandling.h"
-
 
 struct Position{
 	int x;

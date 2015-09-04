@@ -1,6 +1,6 @@
 
-#ifndef ERRORHELPER_H_
-#define ERRORHELPER_H_
+#ifndef ERRORHANDLING_H_
+#define ERRORHANDLING_H_
 
 //** include **//
 
@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 //** functions **//
-void notifyFunctionFailure(char* failedFunction);
+void notifyFunctionFailure(char* message);
+void notifyFailureGUI(char* message);
 
-#endif /* ERRORHELPER_H_ */
+#endif /* ERRORHANDLING_H_ */

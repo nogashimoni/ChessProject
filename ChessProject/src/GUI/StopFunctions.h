@@ -23,8 +23,7 @@
 #include <SDL_video.h>
 #include <SDL/SDL_image.h>
 #include "GUIUtils.h"
-#include "GUIDefinitions.h"
 
-int stopWelcomeOrPlayerSelection (Window* window, void* initData);
+void* stopWelcomeOrSelection (Window* window);
 
 #endif /* STOPFUNCTIONS_H_ */

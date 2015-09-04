@@ -39,14 +39,14 @@ typedef enum {
 } EventID;
 
 typedef enum {
-	WINDOW,
-	BUTTON
-} WidgetType;
+	BACKGROUND,
+	BUTTONS,
+} TreeWidgetType;
 
 
 struct UITreeNode {
     void *widget;
-    WidgetType widgetType;
+    TreeWidgetType widgetType;
     struct UITreeNode* next;
     struct UITreeNode* child;
     struct UITreeNode* parent;
@@ -58,10 +58,9 @@ typedef struct UITreeNode UITreeNode;
 typedef struct Window Window;
 struct Window {
 	/* data members */
-//	Game* game;
-	SDL_Surface* background;
 	UITreeNode* UITreeHead; //ui tree
 	WindowId windowId;
+	SDL_Surface* screen;
 	/* methods */
 	int (*start) (Window* window, void* initData);
 	EventID (*translateEvent)(Window* window, SDL_Event event);
@@ -69,11 +68,10 @@ struct Window {
 	void* (*stop) (Window* window);
 };
 
-
+// Tree members
 
 typedef struct Button Button;
 struct Button {
-	SDL_Surface* buttonsImages;
 	/* data members */
 	int widgetType; // Every GUI struct will have this field that will help us know in runtime what's it's type
 	//The attributes of the button
@@ -84,5 +82,16 @@ struct Button {
 	int (*isButtonPressed)(Button *button, SDL_Event sdlEvent);
 };
 
+typedef struct Buttons Buttons;
+struct Buttons {
+	SDL_Surface* buttonsImages;
+	Button** buttonArray;
+	int numOfButtons;
+};
+
+typedef struct Background Background;
+struct Background {
+	SDL_Surface* image;
+};
 
 #endif /* GUIDEFINITIONS_H_ */

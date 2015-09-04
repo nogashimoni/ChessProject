@@ -16,6 +16,6 @@
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
 
-EventID welcomeOrSelectionTranslateEvent(Window* window, SDL_Event event);
+EventID translateEventWelcomeOrSelection(Window* window, SDL_Event event);
 
 #endif /* TRANSLATEFUNCTIONS_H_ */

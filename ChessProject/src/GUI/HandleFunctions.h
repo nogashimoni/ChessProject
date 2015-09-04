@@ -16,8 +16,8 @@
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
 
-int welcomeWindowHandleEvent(Window* window, EventID eventID);
-int playerSelectionWindowHandleEvent(Window* window, EventID eventID);
+int handleEventWelcomeWindow(Window* window, EventID eventID);
+int handleEventSelectionWindow(Window* window, EventID eventID);
 
 
 #endif /* HANDLEFUNCTIONS_H_ */

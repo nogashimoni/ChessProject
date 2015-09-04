@@ -1,6 +1,6 @@
 #include "GUIUtils.h"
 
-SDL_Surface* createScreen() {
+SDL_Surface* openScreen() {
 	SDL_Surface* screen = malloc(sizeof(SDL_Surface));
 	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP,
 			SDL_SWSURFACE);
@@ -11,7 +11,7 @@ SDL_Surface* createScreen() {
 	return screen;
 }
 
-Button** createVerticalButtonsArray(int numOfButtons, int xForButtons,
+Button** createVerticalButtonsArrayAndApplayToScreen(int numOfButtons, int xForButtons,
 		int yFirstButton, SDL_Surface* buttonsImages, SDL_Rect* clipArray,
 		int relevantFirstClipIndex, SDL_Surface* screen) {
 	/** assuming clips are serially organized as needed **/
@@ -67,8 +67,33 @@ void applySurface(int x, int y, SDL_Surface* source, SDL_Surface* destination,
 
 }
 
-Button* createButton(SDL_Rect relevantArea) {
+Background* createBackground(WindowId windowID) {
+	// open background (which will be the tree root)
+	Background* background = (Background*)malloc(sizeof(background));
+	if( background == NULL ) {
+		//TODO
+	}
+	char* imagePath;
+	switch(windowID) {
+		case(WELCOME):
+			imagePath =  WELCOME_BACKGROUND;
+			break;
+		case(PLAYER_SELECTION):
+			imagePath = PLAYER_SELECTION_BACKGROUND;
+			break;
+		case(QUIT):
+			break;
+	}
 
+	background->image= loadImage(imagePath);
+	if( background->image == NULL ) {
+		//TODO
+	}
+	return background;
+}
+
+
+Button* createButton(SDL_Rect relevantArea) {
 	Button* button = NULL;
 
 	button = (Button*) malloc(sizeof(Button));
@@ -76,11 +101,25 @@ Button* createButton(SDL_Rect relevantArea) {
 		//TODO standardFunctionFailure("malloc"); /* exit unavoidable */
 		return NULL;
 	}
-	button->buttonsImages = NULL;
 	button->clip = NULL;
 	button->relevantArea = relevantArea;
 	button->isButtonPressed = isButtonPressed;
 	return button;
+}
+
+Buttons* createButtons(Button** buttonsArray, SDL_Surface* image, int numOfButtons) {
+	Buttons* buttons = NULL;
+
+	buttons = (Buttons*) malloc(sizeof(Buttons));
+	if (buttons == NULL) {
+		//TODO standardFunctionFailure("malloc"); /* exit unavoidable */
+		return NULL;
+	}
+	buttons->buttonArray = buttonsArray;
+	buttons->buttonsImages = image;
+	buttons->numOfButtons = numOfButtons;
+
+	return buttons;
 }
 
 int isButtonPressed(Button *button, SDL_Event sdlEvent) {
@@ -111,7 +150,7 @@ int isXYInRelevantArea(Button *button, int x, int y) {
 
 // Tree utilities
 
-UITreeNode* createNode(void* widget, WidgetType widgetType) {
+UITreeNode* createNode(void* widget, TreeWidgetType widgetType) {
 	UITreeNode* newNode = (UITreeNode*) malloc(sizeof(UITreeNode));
 	if (newNode == NULL) {
 //		perrorPrint("malloc"); TODO
@@ -128,7 +167,7 @@ UITreeNode* createNode(void* widget, WidgetType widgetType) {
 	return newNode;
 }
 
-UITreeNode* append(UITreeNode* list, void* widget, WidgetType widgetType) {
+UITreeNode* append(UITreeNode* list, void* widget, TreeWidgetType widgetType) {
 	if (widget == NULL) {
 		return list;
 	}
@@ -166,7 +205,7 @@ UITreeNode* append(UITreeNode* list, void* widget, WidgetType widgetType) {
 /*
  * adds a new child to a listNode, at the end of the child list, and return it
  */
-UITreeNode* addChildNode(UITreeNode* parent, void * widget, WidgetType widgetType) {
+UITreeNode* addChildNode(UITreeNode* parent, void * widget, TreeWidgetType widgetType) {
 	UITreeNode* childNode = createNode(widget, widgetType); /* create a new child node */
 	if (childNode == NULL) { /* failed to create the list node */
 		return NULL;
@@ -199,33 +238,28 @@ void freeTree(UITreeNode* root) {
 			currChild = temp;
 		}
 		if (root->widget != NULL) /* free the data  if it is not null */
-			freeWidget(root->widget, root->widgetType);
+			freeWidget(root, root->widgetType);
 		free(root); /* free the listRef itself */
 	}
 }
 
-void freeWidget(void* widget, WidgetType widgetType) {
+void freeWidget(void* widget, TreeWidgetType widgetType) {
 	switch (widgetType) {
-	case (BUTTON):
-		freeButton((Button*) widget);
+	case (BUTTONS):
+		freeButtons((Buttons*) widget);
 		break;
-	case (WINDOW):
-		freeWindow((Window*) widget);
+	case (BACKGROUND):
+		freeBackground((Background*) widget);
 		break;
 	}
 }
 
-void freeButton(Button* button) {
-	if (button->buttonsImages != NULL) {
-		SDL_FreeSurface(button->buttonsImages);
-	}
-	if (button != NULL ) {
-		free(button);
-	}
+void freeButtons(Buttons* buttons) {
+
 }
 
-void freeWindow(Window* window) {
-	if (window->background != NULL) {
-		SDL_FreeSurface(window->background);
+void freeBackground(Background* background) {
+	if (background->image != NULL) {
+		SDL_FreeSurface(background->image);
 	}
 }
