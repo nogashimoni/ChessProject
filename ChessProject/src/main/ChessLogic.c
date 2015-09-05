@@ -1,0 +1,696 @@
+
+#include "ChessLogic.h"
+
+void print_board(char board[BOARD_SIZE][BOARD_SIZE]) {
+	int i, j;
+	print_line();
+	for (j = BOARD_SIZE - 1; j >= 0; j--) {
+		printf((j < 9 ? " %d" : "%d"), j + 1);
+		for (i = 0; i < BOARD_SIZE; i++) {
+			printf("| %c ", board[i][j]);
+		}
+		printf("|\n");
+		print_line();
+	}
+	printf("   ");
+	for (j = 0; j < BOARD_SIZE; j++) {
+		printf(" %c  ", (char) ('a' + j));
+	}
+	printf("\n");
+}
+
+void printMove(Move* move){
+	printf("<%c,%u> to ",iToX((move->first)->x),jToY((move->first)->y));
+	Position* currPosition = (move->first)->next;
+	while ( currPosition != NULL ) {
+		printf("<%c,%u>", iToX(currPosition->x) ,jToY(currPosition->y));
+		currPosition = currPosition->next;
+	}
+	printf("\n");
+}
+
+
+int isInvalidIJ(unsigned int i, unsigned int j) {
+	if (i < 0 || i > BOARD_SIZE - 1 || j < 0 || j > BOARD_SIZE - 1)
+		return 1;
+	return 0;
+}
+
+int isInvalidXY(char x, unsigned int y) {
+	unsigned int i, j;
+	i = xToI(x);
+	j = yToJ(y);
+	return !isValidIJ(i,j);
+}
+
+int isCurrentPlayerLose(Game* game){
+
+	for (int i=0; i<BOARD_SIZE; i++){
+		for (int j=0; j<BOARD_SIZE; j++){
+			getMoves(game, i, j, 1);
+			if (moves->first != NULL){
+				freeMoves(0);
+				return 0;
+			}
+			freeMoves(0);
+		}
+	}
+	return 1;
+}
+
+int isCurrentPlayersKingInDanger(Game* game){
+
+	Game* gameCopy = cloneGame(game);
+	switchTurns(gameCopy);
+
+	for (int i=0; i<BOARD_SIZE; i++){
+		for (int j=0; j<BOARD_SIZE; j++){
+			getMoves(gameCopy, i, j, 0);
+			Move* moveCurr = movesTemp->first;
+			while (moveCurr != NULL){
+				if (isEatingOpponentKing(gameCopy, moveCurr)){
+					if (gameCopy != NULL){
+						free(gameCopy);
+						gameCopy = NULL;
+					}
+					freeMoves(1);
+					return 1;
+				}
+				moveCurr = moveCurr->next;
+			}
+			freeMoves(1);
+		}
+	}
+
+	if (gameCopy != NULL){
+		free(gameCopy);
+		gameCopy = NULL;
+	}
+
+	return 0;
+}
+
+int isValidMove(Game* game, Move* move) {
+
+	getMoves(game, move->first->x, move->first->y, 1);
+	Move* first = moves->first;
+	while (first != NULL){
+		if (compareMoves(first,move)){
+			freeMoves(0);
+			return 1;
+		}
+		first = first->next;
+	}
+	if (moves != NULL){
+		freeMoves(0);
+	}
+	print_message(ILLEGAL_MOVE);
+	return 0;
+}
+
+int compareMoves(Move* m1, Move* m2){
+	int i = comparePositions(m1->first,m2->first);
+	int j =comparePositions(m1->first->next,m2->first->next);
+	return (i && j);
+}
+
+int comparePositions(Position* p1, Position* p2){
+	if ((p1->x != p2->x) || (p1->y != p2->y)){
+		return 0;
+	}
+	return 1;
+}
+
+void doMove(Game* game, Move* move, int isPrintMove) {
+	if (isPrintMove){
+		printMove(move);
+	}
+
+	Position* first = move->first;
+	Position* last = first->next;
+	game->board[last->x][last->y] = game->board[first->x][first->y];
+	game->board[first->x][first->y] = EMPTY;
+
+}
+
+
+void switchTurns(Game* game) {
+	if (game->isWhiteTurn){
+		game->isWhiteTurn = 0;
+	}
+	else{
+		game->isWhiteTurn = 1;
+	}
+
+	if (!(game->isTwoPlayersMode) ) {
+		game->isComputerTurn=!game->isComputerTurn;
+	}
+}
+
+/* Returns all legal moves for a certian piece */
+
+Moves* getMoves(Game* game, int x, int y, int isCheckRelevence ){
+
+	if (isCheckRelevence){
+		moves = calloc(sizeof(Moves),1);
+		if ( moves == NULL ) {
+			notifyFunctionFailure("getMoves");
+			quit();
+		}
+
+		moves->maxEats = 0;
+
+		moves->first = NULL;
+
+		getMovesForPiece(game, x, y, moves);
+
+		removeUnreleventMoves(game, moves);
+
+		return moves;
+	}
+
+	else{
+		movesTemp = calloc(sizeof(Moves),1);
+		if ( movesTemp == NULL ) {
+			notifyFunctionFailure("getMoves");
+			quit();
+		}
+
+		movesTemp->maxEats = 0;
+
+		movesTemp->first = NULL;
+
+		getMovesForPiece(game, x, y, movesTemp);
+
+		return movesTemp;
+	}
+
+}
+
+void getMovesForPiece(Game* game, int x, int y, Moves* movesCopy){
+	if (isCurrentPlayerPeice(game, x, y)){
+		//Piece is a Pawn
+		if (game->board[x][y] == WHITE_P || game->board[x][y] == BLACK_P){
+			getPawnMoves(game, movesCopy, x, y);
+		}
+		//Piece is a Knight.
+		else if (game->board[x][y] == WHITE_N || game->board[x][y] == BLACK_N){
+			getKnightMoves(game, movesCopy, x, y);
+		}
+		//Piece is a King.
+		else if (game->board[x][y] == WHITE_K || game->board[x][y] == BLACK_K){
+			getKingMoves(game, movesCopy, x, y);
+		}
+		//Piece is a Bishop.
+		else if (game->board[x][y] == WHITE_B || game->board[x][y] == BLACK_B){
+			getBishopMoves(game, movesCopy, x, y);
+		}
+		//Piece is a Queen.
+		else if (game->board[x][y] == WHITE_Q || game->board[x][y] == BLACK_Q){
+			getQueenMoves(game, movesCopy, x, y);
+		}
+		//Piece is a Rook.
+		else if (game->board[x][y] == WHITE_R || game->board[x][y] == BLACK_R){
+			getRookMoves(game, movesCopy, x, y);
+		}
+	}
+
+}
+
+
+void removeUnreleventMoves(Game* game, Moves* moves){
+	/* Out of all possible move, removes moves with not enough eats and frees them */
+
+	Move* prevMove = moves->first;
+
+	if (prevMove == NULL){
+		return;
+	}
+
+	int isNotLegalMove = isEndangeringKingMove(game,prevMove);
+
+	while (isNotLegalMove){
+		moves->first = prevMove->next;
+		Move* tmpPrev = prevMove;
+		prevMove = prevMove->next;
+		freeMove(tmpPrev);
+		if (prevMove == NULL){
+			moves->first = NULL;
+			moves->maxEats = 0;
+			return;
+		}
+		isNotLegalMove = isEndangeringKingMove(game,prevMove);
+	}
+
+	Move* currMove = prevMove->next;
+
+	while (currMove != NULL){
+
+		if (isEndangeringKingMove(game, currMove)){
+			prevMove->next = currMove->next;
+			Move* tmpCurr = currMove;
+			currMove = currMove->next;
+			freeMove(tmpCurr);
+			continue;
+		}
+		prevMove = currMove;
+		currMove = currMove->next;
+
+	}
+}
+
+
+int isEndangeringKingMove (Game* game, Move* move){
+	/*Checks if the move puts the player's king in a danger (check) */
+
+	Game* gameCopy = cloneGame(game);
+
+	doMove(gameCopy, move, 0);
+	switchTurns(gameCopy);
+
+	for (int i=0; i<BOARD_SIZE;i++){
+		for (int j=0; j<BOARD_SIZE; j++){
+			getMoves(gameCopy, i, j, 0);
+			Move* moveCurr = movesTemp->first;
+			while (moveCurr != NULL){
+				if (isEatingOpponentKing(gameCopy, moveCurr)){
+					if (gameCopy != NULL){
+						free(gameCopy);
+						gameCopy = NULL;
+					}
+					freeMoves(1);
+					return 1;
+				}
+				moveCurr = moveCurr->next;
+			}
+			freeMoves(1);
+		}
+	}
+	if (gameCopy != NULL){
+		free(gameCopy);
+		gameCopy = NULL;
+	}
+	return 0;
+}
+
+int isEatingOpponentKing(Game* game, Move* move){
+	/*Checks if the 'move' is eating the opponent's king */
+	if (isOpponentKingPosition(game, move->first->next->x, move->first->next->y)){
+		return 1;
+	}
+	return 0;
+}
+
+int isOpponentKingPosition(Game* game, int x, int y){
+	/*Checks if the Opponent's king is in position x,y */
+	if (game->isWhiteTurn && game->board[x][y] == BLACK_K){
+		return 1;
+	}
+	if (!game->isWhiteTurn && game->board[x][y] == WHITE_K){
+		return 1;
+	}
+	return 0;
+}
+
+
+//TODO add special pawn move (what happens when pawn reaches end f board).
+void getPawnMoves(Game* game, Moves* movesCopy, int x, int y){
+	//Pawn is white - standard move.
+	if (isValidIJ(x,y+1)){
+		if (game->isWhiteTurn && (game->board[x][y+1] == EMPTY)){
+			Move* move = creatNewMove(x, y, x, y+1);
+			move->eats=0;
+			addToMoves(movesCopy,move);
+		}
+	}
+	//Pawn is white - check for eats.
+	if (game->isWhiteTurn){
+		for (int i=-1 ; i<=1; i+=2){
+			if (!isValidIJ(x+i,y+1)){
+				break;
+			}
+			if ( (!game->isWhiteTurn)==getPieceColor(game, x+i,y+1) ){
+				Move* move = creatNewMove(x, y, x+i, y+1);
+				move->eats=1;
+				addToMoves(movesCopy,move);
+			}
+		}
+	}
+
+	//Pawn is black - standard move.
+	if (isValidIJ(x,y-1)){
+		if ((!game->isWhiteTurn) && game->board[x][y-1] == EMPTY){
+			Move* move = creatNewMove(x, y, x, y-1);
+			move->eats=0;
+			addToMoves(movesCopy,move);
+		}
+	}
+	//Pawn is black - check for eats
+	if (!game->isWhiteTurn){
+		for (int i=-1 ; i<=1; i+=2){
+			if (!isValidIJ(x+i,y-1)){
+				break;
+			}
+			if ((!game->isWhiteTurn)==getPieceColor(game, x+i,y+1)){
+				Move* move = creatNewMove(x, y, x+i, y-1);
+				move->eats=1;
+				addToMoves(movesCopy,move);
+			}
+		}
+	}
+}
+
+void getKnightMoves(Game* game, Moves* movesCopy, int x, int y){
+
+	for (int i=-1;i<=1;i+=2){
+		for (int j=-1; j<=1; j+=2){
+			if (isValidIJ(x+1*i,y+2*j)){
+				if (!isCurrentPlayerPeice(game, x+1*i,y+2*j)){
+					Move* move = creatNewMove(x, y, x+1*i,y+2*j);
+					if (getPieceColor(game, x+1*i,y+2*j) != -1){
+						move->eats=1;
+					}
+					addToMoves(movesCopy,move);
+				}
+			}
+			if (isValidIJ(x+2*i,y+1*j)){
+				if (!isCurrentPlayerPeice(game, x+2*i,y+1*j)){
+					Move* move = creatNewMove(x, y, x+2*i,y+1*j);
+					if (getPieceColor(game, x+2*i,y+1*j) != -1){
+						move->eats=1;
+					}
+					addToMoves(movesCopy,move);
+				}
+			}
+		}
+	}
+}
+
+void getKingMoves(Game* game, Moves* movesCopy, int x, int y){
+	for (int i=-1 ; i<=1;i++){
+		for (int j=-1; j<=1;j++){
+			if (i==j && j==0){
+				continue;
+			}
+			if (!isValidIJ(x+i,y+j)){
+				continue;
+			}
+			if (!isCurrentPlayerPeice(game, x+i,y+j)){
+				Move* move = creatNewMove(x, y, x+i,y+j);
+				if (getPieceColor(game, x+i,y+j) != -1){
+					move->eats=1;
+				}
+				addToMoves(movesCopy,move);
+			}
+		}
+
+	}
+}
+
+void getBishopMoves(Game* game, Moves* movesCopy, int x, int y){
+
+	for (int r=-1; r<=1;r+=2){
+		for (int j=-1; j<=1;j+=2){
+			for (int i=1; i<=BOARD_SIZE;i++){
+				if (!isValidIJ(x+i*j,y+i*r)){
+					break;
+				}
+				if (isCurrentPlayerPeice(game, x+i*j,y+i*r)){
+					break;
+				}
+				if (!isCurrentPlayerPeice(game, x+i*j,y+i*r) && isValidIJ(x+i*j,y+i*r)){
+					Move* move = creatNewMove(x, y, x+i*j,y+i*r);
+					if (getPieceColor(game, x+i*j,y+i*r) != -1){
+						move->eats=1;
+						addToMoves(movesCopy,move);
+						break;
+					}
+					addToMoves(movesCopy,move);
+				}
+			}
+		}
+	}
+}
+
+void getRookMoves(Game* game, Moves* movesCopy, int x, int y){
+
+	for (int j=-1; j<=1;j+=2){
+		for (int i=1; i<=BOARD_SIZE;i++){
+			if (!isValidIJ(x+i*j,y)){
+				break;
+			}
+			if (isCurrentPlayerPeice(game, x+i*j,y)){
+				break;
+			}
+			else if (!isCurrentPlayerPeice(game, x+i*j,y)){
+				Move* move = creatNewMove(x, y, x+i*j,y);
+				if (getPieceColor(game, x+i*j,y) != -1){
+					move->eats=1;
+					addToMoves(movesCopy,move);
+					break;
+				}
+				addToMoves(movesCopy,move);
+			}
+		}
+	}
+
+	for (int j=-1; j<=1;j+=2){
+		for (int i=1; i<=BOARD_SIZE;i++){
+			if (!isValidIJ(x,y+i*j)){
+				break;
+			}
+			if (isCurrentPlayerPeice(game, x,y+i*j)){
+				break;
+			}
+			if (!isCurrentPlayerPeice(game, x,y+i*j)){
+				Move* move = creatNewMove(x, y, x,y+i*j);
+				if (getPieceColor(game, x,y+i*j) != -1){
+					move->eats=1;
+					addToMoves(movesCopy,move);
+					break;
+				}
+				addToMoves(movesCopy,move);
+			}
+		}
+	}
+}
+
+void getQueenMoves(Game* game, Moves* movesCopy, int x, int y){
+
+	getRookMoves(game, movesCopy, x, y);
+	getBishopMoves(game, movesCopy, x, y);
+
+}
+
+
+Move* creatNewMove(int startX, int startY, int endX, int endY){
+	Position* position = NULL;
+	position = calloc(sizeof(Position), 1);
+	if (position == NULL){
+		quit();
+	}
+	position->x = startX;
+	position->y = startY;
+	position->next = NULL;
+	Move* move = NULL;
+	move = calloc(sizeof(Move), 1);
+	if (move == NULL){
+		quit();
+	}
+	move->first = position;
+	Position* newPosition = NULL;
+	newPosition = calloc(sizeof(Position), 1);
+	if (newPosition == NULL){
+		freeMove(move);
+		quit();
+	}
+	newPosition->x = endX;
+	newPosition->y = endY;
+	move->first->next = newPosition;
+	move->eats = 0;
+	move->next = NULL;
+	return move;
+}
+
+
+//what if newMove == NULL??
+int isCurrentPlayerPeice(Game* game, int i, int j) {
+	/* receives a legal i,j and returns 1 if it's the current player's piece */
+	if (!isValidIJ(i,j)){
+		return 0;
+	}
+	if (game->board[i][j] == EMPTY){
+		return 0;
+	}
+	if ( game->isWhiteTurn && (getPieceColor(game,i,j)==1)) {
+		return 1;
+	}
+	if ( (!game->isWhiteTurn) && ((0 == getPieceColor(game,i,j))) ) {
+		return 1;
+	}
+	return 0;
+
+}
+
+int getPieceColor(Game* game, int i, int j){
+	/*Returns 1 is white, 0 if black, -1 if empty */
+	//The piece is white - returns 1.
+	if (game->board[i][j] == WHITE_P ||
+	                   game->board[i][j] == WHITE_B ||
+	                                  game->board[i][j] == WHITE_N
+	                                		  ||game->board[i][j] == WHITE_R ||
+	                                		                   game->board[i][j] == WHITE_Q ||
+	                                		                                  game->board[i][j] == WHITE_K){
+		return 1;
+	}
+	//The piece is black - returns 0.
+	if (game->board[i][j] == BLACK_P ||
+	                   game->board[i][j] == BLACK_B ||
+	                                  game->board[i][j] == BLACK_N
+	                                		  ||game->board[i][j] == BLACK_R ||
+	                                		                   game->board[i][j] == BLACK_Q ||
+	                                		                                  game->board[i][j] == BLACK_K){
+		return 0;
+	}
+	return -1; //The square is empty.
+
+}
+
+int isValidIJ(int i, int j) {
+	if ( i < 0 || i > BOARD_SIZE-1 || j < 0 || j > BOARD_SIZE-1 )
+		return 0;
+	return 1;
+}
+
+void addToMoves(Moves* movesCopy, Move* newMove){
+	/* Add a move to the linked list moves */
+	if (movesCopy->first == NULL){
+		movesCopy->first = newMove;
+		return;
+	}
+	Move* temp = movesCopy->first;
+	movesCopy->first = newMove;
+	newMove->next = temp;
+
+	if (newMove->eats > movesCopy->maxEats){
+		movesCopy->maxEats = newMove->eats;
+	}
+}
+
+Game* cloneGame(Game* game){
+	Game* gameCopy = NULL;
+	gameCopy = calloc(sizeof(Game), 1);
+	if (gameCopy == NULL){
+		quit();
+	}
+
+	for (int i=0; i<BOARD_SIZE; i++){
+		for (int j=0; j<BOARD_SIZE; j++){
+			gameCopy->board[i][j]=game->board[i][j];
+		}
+	}
+
+	gameCopy->isComputerTurn = game->isComputerTurn;
+	gameCopy->isGUIMode = game->isGUIMode;
+	gameCopy->isRunning = game->isRunning;
+	gameCopy->isTwoPlayersMode = game->isRunning;
+	gameCopy->isUserWhite = game->isUserWhite;
+	gameCopy->isWhiteTurn = game->isWhiteTurn;
+	gameCopy->minmaxDepth = game->minmaxDepth;
+	gameCopy->minmaxMove = game->minmaxMove;
+	gameCopy->minmaxScore = game->minmaxScore;
+	return gameCopy;
+}
+
+Move* cloneMove(Move* move){
+
+	if (move == NULL){
+		return NULL;
+	}
+
+	Move* moveCopy = NULL;
+	moveCopy = calloc(sizeof(Move),1);
+	if (moveCopy == NULL){
+		quit();
+	}
+	moveCopy->eats = move->eats;
+	moveCopy->next = NULL;
+	moveCopy->first = clonePosition(move->first);
+	moveCopy->first->next = clonePosition(move->first->next);
+
+	return moveCopy;
+}
+
+Position* clonePosition(Position* position){
+
+	Position* positionCopy = NULL;
+	positionCopy = calloc(sizeof(Position), 1);
+	if (positionCopy == NULL){
+		quit();
+	}
+	positionCopy->x = position->x;
+	positionCopy->y = position->y;
+	positionCopy->next = NULL;
+	return positionCopy;
+}
+
+void freeAndNull(void* obj) {
+	if ( obj != NULL ) {
+		free(obj);
+	}
+	obj = NULL;
+}
+
+void quit() {
+	if (moves != NULL){
+		freeMoves(0);
+	}
+	if (movesTemp != NULL){
+		freeMoves(1);
+	}
+	exit(0);
+}
+
+void freeMove(Move* move){
+	if (move != NULL){
+		Position* curr = move->first;
+		while ( curr != NULL ) {
+			Position* next = curr->next;
+			free(curr);
+			curr = NULL;
+			curr = next;
+		}
+		free(move);
+	}
+	move = NULL;
+}
+
+void freeMoves(int isTmpMoves){
+
+	if (isTmpMoves){
+		if (movesTemp != NULL){
+			Move* currMove = movesTemp->first;
+			while ( currMove != NULL ) {
+				Move* prevMove=currMove;
+				currMove = currMove->next;
+				freeMove(prevMove);
+			}
+			free(movesTemp);
+		}
+		movesTemp = NULL;
+	}
+
+	else {
+		if (moves != NULL){
+			Move* currMove = moves->first;
+			while ( currMove != NULL ) {
+				Move* prevMove=currMove;
+				currMove = currMove->next;
+				freeMove(prevMove);
+			}
+			free(moves);
+		}
+		moves = NULL;
+	}
+}
+

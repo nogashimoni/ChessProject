@@ -1,5 +1,5 @@
 CFLAGS=-Wall -std=c99 -pedantic-errors -lm -g
-OFILES= ErrorHandling.o GUIDefinitions.o GUIUtils.o StartFunctions.o TranslateFunctions.o HandleFunctions.o StopFunctions.o WindowFactory.o GUI.o Chess.o  
+OFILES= ErrorHandling.o GUIDefinitions.o GUIUtils.o StartFunctions.o TranslateFunctions.o HandleFunctions.o StopFunctions.o WindowFactory.o GUI.o ChessDefinitions.o ChessLogic.o Minmax.o GameFlow.o 
 SDL_L=`sdl-config --libs` 
 SDL_C=`sdl-config --cflags`
 
@@ -14,19 +14,10 @@ chessprog: $(OFILES)
 ErrorHandling.o: src/services/ErrorHandling.c src/services/ErrorHandling.h
 	gcc -c $(CFLAGS) src/services/$*.c $(SDL_C) -lSDL_image
 	
-GUIUtils.o: src/GUI/GUIUtils.c src/GUI/GUIUtils.h src/GUI/GUIDefinitions.h
-	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
-
-Chess.o: src/main/Chess.c src/main/Chess.h src/GUI/GUI.h src/services/ErrorHandling.h 
-	gcc -c $(CFLAGS) src/main/$*.c $(SDL_C) -lSDL_image
-
-GUI.o: src/GUI/GUI.c src/GUI/GUI.h src/main/Chess.h src/GUI/WindowFactory.h src/GUI/GUIDefinitions.h
-	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
-	
-WindowFactory.o: src/GUI/WindowFactory.c src/GUI/WindowFactory.h src/GUI/GUIUtils.h src/GUI/GUIDefinitions.h src/GUI/StartFunctions.h src/GUI/TranslateFunctions.h src/GUI/HandleFunctions.h src/GUI/StopFunctions.h
-	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
-	
 GUIDefinitions.o: src/GUI/GUIDefinitions.c src/GUI/GUIDefinitions.h
+	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
+
+GUIUtils.o: src/GUI/GUIUtils.c src/GUI/GUIUtils.h src/GUI/GUIDefinitions.h
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 
 StartFunctions.o: src/GUI/StartFunctions.c src/GUI/StartFunctions.h src/GUI/GUIUtils.h
@@ -39,6 +30,24 @@ HandleFunctions.o: src/GUI/HandleFunctions.c src/GUI/HandleFunctions.h src/GUI/G
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 	
 StopFunctions.o: src/GUI/StopFunctions.c src/GUI/StopFunctions.h src/GUI/GUIUtils.h
+	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
+	
+ChessDefinitions.o: src/main/ChessDefinitions.c src/main/ChessDefinitions.h
+	gcc -c $(CFLAGS) src/main/$*.c $(SDL_C) -lSDL_image
+
+ChessLogic.o: src/main/ChessLogic.c src/main/ChessLogic.h src/main/ChessDefinitions.h #src/GUI/GUI.h src/services/ErrorHandling.h src/main/Minmax.h src/main/ChessDefinitions.h
+	gcc -c $(CFLAGS) src/main/$*.c $(SDL_C) -lSDL_image
+
+Minmax.o: src/main/Minmax.c src/main/Minmax.h src/main/ChessDefinitions.h src/main/ChessLogic.h src/services/ErrorHandling.h
+	gcc -c $(CFLAGS) src/main/$*.c $(SDL_C) -lSDL_image
+
+GameFlow.o: src/main/GameFlow.c src/main/GameFlow.h src/main/ChessDefinitions.h src/main/ChessLogic.h src/main/Minmax.h src/GUI/GUI.h src/services/ErrorHandling.h
+	gcc -c $(CFLAGS) src/main/$*.c $(SDL_C) -lSDL_image
+
+GUI.o: src/GUI/GUI.c src/GUI/GUI.h src/GUI/WindowFactory.h src/GUI/GUIDefinitions.h src/main/ChessDefinitions.h #src/main/ChessLogic.h
+	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
+	
+WindowFactory.o: src/GUI/WindowFactory.c src/GUI/WindowFactory.h src/GUI/GUIUtils.h src/GUI/GUIDefinitions.h src/GUI/StartFunctions.h src/GUI/TranslateFunctions.h src/GUI/HandleFunctions.h src/GUI/StopFunctions.h
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 	
 test:
