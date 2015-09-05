@@ -1,15 +1,15 @@
 #include "GUIUtils.h"
 
-SDL_Surface* openScreen() {
-	SDL_Surface* screen = malloc(sizeof(SDL_Surface));
-	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP,
-			SDL_SWSURFACE);
-	//If there was an error in setting up the screen
-	if (screen == NULL)
-		return 0;
-	SDL_WM_SetCaption("Noa and Noga's World Of Fun!", NULL);
-	return screen;
-}
+//SDL_Surface* openScreen() {
+//	SDL_Surface* screen = malloc(sizeof(SDL_Surface));
+//	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP,
+//			SDL_SWSURFACE);
+//	//If there was an error in setting up the screen
+//	if (screen == NULL)
+//		return 0;
+//	SDL_WM_SetCaption("Noa and Noga's World Of Fun!", NULL);
+//	return screen;
+//}
 
 Button** createVerticalButtonsArrayAndApplayToScreen(int numOfButtons, int xForButtons,
 		int yFirstButton, SDL_Surface* buttonsImages, SDL_Rect* clipArray,
@@ -258,11 +258,21 @@ void freeWidget(void* widget, TreeWidgetType widgetType) {
 }
 
 void freeButtons(Buttons* buttons) {
+	/* frees all buttons fields, and background widget itself */
+	int i;
+	for (i=0; i<buttons->numOfButtons; i++)
+		if ( buttons->buttonArray[i] != NULL ) {
+			free(buttons->buttonArray[i]);
+		}
+	free(buttons->buttonArray);
 
+	free(buttons);
 }
 
 void freeBackground(Background* background) {
+	/* frees all background fields, and background widget itself */
 	if (background->image != NULL) {
-//		SDL_FreeSurface(background->image);
+		SDL_FreeSurface(background->image);
 	}
+	free(background);
 }

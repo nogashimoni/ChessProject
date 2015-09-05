@@ -4,12 +4,19 @@ int isError = 0;
 
 int GUIMain() {
 
+		//init gui
 		if (SDL_Init(SDL_INIT_VIDEO) == -1) {
 			notifyFunctionFailure("GUIMain"); //TODO sdlErrorPrint("unable to init SDL");
 			return 0;
 		}
-		SDL_Surface* screen = openScreen();
+		SDL_Surface* screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP,
+				SDL_SWSURFACE);
+		if (screen == NULL)
+			//TODO error
+		SDL_WM_SetCaption("Noa and Noga's World Of Fun!", NULL);
 		atexit(SDL_Quit);
+
+		// init windows
 		Window windows[WINDOWS_COUNT];
 		/* initialize GUI structs mapping by state ids: */
 
