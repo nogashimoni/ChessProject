@@ -73,7 +73,7 @@ int setupGame(Game* game, int argc, char** argv) {
 	print_board(game->board);
 
 	if (game->isGUIMode) {
-//		GUIMain();
+		GUIMain();
 	}
 
 	printf(ENTER_SETTINGS);
