@@ -4,7 +4,8 @@
 
 int main(int argc, char **argv) {
 	Game game;
-	initGameFields(&game, argc, argv);
+	int isGUIMode = ((argc == 2) && (strcmp(argv[0], "gui")) ? 1 : 0);
+	initGameFields(&game, isGUIMode);
 
 	if (game.isGUIMode) {
 		GUIMain(&game);
@@ -66,13 +67,14 @@ void removeSpaces(char* string) {
 	*i = '\0';
 }
 
-void initGameFields(Game* game, int argc, char** argv) {
-	game->isGUIMode = ((argc == 2) && (strcmp(argv[0], "gui")) ? 1 : 0);
+void initGameFields(Game* game, int isGUIMode) {
+	game->isGUIMode = isGUIMode;
 	game->minmaxDepth = 1;
 	game->isWhiteTurn = 1;
 	game->isTwoPlayersMode = 1;
 	game->isUserWhite = 1; // relevant only in player vs. ai mode
 	game->isRunning=1;
+	game->isComputerTurn=!game->isUserWhite;
 	init_board(game->board);
 }
 
@@ -310,13 +312,14 @@ void computerTurn(Game* game){
 /* Perform computer turn. Note: we enter this function only if
  * computer isn't stuck, meaning there's at least 1 move. */
 
-	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
 	printf("Computer: move ");
+	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
+	printf("after minmax");
 	doMove(game, game->minmaxMove, 1);
 
 	print_board(game->board);
 //	freeNullAndRemove(game->minmaxMove); // all other moves on tree will be freed only when quit
-//	game->minmaxScore = INT_MIN;
+	game->minmaxScore = INT_MIN;
 	game->minmaxMove = NULL; //just in case
 
 

@@ -19,7 +19,7 @@ void init_board(char board[BOARD_SIZE][BOARD_SIZE]);
 void setupGameByConsole(Game* game);
 void getCmdFromUser(char* output);
 void removeSpaces(char* string);
-void initGameFields(Game* game, int argc, char** argv);
+void initGameFields(Game* game, int isGUIMode);
 void setDisk(Game* game, char x, int y, char color, char* type);
 int isLegalPeiceAddition(Game* game, char peice);
 int countPeices(Game* game, char peice);
