@@ -15,20 +15,9 @@ extern Moves* movesTemp;
 
 //Functions declarations
 int main(int argc, char **argv);
-void init_board(char board[BOARD_SIZE][BOARD_SIZE]);
 void setupGameByConsole(Game* game);
 void getCmdFromUser(char* output);
 void removeSpaces(char* string);
-void initGameFields(Game* game, int isGUIMode);
-void setDisk(Game* game, char x, int y, char color, char* type);
-int isLegalPeiceAddition(Game* game, char peice);
-int countPeices(Game* game, char peice);
-void removeDisk(Game* game, char x, int y);
-void setGameMode(Game* game, char input);
-void setDifficulty(Game* game, char* pointer);
-void setUserColor(Game* game, char color);
-void loadGameFromXML(Game* game, char* path);
-void clearBoard(Game* game);
 void playByConsole(Game* game);
 void computerTurn(Game* game);
 void userTurn(Game* game);

@@ -14,7 +14,18 @@ extern Moves* moves;
 extern Moves* movesTemp;
 
 //**** functions declarations *******//
-////main flow
+////Setup functions
+void initGameFields(Game* game, int isGUIMode);
+void setDisk(Game* game, char x, int y, char color, char* type);
+int isLegalPeiceAddition(Game* game, char peice);
+int countPeices(Game* game, char peice);
+void removeDisk(Game* game, char x, int y);
+void setGameMode(Game* game, char input);
+void init_board(char board[BOARD_SIZE][BOARD_SIZE]);
+void setDifficulty(Game* game, char* pointer);
+void setUserColor(Game* game, char color);
+void loadGameFromXML(Game* game, char* path);
+void clearBoard(Game* game);
 //int setupGame(Game* game, int argc, char** argv);
 //void play(Game*);
 //void quit();
