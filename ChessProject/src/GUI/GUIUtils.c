@@ -84,7 +84,7 @@ Background* createBackground(WindowId windowID) {
 		case(PLAYER_SELECTION):
 			imagePath = PLAYER_SELECTION_BACKGROUND;
 			break;
-		case(QUIT):
+		case(QUIT_WINDOW):
 			break;
 	}
 

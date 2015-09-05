@@ -24,6 +24,6 @@
 #include <SDL/SDL_image.h>
 #include "GUIUtils.h"
 
-void* stopWelcomeOrSelection (Window* window);
+void* stopGeneralSetup (Window* window);
 
 #endif /* STOPFUNCTIONS_H_ */

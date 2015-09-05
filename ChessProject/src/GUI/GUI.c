@@ -30,7 +30,7 @@ int GUIMain() {
 
 		activeWindow.start(&activeWindow, NULL);
 
-		while (!isError && nextWindowId != QUIT) {
+		while (!isError && nextWindowId != QUIT_WINDOW) {
 //			if (activeGUI.stateId == PLAY_GAME){ /* if we are currently playing the game */
 //				updateMachineMoveIfNeeded(activeGUI); /* make machine move if it is machibe turn */
 //				if (isError)
@@ -51,7 +51,7 @@ int GUIMain() {
 
 				/* if state has changed, stop the active GUI and move to the next one: */
 				if (activeWindow.windowId != nextWindowId) {
-					if (nextWindowId == QUIT) {
+					if (nextWindowId == QUIT_WINDOW) {
 						break;
 					}
 					else {
@@ -68,7 +68,7 @@ int GUIMain() {
 
 		/* stop the active GUI (stop function will return NULL stop if called from here) */
 		activeWindow.stop(&activeWindow);
-exit(0);
+exit(0); //TODO delete?
 return 1;
 }
 

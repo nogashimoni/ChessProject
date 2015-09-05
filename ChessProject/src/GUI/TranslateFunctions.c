@@ -7,12 +7,16 @@
 
 #include "TranslateFunctions.h"
 
-EventID translateEventWelcomeOrSelection(Window* window, SDL_Event event) {
+EventID translateEventGeneralSetup(Window* window, SDL_Event event) {
 
 	UITreeNode* buttonsNode = window->UITreeHead->child;
 	Buttons* buttons = ((Buttons*) buttonsNode->widget);
 
 	int buttonNumber;
+
+	if (event.type == SDL_QUIT) {
+		return QUIT_EVENT;
+	}
 
 	for (buttonNumber = 0; buttonNumber < buttons->numOfButtons;
 			buttonNumber++) {

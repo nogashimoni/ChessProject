@@ -7,7 +7,7 @@
 
 #include "StopFunctions.h"
 
-void* stopWelcomeOrSelection (Window* window) {
+void* stopGeneralSetup (Window* window) {
 	freeTree(window->UITreeHead);
 	return NULL;
 }

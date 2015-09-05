@@ -17,6 +17,6 @@
 #include "GUIDefinitions.h"
 
 void clipWelcomeOrPlayerSelection( SDL_Rect* clip );
-int startWelcomeOrSelection (Window* window, void* initData);
+int startGeneralSetup (Window* window, void* initData);
 
 #endif /* STARTFUNCTIONS_H_ */

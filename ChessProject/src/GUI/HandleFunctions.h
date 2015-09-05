@@ -18,6 +18,6 @@
 
 int handleEventWelcomeWindow(Window* window, EventID eventID);
 int handleEventSelectionWindow(Window* window, EventID eventID);
-
+int handleEventWhoStarts(Window* window, EventID eventID);
 
 #endif /* HANDLEFUNCTIONS_H_ */

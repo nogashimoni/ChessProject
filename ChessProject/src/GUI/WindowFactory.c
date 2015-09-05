@@ -8,17 +8,25 @@ Window initWindow(WindowId id, SDL_Surface* screen) {
 
 	switch (id) {
 	case WELCOME:
-		window.start = startWelcomeOrSelection;
-		window.translateEvent = translateEventWelcomeOrSelection;
+		window.start = startGeneralSetup;
+		window.translateEvent = translateEventGeneralSetup;
 		window.handleEvent = handleEventWelcomeWindow;
-		window.stop = stopWelcomeOrSelection;
+		window.stop = stopGeneralSetup;
 		break;
 	case PLAYER_SELECTION:
-		window.start = startWelcomeOrSelection;
-		window.translateEvent = translateEventWelcomeOrSelection;
+		window.start = startGeneralSetup;
+		window.translateEvent = translateEventGeneralSetup;
 		window.handleEvent = handleEventSelectionWindow;
-		window.stop = stopWelcomeOrSelection;
+		window.stop = stopGeneralSetup;
 		break;
+	case WHO_STARTS:
+		window.start = startGeneralSetup;
+		window.translateEvent = translateEventGeneralSetup;
+		window.handleEvent = handleEventWhoStarts;
+		window.stop = stopGeneralSetup;
+		break;
+
+	case SET_BOARD:
 
 	default:
 		break;

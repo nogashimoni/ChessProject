@@ -1,6 +1,6 @@
 #include "StartFunctions.h"
 
-int startWelcomeOrSelection(Window* window, void* initData) {
+int startGeneralSetup(Window* window, void* initData) {
 
 	// create background widget, which is Tree head, apply it to screen and add to UITree
 	Background* background = createBackground(window->windowId);
