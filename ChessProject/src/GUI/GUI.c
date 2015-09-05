@@ -61,7 +61,7 @@ int GUIMain() {
 
 		/* stop the active GUI (stop function will return NULL stop if called from here) */
 		activeWindow.stop(&activeWindow);
-
+exit(0);
 return 1;
 }
 

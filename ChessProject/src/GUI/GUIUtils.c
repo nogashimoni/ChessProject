@@ -69,9 +69,12 @@ void applySurface(int x, int y, SDL_Surface* source, SDL_Surface* destination,
 
 Background* createBackground(WindowId windowID) {
 	// open background (which will be the tree root)
-	Background* background = (Background*)malloc(sizeof(background));
+	Background* background = NULL;
+	background = (Background*)malloc(sizeof(background));
 	if( background == NULL ) {
 		//TODO
+		printf("error loading background");
+		exit(0);
 	}
 	char* imagePath;
 	switch(windowID) {
@@ -238,7 +241,7 @@ void freeTree(UITreeNode* root) {
 			currChild = temp;
 		}
 		if (root->widget != NULL) /* free the data  if it is not null */
-			freeWidget(root, root->widgetType);
+			freeWidget(root->widget, root->widgetType);
 		free(root); /* free the listRef itself */
 	}
 }
@@ -260,6 +263,6 @@ void freeButtons(Buttons* buttons) {
 
 void freeBackground(Background* background) {
 	if (background->image != NULL) {
-		SDL_FreeSurface(background->image);
+//		SDL_FreeSurface(background->image);
 	}
 }

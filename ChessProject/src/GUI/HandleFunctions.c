@@ -18,6 +18,7 @@ int handleEventWelcomeWindow(Window* window, EventID eventID) {
 			break;
 		case (THIRD_PRESSED):
 			printf("3rd pressed\n");
+			return QUIT;
 			break;
 		case (NOTHING_HAPPANED):
 			return WELCOME;
