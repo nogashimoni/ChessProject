@@ -152,6 +152,15 @@ Move* createMoveFromString(char* cmd);
 int isValidMove(Game* game, Move* move);
 int compareMoves(Move* m1, Move* m2);
 int comparePositions(Position* p1, Position* p2);
+void addMovesToAllMoves(Moves* allMoves);
+Move* cloneMove(Move* move);
+Position* clonePosition(Position* position);
+//minmax
+int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing);
+int min(int x, int y);
+int max (int x, int y);
+Moves* getAllMoves(Game* game);
+int scoringFunction(Game* game);
 
 void doMove(Game* game, Move* move, int printMove);
 int isCurrentPlayerLose(Game* game);
