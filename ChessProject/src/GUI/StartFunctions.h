@@ -16,7 +16,8 @@
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
 
-void clipWelcomeOrPlayerSelection( SDL_Rect* clip );
 int startGeneralSetup (Window* window, void* initData);
+void clipGeneralSetup( SDL_Rect* clip );
+char* getSpriteByWindowID(WindowId windowID);
 
 #endif /* STARTFUNCTIONS_H_ */

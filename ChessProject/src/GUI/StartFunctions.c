@@ -13,13 +13,12 @@ int startGeneralSetup(Window* window, void* initData) {
 
 	// create arguments for buttons creation
 	SDL_Rect clip[4];
-	clipWelcomeOrPlayerSelection(clip);
+	clipGeneralSetup(clip);
 	int xForButtons = 0.5 * SCREEN_WIDTH - 0.5 * BUTTON_WIDTH;
 	int yFirstButton = 0.5 * SCREEN_HEIGHT - 1.5 * BUTTON_HEIGHT;
 	SDL_Surface* buttonsImages = NULL;
-	buttonsImages = loadImage(
-			window->windowId == WELCOME ?
-					WELCOME_SPRITE : PLAYER_SELECTION_SPRITE);
+	char* imagePath = getSpriteByWindowID(window->windowId);
+	buttonsImages = loadImage(imagePath);
 	if (buttonsImages == NULL)
 		return 0; //TOODO
 	Button** buttonsArray = createVerticalButtonsArrayAndApplayToScreen(3,
@@ -37,7 +36,7 @@ int startGeneralSetup(Window* window, void* initData) {
 	return 1;
 }
 
-void clipWelcomeOrPlayerSelection(SDL_Rect* clip) {
+void clipGeneralSetup(SDL_Rect* clip) {
 	//Clip range for the top left
 	clip[0].x = 0;
 	clip[0].y = 0;
@@ -57,4 +56,20 @@ void clipWelcomeOrPlayerSelection(SDL_Rect* clip) {
 	clip[2].h = 50;
 
 }
-
+char* getSpriteByWindowID(WindowId windowID) {
+	switch(windowID) {
+		case (WELCOME):
+			return WELCOME_SPRITE;
+		case (PLAYER_SELECTION):
+			return PLAYER_SELECTION_SPRITE;
+		case (TO_SET_WHO_STARTS):
+			return TO_SET_WHO_STARTS_SPRITE;
+		case (SET_WHO_STARTS):
+			return SET_WHO_STARTS_SPRITE;
+		case (TO_SET_BOARD):
+			return TO_SET_BOARD_SPRITE;
+		default:
+			break;
+	}
+	return PLAYER_SELECTION_SPRITE;
+}

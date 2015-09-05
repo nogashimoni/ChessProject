@@ -22,6 +22,11 @@ int GUIMain() {
 
 		windows[WELCOME] = initWindow(WELCOME, screen);
 		windows[PLAYER_SELECTION] = initWindow(PLAYER_SELECTION, screen);
+		windows[TO_SET_WHO_STARTS] = initWindow(TO_SET_WHO_STARTS, screen);
+		windows[SET_WHO_STARTS] = initWindow(SET_WHO_STARTS, screen);
+		windows[TO_SET_BOARD] = initWindow(TO_SET_BOARD, screen);
+		windows[SET_BOARD] = initWindow(SET_BOARD, screen);
+
 
 		/* Starting the default/initial GUI: */
 

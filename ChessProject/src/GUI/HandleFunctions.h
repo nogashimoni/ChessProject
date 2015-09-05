@@ -18,6 +18,9 @@
 
 int handleEventWelcomeWindow(Window* window, EventID eventID);
 int handleEventSelectionWindow(Window* window, EventID eventID);
-int handleEventWhoStarts(Window* window, EventID eventID);
+int handleEventToSetWhoStarts(Window* window, EventID eventID);
+int handleEventSetWhoStarts(Window* window, EventID eventID);
+int handleEventToSetBoard(Window* window, EventID eventID);
+int handleEventSetBoard(Window* window, EventID eventID);
 
 #endif /* HANDLEFUNCTIONS_H_ */

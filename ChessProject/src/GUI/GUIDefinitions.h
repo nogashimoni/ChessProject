@@ -13,13 +13,22 @@
 //macros for files
 #define WELCOME_BACKGROUND "images/800_600.png"
 #define PLAYER_SELECTION_BACKGROUND "images/800_600.png"
+#define TO_SET_WHO_STARTS_BACKGROUND "images/800_600.png"
+#define TO_SET_BOARD_BACKGROUND "images/800_600.png"
+#define SET_WHO_STARTS_BACKGROUND "images/800_600.png"
+#define SET_BOARD_BACKGROUND "images/800_600.png"
+
 #define WELCOME_SPRITE "images/main_menu_sprite.png"
 #define PLAYER_SELECTION_SPRITE "images/player_selection_sprite.png"
+#define TO_SET_WHO_STARTS_SPRITE "images/to_set_who_starts_sprite.png"
+#define TO_SET_BOARD_SPRITE "images/to_set_board_sprite.png"
+#define SET_WHO_STARTS_SPRITE "images/set_who_starts_sprite.png"
+
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 #define SCREEN_BPP 32
-#define WINDOWS_COUNT 2
+#define WINDOWS_COUNT 7
 #define POLLING_DELAY 10
 
 #define BUTTON_WIDTH 220
@@ -28,7 +37,9 @@
 typedef enum {
 	WELCOME,
 	PLAYER_SELECTION,
-	WHO_STARTS,
+	TO_SET_WHO_STARTS,
+	TO_SET_BOARD,
+	SET_WHO_STARTS,
 	SET_BOARD,
 	QUIT_WINDOW
 } WindowId;

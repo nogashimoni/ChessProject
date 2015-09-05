@@ -30,13 +30,15 @@ int handleEventWelcomeWindow(Window* window, EventID eventID) {
 
 int handleEventSelectionWindow(Window* window, EventID eventID) {
 	switch (eventID) {
-		case (FIRST_PRESSED): //new game
+		case (FIRST_PRESSED): //player vs. player
 			printf("first pressed\n");
+			return TO_SET_WHO_STARTS;
 			break;
-		case (SECOND_PRESSED):
+		case (SECOND_PRESSED): //player vs. computer
 			printf("2nd pressed\n");
+			return TO_SET_WHO_STARTS;
 			break;
-		case (THIRD_PRESSED):
+		case (THIRD_PRESSED): //cancel
 			printf("3rd pressed\n");
 			return WELCOME;
 		case (NOTHING_HAPPANED):
@@ -47,19 +49,72 @@ int handleEventSelectionWindow(Window* window, EventID eventID) {
 	return PLAYER_SELECTION;
 }
 
-int handleEventWhoStarts(Window* window, EventID eventID) {
+int handleEventToSetWhoStarts(Window* window, EventID eventID) {
 	switch (eventID) {
-		case (FIRST_PRESSED): //white starts
+		case (FIRST_PRESSED): //set who starts
 			printf("first pressed\n");
+			return SET_WHO_STARTS;
 			break;
-		case (SECOND_PRESSED): //black starts
+		case (SECOND_PRESSED): //continue
 			printf("2nd pressed\n");
+			return TO_SET_BOARD;
 			break;
-		case (THIRD_PRESSED):
+		case (THIRD_PRESSED): //cancel
 			printf("3rd pressed\n");
 			return WELCOME;
 		case (NOTHING_HAPPANED):
-			return PLAYER_SELECTION;
+			return TO_SET_WHO_STARTS;
+		case (QUIT_EVENT):
+			return QUIT_WINDOW;
+	}
+	return PLAYER_SELECTION;
+}
+
+
+int handleEventSetWhoStarts(Window* window, EventID eventID) {
+	switch (eventID) {
+		case (FIRST_PRESSED): //white
+			printf("first pressed\n");
+			return TO_SET_BOARD;
+			break;
+		case (SECOND_PRESSED): //black
+			printf("2nd pressed\n");
+			return TO_SET_BOARD;
+			break;
+		case (THIRD_PRESSED): //back
+			printf("3rd pressed\n");
+			return TO_SET_WHO_STARTS;
+		case (NOTHING_HAPPANED):
+			return SET_WHO_STARTS;
+		case (QUIT_EVENT):
+			return QUIT_WINDOW;
+	}
+	return SET_WHO_STARTS;
+}
+
+int handleEventSetBoard(Window* window, EventID eventID) {
+	switch (eventID) {
+		case (QUIT_EVENT):
+			return QUIT_WINDOW;
+	}
+	return PLAYER_SELECTION;
+}
+
+int handleEventToSetBoard(Window* window, EventID eventID) {
+	switch (eventID) {
+		case (FIRST_PRESSED): //set board
+			printf("first pressed\n");
+			return SET_BOARD;
+			break;
+		case (SECOND_PRESSED): //continue
+			printf("2nd pressed\n");
+			return TO_SET_BOARD; //TODO start game!
+			break;
+		case (THIRD_PRESSED): //cancel
+			printf("3rd pressed\n");
+			return WELCOME;
+		case (NOTHING_HAPPANED):
+			return TO_SET_BOARD;
 		case (QUIT_EVENT):
 			return QUIT_WINDOW;
 	}

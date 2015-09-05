@@ -84,6 +84,18 @@ Background* createBackground(WindowId windowID) {
 		case(PLAYER_SELECTION):
 			imagePath = PLAYER_SELECTION_BACKGROUND;
 			break;
+		case(TO_SET_WHO_STARTS):
+			imagePath = TO_SET_WHO_STARTS_BACKGROUND;
+			break;
+		case(TO_SET_BOARD):
+			imagePath = TO_SET_BOARD_BACKGROUND;
+			break;
+		case(SET_BOARD):
+			imagePath = SET_BOARD_BACKGROUND;
+			break;
+		case(SET_WHO_STARTS):
+			imagePath = SET_WHO_STARTS_BACKGROUND;
+			break;
 		case(QUIT_WINDOW):
 			break;
 	}
