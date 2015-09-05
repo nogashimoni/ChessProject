@@ -1,17 +1,21 @@
-/*
- * GameFlow.c
- *
- *  Created on: Sep 5, 2015
- *      Author: noaleibo1
- */
+
 
 #include "GameFlow.h"
 
 int main(int argc, char **argv) {
 	Game game;
-	setupGame(&game, argc, argv);
-	play(&game);
-	quit();
+	initGameFields(&game, argc, argv);
+
+	if (game.isGUIMode) {
+		GUIMain(&game);
+		printf("%d\n",game.isTwoPlayersMode);
+		quit(); //releases all chess logic variables
+	}
+	else {
+		setupGameByConsole(&game);
+		playByConsole(&game);
+		quit();
+	}
 	return EXIT_SUCCESS;
 }
 
@@ -62,7 +66,7 @@ void removeSpaces(char* string) {
 	*i = '\0';
 }
 
-int setupGame(Game* game, int argc, char** argv) {
+void initGameFields(Game* game, int argc, char** argv) {
 	game->isGUIMode = ((argc == 2) && (strcmp(argv[0], "gui")) ? 1 : 0);
 	game->minmaxDepth = 1;
 	game->isWhiteTurn = 1;
@@ -70,11 +74,10 @@ int setupGame(Game* game, int argc, char** argv) {
 	game->isUserWhite = 1; // relevant only in player vs. ai mode
 	game->isRunning=1;
 	init_board(game->board);
-	print_board(game->board);
+}
 
-	if (game->isGUIMode) {
-		GUIMain();
-	}
+void setupGameByConsole(Game* game) {
+	print_board(game->board);
 
 	printf(ENTER_SETTINGS);
 	char cmd[51];
@@ -121,7 +124,7 @@ int setupGame(Game* game, int argc, char** argv) {
 			print_message(ILLEGAL_COMMAND);
 		}
 	}
-	return 1;
+	return;
 }
 
 void setDisk(Game* game, char x, int y, char color, char* type) {
@@ -252,7 +255,7 @@ void clearBoard(Game* game) {
 			game->board[i][j] = EMPTY;
 }
 
-void play(Game* game) {
+void playByConsole(Game* game) {
 	if (game->isTwoPlayersMode) { //user-user game.
 		while ( game->isRunning ) {
 			if (isCurrentPlayerLose(game)){

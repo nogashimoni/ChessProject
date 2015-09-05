@@ -2,8 +2,7 @@
 
 int isError = 0;
 
-int GUIMain() {
-
+int GUIMain(Game* game) {
 		//init gui
 		if (SDL_Init(SDL_INIT_VIDEO) == -1) {
 			notifyFunctionFailure("GUIMain"); //TODO sdlErrorPrint("unable to init SDL");
@@ -50,7 +49,7 @@ int GUIMain() {
 					break;
 
 				/* Handling the event */
-				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID);
+				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID, game);
 				if (isError) /* PHE function may result in an error */
 					break;
 
@@ -73,7 +72,6 @@ int GUIMain() {
 
 		/* stop the active GUI (stop function will return NULL stop if called from here) */
 		activeWindow.stop(&activeWindow);
-exit(0); //TODO delete?
 return 1;
 }
 

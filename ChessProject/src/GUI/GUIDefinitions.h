@@ -1,12 +1,11 @@
-/*
- * GUIdefinitions.h
- *
- *  Created on: Aug 26, 2015
- *      Author: nogalavi1
- */
+
 
 #ifndef GUIDEFINITIONS_H_
 #define GUIDEFINITIONS_H_
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "../main/ChessDefinitions.h"
 
 #define BOARD_SIZE 8
 
@@ -79,7 +78,7 @@ struct Window {
 	/* methods */
 	int (*start) (Window* window, void* initData);
 	EventID (*translateEvent)(Window* window, SDL_Event event);
-	int (*handleEvent)(Window* window, EventID event);
+	int (*handleEvent)(Window* window, EventID event, Game* game);
 	void* (*stop) (Window* window);
 };
 

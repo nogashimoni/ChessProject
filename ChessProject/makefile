@@ -1,5 +1,5 @@
 CFLAGS=-Wall -std=c99 -pedantic-errors -lm -g
-OFILES= ErrorHandling.o GUIDefinitions.o GUIUtils.o StartFunctions.o TranslateFunctions.o HandleFunctions.o StopFunctions.o WindowFactory.o GUI.o ChessDefinitions.o ChessLogic.o Minmax.o GameFlow.o 
+OFILES= ErrorHandling.o ChessDefinitions.o ChessLogic.o Minmax.o GUIDefinitions.o GUIUtils.o StartFunctions.o TranslateFunctions.o HandleFunctions.o StopFunctions.o WindowFactory.o GUI.o GameFlow.o 
 SDL_L=`sdl-config --libs` 
 SDL_C=`sdl-config --cflags`
 
@@ -14,7 +14,7 @@ chessprog: $(OFILES)
 ErrorHandling.o: src/services/ErrorHandling.c src/services/ErrorHandling.h
 	gcc -c $(CFLAGS) src/services/$*.c $(SDL_C) -lSDL_image
 	
-GUIDefinitions.o: src/GUI/GUIDefinitions.c src/GUI/GUIDefinitions.h
+GUIDefinitions.o: src/GUI/GUIDefinitions.c src/GUI/GUIDefinitions.h src/main/ChessDefinitions.h
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 
 GUIUtils.o: src/GUI/GUIUtils.c src/GUI/GUIUtils.h src/GUI/GUIDefinitions.h

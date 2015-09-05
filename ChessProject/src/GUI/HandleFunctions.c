@@ -7,7 +7,7 @@
 
 #include "HandleFunctions.h"
 
-int handleEventWelcomeWindow(Window* window, EventID eventID) {
+int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game) {
 	switch (eventID) {
 		case (FIRST_PRESSED): //new game
 			printf("first pressed\n");
@@ -28,13 +28,15 @@ int handleEventWelcomeWindow(Window* window, EventID eventID) {
 	return WELCOME;
 }
 
-int handleEventSelectionWindow(Window* window, EventID eventID) {
+int handleEventSelectionWindow(Window* window, EventID eventID, Game* game) {
 	switch (eventID) {
 		case (FIRST_PRESSED): //player vs. player
 			printf("first pressed\n");
+			game->isTwoPlayersMode=1;
 			return TO_SET_WHO_STARTS;
 			break;
 		case (SECOND_PRESSED): //player vs. computer
+			game->isTwoPlayersMode=0;
 			printf("2nd pressed\n");
 			return TO_SET_WHO_STARTS;
 			break;
@@ -49,7 +51,7 @@ int handleEventSelectionWindow(Window* window, EventID eventID) {
 	return PLAYER_SELECTION;
 }
 
-int handleEventToSetWhoStarts(Window* window, EventID eventID) {
+int handleEventToSetWhoStarts(Window* window, EventID eventID, Game* game) {
 	switch (eventID) {
 		case (FIRST_PRESSED): //set who starts
 			printf("first pressed\n");
@@ -71,7 +73,7 @@ int handleEventToSetWhoStarts(Window* window, EventID eventID) {
 }
 
 
-int handleEventSetWhoStarts(Window* window, EventID eventID) {
+int handleEventSetWhoStarts(Window* window, EventID eventID, Game* game) {
 	switch (eventID) {
 		case (FIRST_PRESSED): //white
 			printf("first pressed\n");
@@ -92,7 +94,7 @@ int handleEventSetWhoStarts(Window* window, EventID eventID) {
 	return SET_WHO_STARTS;
 }
 
-int handleEventSetBoard(Window* window, EventID eventID) {
+int handleEventSetBoard(Window* window, EventID eventID, Game* game) {
 	switch (eventID) {
 		case (QUIT_EVENT):
 			return QUIT_WINDOW;
@@ -100,7 +102,7 @@ int handleEventSetBoard(Window* window, EventID eventID) {
 	return PLAYER_SELECTION;
 }
 
-int handleEventToSetBoard(Window* window, EventID eventID) {
+int handleEventToSetBoard(Window* window, EventID eventID, Game* game) {
 	switch (eventID) {
 		case (FIRST_PRESSED): //set board
 			printf("first pressed\n");

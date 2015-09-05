@@ -1,7 +1,6 @@
 #ifndef WINDOWFACTORY_H_
 #define WINDOWFACTORY_H_
 
-#include "../main/Chess.h"
 #include "../services/ErrorHandling.h"
 #include "GUI.h"
 #include "GUIUtils.h"

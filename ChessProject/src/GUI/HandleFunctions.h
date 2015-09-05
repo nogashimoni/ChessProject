@@ -16,11 +16,11 @@
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
 
-int handleEventWelcomeWindow(Window* window, EventID eventID);
-int handleEventSelectionWindow(Window* window, EventID eventID);
-int handleEventToSetWhoStarts(Window* window, EventID eventID);
-int handleEventSetWhoStarts(Window* window, EventID eventID);
-int handleEventToSetBoard(Window* window, EventID eventID);
-int handleEventSetBoard(Window* window, EventID eventID);
+int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game);
+int handleEventSelectionWindow(Window* window, EventID eventID, Game* game);
+int handleEventToSetWhoStarts(Window* window, EventID eventID, Game* game);
+int handleEventSetWhoStarts(Window* window, EventID eventID, Game* game);
+int handleEventToSetBoard(Window* window, EventID eventID, Game* game);
+int handleEventSetBoard(Window* window, EventID eventID, Game* game);
 
 #endif /* HANDLEFUNCTIONS_H_ */
