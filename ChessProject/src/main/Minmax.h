@@ -19,5 +19,6 @@ int max (int x, int y);
 Moves* getAllMoves(Game* game);
 int scoringFunction(Game* game);
 void addMovesToAllMoves(Moves* allMoves);
+void freeAllMoves(Moves* allMoves);
 
 #endif /* MINMAX_H_ */

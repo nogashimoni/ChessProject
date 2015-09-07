@@ -132,6 +132,7 @@ void clearBoard(Game* game) {
 void initGameFields(Game* game, int isGUIMode) {
 	game->isGUIMode = isGUIMode;
 	game->minmaxDepth = 1;
+	game->minmaxMove = NULL;
 	game->isWhiteTurn = 1;
 	game->isTwoPlayersMode = 1;
 	game->isUserWhite = 1; // relevant only in player vs. ai mode
@@ -762,7 +763,7 @@ Game* cloneGame(Game* game){
 	gameCopy->isUserWhite = game->isUserWhite;
 	gameCopy->isWhiteTurn = game->isWhiteTurn;
 	gameCopy->minmaxDepth = game->minmaxDepth;
-	gameCopy->minmaxMove = game->minmaxMove;
+	gameCopy->minmaxMove = NULL;
 	gameCopy->minmaxScore = game->minmaxScore;
 	return gameCopy;
 }

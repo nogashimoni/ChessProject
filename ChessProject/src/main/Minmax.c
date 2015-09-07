@@ -1,26 +1,29 @@
 
-//
-#include "ChessLogic.h"
+
 #include "Minmax.h"
 
 
 int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
 
 	//halting condition.
-	if ( depth == 0 || isCurrentPlayerLose(game) ) {
+	if ( depth == 0 || isCurrentPlayerLose(game) ) { //change to isPlayerStuck().
 		return scoringFunction(game);
 	}
 
 	//Current player is maximizing.
 	if ( isMaximizing ) {
+
 		Moves* allMoves = getAllMoves(game);
 		Move* move = allMoves->first;
 
 		int val;
 		int bestValue = INT_MIN;
 
+		Game* gameCopy = NULL;
+
 		while ( move != NULL ) {
-			Game* gameCopy = cloneGame(game); //doesn't clone move field
+
+			gameCopy = cloneGame(game); //doesn't clone move field
 			doMove(gameCopy, move,0);
 
 			// switch turns before recursive call
@@ -37,22 +40,27 @@ int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
 				if ( game->minmaxMove != NULL ) {
 					freeMove(game->minmaxMove); //frees only when not null
 				}
-				game->minmaxMove = tmpMove;
+				game->minmaxMove = cloneMove(tmpMove);
 			}
+
+			freeMove(gameCopy->minmaxMove);
+			free(gameCopy);
+			gameCopy = NULL;
+
 			alpha = max(alpha, bestValue); //check where this needs to be put.
 			if (alpha >= beta){
 				break;
 			}
+
 		}
-		//free moves
-		//freeNullAndRemove(allMoves); //to be modified.
+		freeAllMoves(allMoves);
 		return bestValue;
 	}
 
 	//Current player is minimizing
 	else {
-		Moves* moves = getAllMoves(game);
-		Move* move = moves->first;
+		Moves* allMoves = getAllMoves(game);
+		Move* move = allMoves->first;
 
 		int val;
 		int bestValue = INT_MAX;
@@ -76,17 +84,36 @@ int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
 				if ( game->minmaxMove != NULL ) {
 					freeMove(game->minmaxMove); //frees only when not null
 				}
-				game->minmaxMove = tmpMove;
+				game->minmaxMove = cloneMove(tmpMove);
 			}
+
+			freeMove(gameCopy->minmaxMove);
+			free(gameCopy);
+			gameCopy = NULL;
+
 			beta = min(beta, bestValue);//check where this needs to be put.
 			if (alpha >= beta){
 				break;
 			}
+
 		}
-		//free moves
-		//freeNullAndRemove(moves); // to be modified.
+		freeAllMoves(allMoves);
 		return bestValue;
 	}
+}
+
+void freeAllMoves(Moves* allMoves){
+
+	if (allMoves != NULL){
+		Move* currMove = allMoves->first;
+		while ( currMove != NULL ) {
+			Move* prevMove=currMove;
+			currMove = currMove->next;
+			freeMove(prevMove);
+		}
+		free(allMoves);
+	}
+	allMoves = NULL;
 }
 
 int min(int x, int y){
@@ -107,7 +134,7 @@ Moves* getAllMoves(Game* game){
 
 	Moves* allMoves = NULL;
 	allMoves = calloc(sizeof(Moves), 1);
-	if (allMoves != NULL){
+	if (allMoves == NULL){
 		quit();
 	}
 	allMoves->first = NULL;
@@ -120,7 +147,6 @@ Moves* getAllMoves(Game* game){
 			freeMoves(0);
 		}
 	}
-
 	return allMoves;
 }
 
@@ -216,8 +242,8 @@ void addMovesToAllMoves(Moves* allMoves){
 
 	if (allMoves->first == NULL){
 		Move* movesCurrMove = moves->first;
-		Move* allMovesCurrMove = allMoves->first;
-		allMovesCurrMove = cloneMove(movesCurrMove); //doesn't clone 'next'.
+		allMoves->first = cloneMove(movesCurrMove); //doesn't clone 'next'.
+		Move* allMovesCurrMove = allMoves->first;;
 		while (movesCurrMove != NULL){
 			allMovesCurrMove->next = cloneMove(movesCurrMove->next);
 			movesCurrMove = movesCurrMove->next;
@@ -229,8 +255,10 @@ void addMovesToAllMoves(Moves* allMoves){
 		Move* movesCurrMove = moves->first;
 		while (movesCurrMove != NULL){
 			Move* temp = allMoves->first;
-			allMoves->first = cloneMove(movesCurrMove);
-			movesCurrMove->next = temp;
+			Move* newMove = cloneMove(movesCurrMove);
+			allMoves->first = newMove;
+			newMove->next = temp;
+			movesCurrMove = movesCurrMove->next;
 		}
 	}
 }
