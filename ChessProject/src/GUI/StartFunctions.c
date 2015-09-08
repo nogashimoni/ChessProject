@@ -90,10 +90,10 @@ void clipPeices(SDL_Rect* clip) {
 	//Clip range for the top left
 	for (int i=0; i<2; i++) {
 		for (int j=0; j<6; j++) {
-			clip[i+j].x = j*BOARD_MATRIX_SQUARE_SIZE;
-			clip[i+j].y = i*BOARD_MATRIX_SQUARE_SIZE;
-			clip[i+j].w = BOARD_MATRIX_SQUARE_SIZE;
-			clip[i+j].h = BOARD_MATRIX_SQUARE_SIZE;
+			clip[i*6+j].x = j*BOARD_MATRIX_SQUARE_SIZE;
+			clip[i*6+j].y = i*BOARD_MATRIX_SQUARE_SIZE;
+			clip[i*6+j].w = BOARD_MATRIX_SQUARE_SIZE;
+			clip[i*6+j].h = BOARD_MATRIX_SQUARE_SIZE;
 
 		}
 	}

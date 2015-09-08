@@ -43,6 +43,8 @@ SDL_Surface* loadImage(char* imagePath) {
 	if (loadedImage != NULL) {
 		//Create an optimized image
 		optimizedImage = SDL_DisplayFormat(loadedImage);
+		Uint32 colorkey = SDL_MapRGB( optimizedImage->format, 0, 0, 0xFF );
+		SDL_SetColorKey( optimizedImage, SDL_SRCCOLORKEY, colorkey );
 		//Free the old image
 		SDL_FreeSurface(loadedImage);
 	} else {
@@ -182,7 +184,7 @@ Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip, Game* game) {
 void updateMatrixByGame(Matrix* matrix, Game* game) {
 	for (int i=0; i<BOARD_SIZE; i++ ) {
 		for (int j=0; j<BOARD_SIZE; j++ ) {
-			((matrix->buttonsMatrix)[i][j])->peiceToDraw = game->board[i][j];
+			((matrix->buttonsMatrix)[i][j])->peiceToDraw = game->board[j][i];
 		}
 	}
 }
@@ -241,7 +243,7 @@ void drawMatrix(Matrix* matrix, SDL_Surface* screen) {
 int isIJPressed(SDL_Event event, Matrix* matrix, int i, int j) {
 	if ( i> matrix->n || j> matrix -> m)
 		return 0;
-	return matrix->buttonsMatrix[i][j]->isButtonPressed(matrix->buttonsMatrix[i][j], event);
+	return matrix->buttonsMatrix[0][0]->isButtonPressed(matrix->buttonsMatrix[BOARD_SIZE-1-j][i], event);
 }
 
 Buttons* createButtons(Button** buttonsArray, SDL_Surface* image,
