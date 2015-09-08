@@ -1,9 +1,3 @@
-/*
- * StartFunctions.c
- *
- *  Created on: Aug 29, 2015
- *      Author: nogalavi1
- */
 
 #include "HandleFunctions.h"
 
@@ -13,10 +7,10 @@ int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game) {
 			printf("first pressed\n");
 			return PLAYER_SELECTION;
 			break;
-		case (SECOND_PRESSED):
+		case (SECOND_PRESSED): //load game
 			printf("2nd pressed\n");
 			break;
-		case (THIRD_PRESSED):
+		case (THIRD_PRESSED): //quit
 			printf("3rd pressed\n");
 			return QUIT_WINDOW;
 			break;
@@ -41,6 +35,7 @@ int handleEventSelectionWindow(Window* window, EventID eventID, Game* game) {
 			return TO_SET_WHO_STARTS;
 			break;
 		case (THIRD_PRESSED): //cancel
+			initGameFields(game, 1);
 			printf("3rd pressed\n");
 			return WELCOME;
 		case (NOTHING_HAPPANED):
@@ -63,6 +58,7 @@ int handleEventToSetWhoStarts(Window* window, EventID eventID, Game* game) {
 			break;
 		case (THIRD_PRESSED): //cancel
 			printf("3rd pressed\n");
+			initGameFields(game, 1);
 			return WELCOME;
 		case (NOTHING_HAPPANED):
 			return TO_SET_WHO_STARTS;
@@ -77,9 +73,11 @@ int handleEventSetWhoStarts(Window* window, EventID eventID, Game* game) {
 	switch (eventID) {
 		case (FIRST_PRESSED): //white
 			printf("first pressed\n");
+			game->isWhiteTurn = 1;
 			return TO_SET_BOARD;
 			break;
 		case (SECOND_PRESSED): //black
+			game->isWhiteTurn = 0;
 			printf("2nd pressed\n");
 			return TO_SET_BOARD;
 			break;
@@ -98,8 +96,11 @@ int handleEventSetBoard(Window* window, EventID eventID, Game* game) {
 	switch (eventID) {
 		case (QUIT_EVENT):
 			return QUIT_WINDOW;
+			break;
+		default:
+			return SET_BOARD;
 	}
-	return PLAYER_SELECTION;
+
 }
 
 int handleEventToSetBoard(Window* window, EventID eventID, Game* game) {
@@ -120,5 +121,5 @@ int handleEventToSetBoard(Window* window, EventID eventID, Game* game) {
 		case (QUIT_EVENT):
 			return QUIT_WINDOW;
 	}
-	return PLAYER_SELECTION;
+	return TO_SET_BOARD;
 }

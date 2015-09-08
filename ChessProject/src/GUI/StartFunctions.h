@@ -17,7 +17,10 @@
 #include "GUIDefinitions.h"
 
 int startGeneralSetup (Window* window, void* initData);
+int startSetBoard(Window* window, void* initData);
+
 void clipGeneralSetup( SDL_Rect* clip );
+void clipPeices(SDL_Rect* clip);
 char* getSpriteByWindowID(WindowId windowID);
 
 #endif /* STARTFUNCTIONS_H_ */

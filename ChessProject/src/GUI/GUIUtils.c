@@ -11,9 +11,9 @@
 //	return screen;
 //}
 
-Button** createVerticalButtonsArrayAndApplayToScreen(int numOfButtons, int xForButtons,
-		int yFirstButton, SDL_Surface* buttonsImages, SDL_Rect* clipArray,
-		int relevantFirstClipIndex, SDL_Surface* screen) {
+Button** createVerticalButtonsArrayAndApplayToScreen(int numOfButtons,
+		int xForButtons, int yFirstButton, SDL_Surface* buttonsImages,
+		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen) {
 	/** assuming clips are serially organized as needed **/
 
 	Button** buttons = (Button**) malloc(sizeof(Button*) * numOfButtons);
@@ -32,6 +32,7 @@ Button** createVerticalButtonsArrayAndApplayToScreen(int numOfButtons, int xForB
 	}
 	return buttons;
 }
+
 SDL_Surface* loadImage(char* imagePath) {
 	//Temporary storage for the image that's loaded
 	SDL_Surface* loadedImage = NULL;
@@ -70,43 +71,65 @@ void applySurface(int x, int y, SDL_Surface* source, SDL_Surface* destination,
 Background* createBackground(WindowId windowID) {
 	// open background (which will be the tree root)
 	Background* background = NULL;
-	background = (Background*)malloc(sizeof(background));
-	if( background == NULL ) {
+	background = (Background*) malloc(sizeof(background));
+	if (background == NULL) {
 		//TODO
 		printf("error loading background");
 		exit(0);
 	}
 	char* imagePath;
-	switch(windowID) {
-		case(WELCOME):
-			imagePath =  WELCOME_BACKGROUND;
-			break;
-		case(PLAYER_SELECTION):
-			imagePath = PLAYER_SELECTION_BACKGROUND;
-			break;
-		case(TO_SET_WHO_STARTS):
-			imagePath = TO_SET_WHO_STARTS_BACKGROUND;
-			break;
-		case(TO_SET_BOARD):
-			imagePath = TO_SET_BOARD_BACKGROUND;
-			break;
-		case(SET_BOARD):
-			imagePath = SET_BOARD_BACKGROUND;
-			break;
-		case(SET_WHO_STARTS):
-			imagePath = SET_WHO_STARTS_BACKGROUND;
-			break;
-		case(QUIT_WINDOW):
-			break;
+	switch (windowID) {
+	case (WELCOME):
+		imagePath = WELCOME_BACKGROUND;
+		break;
+	case (PLAYER_SELECTION):
+		imagePath = PLAYER_SELECTION_BACKGROUND;
+		break;
+	case (TO_SET_WHO_STARTS):
+		imagePath = TO_SET_WHO_STARTS_BACKGROUND;
+		break;
+	case (TO_SET_BOARD):
+		imagePath = TO_SET_BOARD_BACKGROUND;
+		break;
+	case (SET_BOARD):
+		imagePath = SET_BOARD_BACKGROUND;
+		break;
+	case (SET_WHO_STARTS):
+		imagePath = SET_WHO_STARTS_BACKGROUND;
+		break;
+	case (QUIT_WINDOW):
+		break;
 	}
 
-	background->image= loadImage(imagePath);
-	if( background->image == NULL ) {
+	background->image = loadImage(imagePath);
+	if (background->image == NULL) {
 		//TODO
 	}
 	return background;
 }
 
+Panel* createPanel(SDL_Rect relevantArea, char* backgroundPath) {
+	Panel* panel = NULL;
+
+	panel = (Panel*) malloc(sizeof(Panel));
+	if (panel == NULL) {
+		//TODO standardFunctionFailure("malloc"); /* exit unavoidable */
+		return NULL;
+	}
+	panel->widgetType = PANEL;
+	panel->relevantArea = relevantArea;
+	panel->panelBackground = loadImage(backgroundPath);
+	if (panel->panelBackground == NULL) {
+		//TODO
+	}
+	panel->applyOnPanel = applyOnPanel;
+	return panel;
+
+}
+
+void applyOnPanel(SDL_Surface* screen, Panel* panel, SDL_Surface* whatToApply,
+		int relativeX, int relativeY) {
+}
 
 Button* createButton(SDL_Rect relevantArea) {
 	Button* button = NULL;
@@ -122,7 +145,52 @@ Button* createButton(SDL_Rect relevantArea) {
 	return button;
 }
 
-Buttons* createButtons(Button** buttonsArray, SDL_Surface* image, int numOfButtons) {
+Button*** createButtonsForMatrix(int matrixTopLeftX, int matrixTopLeftY,
+		int squareSize, int n, int m) {
+	Button*** buttons = (Button***) malloc(sizeof(Button**) * n);
+	for (int i = 0; i < n; i++) {
+		buttons[i] = (Button**) malloc(sizeof(Button*) * n);
+		for (int j = 0; j < n; j++) {
+			SDL_Rect box = { matrixTopLeftX + j * squareSize, matrixTopLeftY
+					+ i * squareSize, squareSize, squareSize };
+			Button* button = createButton(box);
+			buttons[i][j] = button;
+		}
+	}
+	return buttons;
+}
+
+Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip) {
+
+	Matrix* matrix = (Matrix*) malloc(sizeof(Matrix));
+	matrix->buttonsMatrix = createButtonsForMatrix(BOARD_MATRIX_TOP_LEFT_X,
+			BOARD_MATRIX_TOP_LEFT_Y, BOARD_MATRIX_SQUARE_SIZE, BOARD_SIZE,
+			BOARD_SIZE);
+	matrix->peicesClipArray = clip;
+	matrix->piecesImages = loadImage(PEICES_SPRITE);
+	matrix->m = BOARD_SIZE;
+	matrix->n = BOARD_SIZE;
+//	matrix->drawIJ
+	matrix->isIJPressed = isIJPressed;
+//	matrix->fatherPanel
+
+//	SDL_Surface* fatherPanel;
+//
+//	int n;
+//
+//	int (*isIJPressed)(Matrix matrix);
+//	int (*drawIJ)(Panel* panel, Matrix* matrix, PieceID peiceType, int i, int j);
+	return matrix;
+}
+
+int isIJPressed(SDL_Event event, Matrix* matrix, int i, int j) {
+	if ( i> matrix->n || j> matrix -> m)
+		return 0;
+	return matrix->buttonsMatrix[i][j]->isButtonPressed(matrix->buttonsMatrix[i][j], event);
+}
+
+Buttons* createButtons(Button** buttonsArray, SDL_Surface* image,
+		int numOfButtons, SDL_Rect* clip) {
 	Buttons* buttons = NULL;
 
 	buttons = (Buttons*) malloc(sizeof(Buttons));
@@ -130,9 +198,11 @@ Buttons* createButtons(Button** buttonsArray, SDL_Surface* image, int numOfButto
 		//TODO standardFunctionFailure("malloc"); /* exit unavoidable */
 		return NULL;
 	}
+	buttons->widgetType = BUTTONS;
 	buttons->buttonArray = buttonsArray;
 	buttons->buttonsImages = image;
 	buttons->numOfButtons = numOfButtons;
+	buttons->clipArray = clip;
 
 	return buttons;
 }
@@ -161,6 +231,36 @@ int isXYInRelevantArea(Button *button, int x, int y) {
 			&& (x < button->relevantArea.x + button->relevantArea.w)
 			&& (y > button->relevantArea.y)
 			&& (y < button->relevantArea.y + button->relevantArea.h);
+}
+
+// draw functions
+void drawGUI(Window* window) {
+	SDL_Surface* screen = window->screen;
+	int dfsRes = treeDFS(window->UITreeHead, NULL, drawNode, screen);
+	if (dfsRes == -1)
+		return;
+
+	if (SDL_Flip(window->screen) != 0) {
+		// todo print error
+		return;
+	}
+}
+
+int drawNode(UITreeNode* UITreeNode, SDL_Surface* screen) {
+	void* widget = UITreeNode->widget;
+	switch (UITreeNode->widgetType) {
+	case (PANEL):
+		applySurface(((Panel*) widget)->relevantArea.x,
+				((Panel*) widget)->relevantArea.y,
+				((Panel*) widget)->panelBackground, screen, NULL);
+		break;
+//		case(MATRIX):
+//			drawMatrix();
+	case (BACKGROUND):
+		applySurface(0, 0, ((Background*) widget)->image, screen, NULL);
+		break;
+	}
+
 }
 
 // Tree utilities
@@ -194,9 +294,9 @@ UITreeNode* append(UITreeNode* list, void* widget, TreeWidgetType widgetType) {
 //		list->widget = data;
 //		return list;
 //	} else { /* list is not empty */
-		UITreeNode* appendedNode = createNode(widget, widgetType); /* create a new list node */
-		if (appendedNode == NULL) { /* failed to create the list node */
-			return NULL;
+	UITreeNode* appendedNode = createNode(widget, widgetType); /* create a new list node */
+	if (appendedNode == NULL) { /* failed to create the list node */
+		return NULL;
 //		}
 		/* Loop until reached the last node of the list.
 		 * If the list passed to the function is the last node
@@ -220,7 +320,8 @@ UITreeNode* append(UITreeNode* list, void* widget, TreeWidgetType widgetType) {
 /*
  * adds a new child to a listNode, at the end of the child list, and return it
  */
-UITreeNode* addChildNode(UITreeNode* parent, void * widget, TreeWidgetType widgetType) {
+UITreeNode* addChildNode(UITreeNode* parent, void * widget,
+		TreeWidgetType widgetType) {
 	UITreeNode* childNode = createNode(widget, widgetType); /* create a new child node */
 	if (childNode == NULL) { /* failed to create the list node */
 		return NULL;
@@ -242,6 +343,37 @@ UITreeNode* addChildNode(UITreeNode* parent, void * widget, TreeWidgetType widge
 	childNode->parent = parent;
 	return childNode; /* return the node added */
 }
+
+/* A recursive function that makes a DFS traversal over a tree,
+ * using treeNodePreFunction as a function that will run in a pre-order manner
+ * (parent before child , and using treeNodePostFunction as a function that will run in a post-order manner
+ * (child before parent). return -1 if there was an error running one of the functions.
+ */
+int treeDFS(UITreeNode* root, int (*treeNodePreFunction)(UITreeNode* node),
+		int (*treeNodePostFunction)(UITreeNode* node, SDL_Surface* screen),
+		SDL_Surface* screen) {
+	if (root == NULL)
+		return 0;
+	int preState = treeNodePreFunction(root); /* run pre function on current root */
+	if (preState == -1) { /* if there was an error, return -1 */
+		return -1;
+	}
+	if (root->child != NULL) {
+		UITreeNode* curr = root->child;
+		while (curr != NULL) { /* go over each child of the root */
+			if (treeDFS(curr, treeNodePreFunction, treeNodePostFunction, screen)
+					== -1) /* make a recursive call */
+				return -1; /* if there was an error, return -1 */
+			curr = curr->next;
+		}
+	}
+	int postState = treeNodePostFunction(root, screen); /* run post function */
+	if (postState == -1) /* if there was an error, return -1 */
+		return -1;
+	return 0;
+}
+
+// free functions
 
 /* freeTree frees the tree nodes and frees their data using a free data function */
 void freeTree(UITreeNode* root) {
@@ -272,8 +404,8 @@ void freeWidget(void* widget, TreeWidgetType widgetType) {
 void freeButtons(Buttons* buttons) {
 	/* frees all buttons fields, and background widget itself */
 	int i;
-	for (i=0; i<buttons->numOfButtons; i++)
-		if ( buttons->buttonArray[i] != NULL ) {
+	for (i = 0; i < buttons->numOfButtons; i++)
+		if (buttons->buttonArray[i] != NULL) {
 			free(buttons->buttonArray[i]);
 		}
 	free(buttons->buttonArray);

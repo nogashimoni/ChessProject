@@ -11,3 +11,7 @@ void* stopGeneralSetup (Window* window) {
 	freeTree(window->UITreeHead);
 	return NULL;
 }
+
+void* stopSetBoard (Window* window) {
+	return NULL;
+}

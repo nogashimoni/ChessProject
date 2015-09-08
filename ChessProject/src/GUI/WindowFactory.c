@@ -37,9 +37,12 @@ Window initWindow(WindowId id, SDL_Surface* screen) {
 		window.handleEvent = handleEventToSetBoard;
 		window.stop = stopGeneralSetup;
 		break;
-
 	case SET_BOARD:
-		//TODO
+		window.start = startSetBoard;
+		window.translateEvent = translateEventSetBoard;
+		window.handleEvent = handleEventSetBoard;
+		window.stop = stopSetBoard;
+		break;
 	default:
 		break;
 	}

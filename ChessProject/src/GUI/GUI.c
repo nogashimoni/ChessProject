@@ -3,6 +3,7 @@
 int isError = 0;
 
 int GUIMain(Game* game) {
+
 		//init gui
 		if (SDL_Init(SDL_INIT_VIDEO) == -1) {
 			notifyFunctionFailure("GUIMain"); //TODO sdlErrorPrint("unable to init SDL");

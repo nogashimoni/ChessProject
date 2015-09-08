@@ -25,5 +25,6 @@
 #include "GUIUtils.h"
 
 void* stopGeneralSetup (Window* window);
+void* stopSetBoard (Window* window);
 
 #endif /* STOPFUNCTIONS_H_ */

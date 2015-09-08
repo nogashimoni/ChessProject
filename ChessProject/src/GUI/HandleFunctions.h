@@ -15,6 +15,7 @@
 #include <SDL/SDL_image.h>
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
+#include "../main/ChessLogic.h"
 
 int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game);
 int handleEventSelectionWindow(Window* window, EventID eventID, Game* game);

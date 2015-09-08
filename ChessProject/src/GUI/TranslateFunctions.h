@@ -17,5 +17,6 @@
 #include "GUIDefinitions.h"
 
 EventID translateEventGeneralSetup(Window* window, SDL_Event event);
+EventID translateEventSetBoard(Window* window, SDL_Event event);
 
 #endif /* TRANSLATEFUNCTIONS_H_ */

@@ -33,3 +33,20 @@ EventID translateEventGeneralSetup(Window* window, SDL_Event event) {
 	return NOTHING_HAPPANED;
 }
 
+EventID translateEventSetBoard(Window* window, SDL_Event event) {
+	if (event.type == SDL_QUIT) {
+		return QUIT_EVENT;
+	}
+
+	for (int i=0; i<BOARD_SIZE; i++) {
+		for (int j=0; j<BOARD_SIZE; j++) {
+			Matrix* matrix = (Matrix*)window->UITreeHead->child->child->widget ;
+			if ( matrix->isIJPressed(event, matrix,i,j) ) {
+				printf("%d %d pressed!\n",i,j);
+				return FIRST_PRESSED;
+			}
+		}
+	}
+	return NOTHING_HAPPANED;
+}
+
