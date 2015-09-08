@@ -160,8 +160,7 @@ Button*** createButtonsForMatrix(int matrixTopLeftX, int matrixTopLeftY,
 	return buttons;
 }
 
-Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip) {
-
+Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip, Game* game) {
 	Matrix* matrix = (Matrix*) malloc(sizeof(Matrix));
 	matrix->buttonsMatrix = createButtonsForMatrix(BOARD_MATRIX_TOP_LEFT_X,
 			BOARD_MATRIX_TOP_LEFT_Y, BOARD_MATRIX_SQUARE_SIZE, BOARD_SIZE,
@@ -172,17 +171,73 @@ Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip) {
 	matrix->n = BOARD_SIZE;
 //	matrix->drawIJ
 	matrix->isIJPressed = isIJPressed;
-//	matrix->fatherPanel
 
-//	SDL_Surface* fatherPanel;
-//
-//	int n;
-//
-//	int (*isIJPressed)(Matrix matrix);
+	updateMatrixByGame(matrix, game);
+
+//	matrix->fatherPanel
 //	int (*drawIJ)(Panel* panel, Matrix* matrix, PieceID peiceType, int i, int j);
 	return matrix;
 }
 
+void updateMatrixByGame(Matrix* matrix, Game* game) {
+	for (int i=0; i<BOARD_SIZE; i++ ) {
+		for (int j=0; j<BOARD_SIZE; j++ ) {
+			((matrix->buttonsMatrix)[i][j])->peiceToDraw = game->board[i][j];
+		}
+	}
+}
+
+void drawMatrix(Matrix* matrix, SDL_Surface* screen) {
+	for (int i=0; i<BOARD_SIZE; i++ ) {
+		for (int j=0; j<BOARD_SIZE; j++ ) {
+			char peiceChar = (matrix->buttonsMatrix[i][j])->peiceToDraw;
+			SDL_Rect* relevantClip;
+			switch (peiceChar){
+				case ('m'):
+					relevantClip = &matrix->peicesClipArray[11];
+					break;
+				case ('b'):
+					relevantClip = &matrix->peicesClipArray[7];
+					break;
+				case ('n'):
+					relevantClip = &matrix->peicesClipArray[10];
+					break;
+				case ('r'):
+					relevantClip = &matrix->peicesClipArray[6];
+					break;
+				case ('q'):
+					relevantClip = &matrix->peicesClipArray[8];
+					break;
+				case ('k'):
+					relevantClip = &matrix->peicesClipArray[9];
+					break;
+				case ('M'):
+					relevantClip = &matrix->peicesClipArray[5];
+					break;
+				case ('B'):
+					relevantClip = &matrix->peicesClipArray[1];
+					break;
+				case ('N'):
+					relevantClip = &matrix->peicesClipArray[4];
+					break;
+				case ('R'):
+					relevantClip = &matrix->peicesClipArray[0];
+					break;
+				case ('Q'):
+					relevantClip = &matrix->peicesClipArray[2];
+					break;
+				case ('K'):
+					relevantClip = &matrix->peicesClipArray[3];
+					break;
+				case (' '):
+					relevantClip = NULL;
+					break;
+			}
+			if ( relevantClip != NULL )
+				applySurface(matrix->buttonsMatrix[i][j]->relevantArea.x,matrix->buttonsMatrix[i][j]->relevantArea.y,matrix->piecesImages,screen,relevantClip);
+		}
+	}
+}
 int isIJPressed(SDL_Event event, Matrix* matrix, int i, int j) {
 	if ( i> matrix->n || j> matrix -> m)
 		return 0;
@@ -260,7 +315,7 @@ int drawNode(UITreeNode* UITreeNode, SDL_Surface* screen) {
 		applySurface(0, 0, ((Background*) widget)->image, screen, NULL);
 		break;
 	}
-
+	return 1;
 }
 
 // Tree utilities

@@ -35,8 +35,10 @@ int isXYInRelevantArea(Button *button, int x, int y);
 void applyOnPanel(SDL_Surface* screen,Panel* panel, SDL_Surface* whatToApply, int relativeX, int relativeY);
 
 //Matrix functions
-Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip);
+Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip, Game* game);
+void updateMatrixByGame(Matrix* matrix, Game* game);
 int isIJPressed(SDL_Event event, Matrix* matrix, int i, int j) ;
+void drawMatrix(Matrix* matrix, SDL_Surface* screen);
 
 // Tree functions
 UITreeNode* createNode(void* headData, TreeWidgetType widgetType);

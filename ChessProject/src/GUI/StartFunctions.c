@@ -1,6 +1,6 @@
 #include "StartFunctions.h"
 
-int startGeneralSetup(Window* window, void* initData) {
+int startGeneralSetup(Window* window, Game* gmae) {
 
 	// create background widget, which is Tree head, apply it to screen and add to UITree
 	Background* background = createBackground(window->windowId);
@@ -35,10 +35,11 @@ int startGeneralSetup(Window* window, void* initData) {
 	}
 	return 1;
 }
-int startSetBoard(Window* window, void* initData) {
+int startSetBoard(Window* window, Game* game) {
 
 	// create background widget, which is Tree head, apply it to screen and add to UITree
 	Background* background = createBackground(window->windowId);
+	//	drawGUI(); todo - draw by tree
 	applySurface(0, 0, background->image, window->screen, NULL);
 	window->UITreeHead = NULL;
 	window->UITreeHead = createNode(background, BACKGROUND);
@@ -55,10 +56,12 @@ int startSetBoard(Window* window, void* initData) {
 
 	SDL_Rect clip[12];
 	clipPeices(clip);
-	Matrix* matrix = createChessBoardMatrix(panel,clip);
+	Matrix* matrix = createChessBoardMatrix(panel,clip,game);
 	addChildNode(window->UITreeHead->child, matrix, MATRIX);
-	SDL_Flip(window->screen);
 
+	//	drawGUI(); todo - draw by tree
+	drawMatrix(matrix, window->screen);
+	SDL_Flip(window->screen);
 	return 1;
 }
 

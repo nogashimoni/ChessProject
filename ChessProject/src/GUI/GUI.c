@@ -33,7 +33,7 @@ int GUIMain(Game* game) {
 		Window activeWindow = windows[WELCOME];
 		WindowId nextWindowId = WELCOME;
 
-		activeWindow.start(&activeWindow, NULL);
+		activeWindow.start(&activeWindow, game);
 
 		while (!isError && nextWindowId != QUIT_WINDOW) {
 //			if (activeGUI.stateId == PLAY_GAME){ /* if we are currently playing the game */
@@ -64,7 +64,7 @@ int GUIMain(Game* game) {
 						if (isError) /* stop function may result in an error */
 							break;
 						activeWindow = windows[nextWindowId];
-						activeWindow.start(&activeWindow, nextWindowInitData);
+						activeWindow.start(&activeWindow, game);//nextWindowInitData);
 					}
 				}
 			}

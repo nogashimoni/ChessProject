@@ -25,7 +25,7 @@
 #define TO_SET_WHO_STARTS_SPRITE "images/to_set_who_starts_sprite.png"
 #define TO_SET_BOARD_SPRITE "images/to_set_board_sprite.png"
 #define SET_WHO_STARTS_SPRITE "images/set_who_starts_sprite.png"
-#define PEICES_SPRITE "images/chess_symbpls.png"
+#define PEICES_SPRITE "images/chess_symbols.png"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -57,21 +57,6 @@ typedef enum {
 	QUIT_WINDOW
 } WindowId;
 
-typedef enum {
-	W_P,
-	W_B,
-	W_N,
-	W_R,
-	W_Q,
-	W_K,
-	B_P,
-	B_B,
-	B_N,
-	B_R,
-	B_Q,
-	B_K,
-	NO_PEICE
-} PieceID;
 
 typedef enum {
 	NOTHING_HAPPANED,
@@ -108,7 +93,7 @@ struct Window {
 	WindowId windowId;
 	SDL_Surface* screen;
 	/* methods */
-	int (*start) (Window* window, void* initData);
+	int (*start) (Window* window, Game* initData);
 	EventID (*translateEvent)(Window* window, SDL_Event event);
 	int (*handleEvent)(Window* window, EventID event, Game* game);
 	void* (*stop) (Window* window);
@@ -123,6 +108,9 @@ struct Button {
 	//The attributes of the button
 	SDL_Rect relevantArea; //The part of the screen the button works in
 	SDL_Rect *clip;//*sprite_map;
+
+	// for Game use
+	char peiceToDraw;
 
 	/* methods */
 	int (*isButtonPressed)(Button *button, SDL_Event sdlEvent);
@@ -165,7 +153,7 @@ struct Matrix {
 	int m;
 
 	int (*isIJPressed)(SDL_Event event, Matrix* matrix, int i, int j);
-	int (*drawIJ)(Panel* panel, Matrix* matrix, PieceID peiceType, int i, int j);
+	int (*drawIJ)(Panel* panel, Matrix* matrix, char peiceType, int i, int j);
 };
 
 typedef struct GameBoard GameBoard;
