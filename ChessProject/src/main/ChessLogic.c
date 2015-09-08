@@ -209,7 +209,7 @@ int isInvalidXY(char x, unsigned int y) {
 	return !isValidIJ(i,j);
 }
 
-int isCurrentPlayerLose(Game* game){
+int isCurrentPlayerStuck(Game* game){
 
 	for (int i=0; i<BOARD_SIZE; i++){
 		for (int j=0; j<BOARD_SIZE; j++){
@@ -287,16 +287,46 @@ int comparePositions(Position* p1, Position* p2){
 	return 1;
 }
 
-void doMove(Game* game, Move* move, int isPrintMove) {
+void doMove(Game* game, Move* move, int isPrintMove, char specialPawn) {
+/*Performs move on the game board. */
 	if (isPrintMove){
 		printMove(move);
 	}
 
 	Position* first = move->first;
 	Position* last = first->next;
+	if (isSpecialPawnMove(game, first, last)){
+		if (specialPawn == EMPTY){ //default for special pawn move is queen.
+			if (game->isWhiteTurn){
+				game->board[last->x][last->y] = WHITE_Q;
+				game->board[first->x][first->y] = EMPTY;
+			}
+			else {
+				game->board[last->x][last->y] = BLACK_Q;
+				game->board[first->x][first->y] = EMPTY;
+			}
+			return;
+		}
+		game->board[last->x][last->y] = specialPawn;
+		game->board[first->x][first->y] = EMPTY;
+		return;
+	}
 	game->board[last->x][last->y] = game->board[first->x][first->y];
 	game->board[first->x][first->y] = EMPTY;
 
+}
+
+int isSpecialPawnMove(Game* game, Position* first, Position* last){
+
+	if (game->board[first->x][first->y] == BLACK_P || game->board[first->x][first->y] == WHITE_P){
+			if (last->y == BOARD_SIZE-1 && game->isWhiteTurn){
+				return 1;
+			}
+			if (last->y == 0 && !game->isWhiteTurn){
+				return 1;
+			}
+	}
+	return 0;
 }
 
 
@@ -431,7 +461,7 @@ int isEndangeringKingMove (Game* game, Move* move){
 
 	Game* gameCopy = cloneGame(game);
 
-	doMove(gameCopy, move, 0);
+	doMove(gameCopy, move, 0, EMPTY);
 	switchTurns(gameCopy);
 
 	for (int i=0; i<BOARD_SIZE;i++){
@@ -517,7 +547,8 @@ void getPawnMoves(Game* game, Moves* movesCopy, int x, int y){
 			if (!isValidIJ(x+i,y-1)){
 				break;
 			}
-			if ((!game->isWhiteTurn)==getPieceColor(game, x+i,y+1)){
+			int pieceColor = getPieceColor(game, x+i,y-1);
+			if (pieceColor == 1){
 				Move* move = creatNewMove(x, y, x+i, y-1);
 				move->eats=1;
 				addToMoves(movesCopy,move);

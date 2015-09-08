@@ -95,29 +95,26 @@ void setupGameByConsole(Game* game) {
 
 
 void playByConsole(Game* game) {
+
 	if (game->isTwoPlayersMode) { //user-user game.
+
 		while ( game->isRunning ) {
-			if (isCurrentPlayerLose(game)){
+			if (isCurrentPlayerStuck(game)){
 				game->isRunning = 0;
-				if (game->isWhiteTurn){
-					printf("Check Mate! Black player wins! \n");
+				if (isCurrentPlayersKingInDanger(game)){
+					if (game->isWhiteTurn){
+						print_message("Mate! Black player wins the game\n");
+					}
+					else{
+						print_message("Mate! White player wins the game\n");
+					}
+					break;
 				}
-				else{
-					printf("Check Mate! White player wins! \n");
+				else {
+					print_message("The game ends in a tie\n");
 				}
 				break;
 			}
-			if (isCurrentPlayersKingInDanger(game)){
-				if (game->isWhiteTurn){
-					printf("Check! White king threatened!\n");
-				}
-				else{
-					printf("Check! Black king threatened! \n");
-				}
-			}
-//			if (OpponentKingInDanger()){
-//				printf("Check! \n");
-//			}
 			userTurn(game);
 			switchTurns(game);
 		}
@@ -125,15 +122,20 @@ void playByConsole(Game* game) {
 	else { //computer-user game.
 
 		while ( game->isRunning ) {
-			if ( isCurrentPlayerLose(game) ){
-				game->isRunning = 0;
-				if (game->isWhiteTurn){
-					printf("Check Mate! Black player wins! \n");
+			if (isCurrentPlayerStuck(game)){
+				if (isCurrentPlayersKingInDanger(game)){
+					game->isRunning = 0;
+					if (game->isWhiteTurn){
+						print_message("Mate! Black player wins the game\n");
+					}
+					else{
+						print_message("Mate! White player wins the game\n");
+					}
+					break;
 				}
-				else{
-					printf("Check Mate! White player wins! \n");
+				else {
+					print_message("The game ends in a tie\n");
 				}
-				break;
 			}
 			if ( game->isComputerTurn ) {
 				computerTurn(game);
@@ -151,7 +153,7 @@ void computerTurn(Game* game){
 
 	printf("Computer: move ");
 	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
-	doMove(game, game->minmaxMove, 1);
+	doMove(game, game->minmaxMove, 1, EMPTY);
 	freeMove(game->minmaxMove);
 
 	print_board(game->board);
@@ -159,11 +161,6 @@ void computerTurn(Game* game){
 	game->minmaxScore = INT_MIN;
 	game->minmaxMove = NULL; //just in case
 
-
-//	int didSomeoneWin = checkIfNextWinsAndPrint(game);
-//	if (didSomeoneWin){
-//		game->isRunning = 0;
-//	}
 }
 
 void userTurn(Game* game){
@@ -183,7 +180,6 @@ void userTurn(Game* game){
 			Move* currMove = moves->first;
 			while ( currMove != NULL ) {
 				printMove(currMove);
-				Move* prevMove=currMove;
 				currMove = currMove->next;
 				//freeMove(prevMove);
 			}
@@ -198,7 +194,23 @@ void userTurn(Game* game){
 			Move* move = createMoveFromString(cmd);
 			int isValid = isValidMove(game, move); //validMove also prints if invalid
 			if (isValid) {
-				doMove(game, move, 1);
+				char peice = EMPTY;
+				if (*(cmd+16) != '\0'){
+					char* type = cmd+16;
+					if (*type == 'k' && *(type + 1) == 'i') {
+						print_message(ILLEGAL_COMMAND);
+						break;
+					} else if (*type == 'k' && *(type + 1) == 'n') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_N : BLACK_N);
+					} else if (*type == 'q') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_Q : BLACK_Q);
+					} else if (*type == 'r') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_R : BLACK_R);
+					} else if (*type == 'b') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_B : BLACK_B);
+					}
+				}
+				doMove(game, move, 1, peice);
 				isStillCurrentUserTurn = 0;
 			}
 			freeMove(move);
@@ -206,9 +218,25 @@ void userTurn(Game* game){
 		else if (!strncmp(cmd,"get_best_move",13)){
 			int d = (int)strtol(cmd+13,(char**)NULL,10);
 			game->minmaxDepth = d;
+			if (d == 0){
+				print_message(ILLEGAL_COMMAND);
+				continue;
+			}
 			getBestMoveForUser(game);
 		}
+		else if (!strncmp(cmd,"get_score",9)){
+			int d = (int)strtol(cmd+9,(char**)NULL,10);
+			if (d == 0){
+				print_message(ILLEGAL_COMMAND);
+				continue;
+			}
 
+			game->minmaxDepth = d;
+			Move* move = createMoveFromString(cmd+10);
+			int moveScore = getScore(game, move ,d);
+			printf("%d\n",moveScore);
+			freeMove(move);
+		}
 		else {
 			print_message(ILLEGAL_COMMAND);
 		}
@@ -217,6 +245,22 @@ void userTurn(Game* game){
 	print_board(game->board);
 
 //	game->whosTurn = 'c';
+
+}
+
+int getScore(Game* game, Move* move, int d){
+
+	Game* gameCopy = cloneGame(game);
+	gameCopy->minmaxDepth = d;
+	doMove(gameCopy, move, 0, EMPTY);
+	int minmaxScore = minmax(gameCopy, d, INT_MIN, INT_MAX, 0);
+	freeMove(gameCopy->minmaxMove);
+	game->minmaxScore = INT_MIN;
+	game->minmaxMove = NULL; //just in case
+	free(gameCopy);
+	gameCopy = NULL;
+	return minmaxScore;
+
 
 }
 

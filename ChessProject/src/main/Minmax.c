@@ -6,7 +6,7 @@
 int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
 
 	//halting condition.
-	if ( depth == 0 || isCurrentPlayerLose(game) ) { //change to isPlayerStuck().
+	if ( depth == 0 || isCurrentPlayerStuck(game) ) { //change to isPlayerStuck().
 		return scoringFunction(game);
 	}
 
@@ -24,7 +24,7 @@ int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
 		while ( move != NULL ) {
 
 			gameCopy = cloneGame(game); //doesn't clone move field
-			doMove(gameCopy, move,0);
+			doMove(gameCopy, move,0, EMPTY);
 
 			// switch turns before recursive call
 			switchTurns(gameCopy);
@@ -68,7 +68,7 @@ int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
 		while ( move != NULL ) {
 			Game* gameCopy = cloneGame(game); //doesn't clone minmax fields
 			gameCopy->minmaxScore = INT_MAX;
-			doMove(gameCopy, move,0);
+			doMove(gameCopy, move,0, EMPTY);
 			// switch turns before recursive call
 
 			switchTurns(gameCopy);
@@ -155,7 +155,7 @@ int scoringFunction(Game* game) {
 	int result;
 
 	//someone lost
-	if ( isCurrentPlayerLose(game) ) {
+	if ( isCurrentPlayerStuck(game) ) {
 		int sign;
 		if  (game->isComputerTurn) {
 			sign = -1;
@@ -225,11 +225,11 @@ int scoringFunction(Game* game) {
 	int whitePlayerScore = numOfWhitePawns + 3*(numOfWhiteKnights+numOfWhiteBishops) + 5*numOfWhiteRooks + 9*numOfWhiteQueens + 400*numOfWhiteKings;
 	int blackPlayerScore = numOfBlackPawns + 3*(numOfBlackKnights+numOfBlackBishops) + 5*numOfBlackRooks + 9*numOfBlackQueens + 400*numOfBlackKings;
 
-	if (!game->isWhiteTurn) {
-		result = whitePlayerScore - blackPlayerScore;
+	if (game->isWhiteTurn) {
+		result = blackPlayerScore - whitePlayerScore;
 	}
 	else {
-		result = blackPlayerScore - whitePlayerScore;
+		result = whitePlayerScore - blackPlayerScore;
 	}
 	return result;
 }
