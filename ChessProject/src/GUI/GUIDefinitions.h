@@ -26,6 +26,7 @@
 #define TO_SET_BOARD_SPRITE "images/to_set_board_sprite.png"
 #define SET_WHO_STARTS_SPRITE "images/set_who_starts_sprite.png"
 #define PEICES_SPRITE "images/chess_symbols.png"
+#define SET_BOARD_BUTTONS_SPRITE "images/set_board_sprite.png"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -44,6 +45,8 @@
 #define BOARD_MATRIX_TOP_LEFT_X 49// not regarding it's father panel!
 #define BOARD_MATRIX_TOP_LEFT_Y 55 // not regarding it's father panel!
 #define BOARD_MATRIX_SQUARE_SIZE 55
+#define SET_BOARD_MENU_X 520
+#define SET_BOARD_MENU_Y 55
 
 #define WINDOWS_COUNT 6
 
