@@ -206,7 +206,7 @@ void userTurn(Game* game){
 						peice = (game->isWhiteTurn == 1 ? WHITE_Q : BLACK_Q);
 					} else if (*type == 'r') {
 						peice = (game->isWhiteTurn == 1 ? WHITE_R : BLACK_R);
-					} else if (*type == 'b') {
+					} else if (*type == 'b' && *(type + 1) == 'i') {
 						peice = (game->isWhiteTurn == 1 ? WHITE_B : BLACK_B);
 					}
 				}
