@@ -61,6 +61,22 @@ int startSetBoard(Window* window, Game* game) {
 
 	//	drawGUI(); todo - draw by tree
 	drawMatrix(matrix, window->screen);
+
+//	// from start function
+//	SDL_Rect menuClip[4];
+//	clipGeneralSetup(clip);
+//	SDL_Surface* buttonsImages = NULL;
+//	buttonsImages = loadImage(SET_BOARD_BUTTONS_SPRITE);
+//	if (buttonsImages == NULL)
+//		return 0; //TOODO
+//	Button** buttonsArray = createVerticalButtonsArrayAndApplayToScreen(3,
+//			xForButtons, yFirstButton, buttonsImages, menuClip, 0, window->screen);
+//
+//	// create buttons widget and add to UITree
+//	Buttons* buttons = createButtons(buttonsArray, buttonsImages, 3, menuClip);
+//	addChildNode((window->UITreeHead->child->child, buttons, BUTTONS);
+//
+
 	SDL_Flip(window->screen);
 	return 1;
 }
