@@ -23,6 +23,7 @@ void computerTurn(Game* game);
 void userTurn(Game* game);
 Move* createMoveFromString(char* cmd);
 void setDisk(Game* game, char x, int y, char color, char* type);
+void getBestMoveForUser(Game* game);
 
 
 

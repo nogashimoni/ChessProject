@@ -9,7 +9,6 @@ int main(int argc, char **argv) {
 
 	if (game.isGUIMode) {
 		GUIMain(&game);
-		printf("%d\n",game.isTwoPlayersMode);
 		quit(); //releases all chess logic variables
 	}
 	else {
@@ -152,8 +151,8 @@ void computerTurn(Game* game){
 
 	printf("Computer: move ");
 	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
-	printf("after minmax");
 	doMove(game, game->minmaxMove, 1);
+	freeMove(game->minmaxMove);
 
 	print_board(game->board);
 //	freeNullAndRemove(game->minmaxMove); // all other moves on tree will be freed only when quit
@@ -203,8 +202,13 @@ void userTurn(Game* game){
 				isStillCurrentUserTurn = 0;
 			}
 			freeMove(move);
-
 		}
+		else if (!strncmp(cmd,"get_best_move",13)){
+			int d = (int)strtol(cmd+13,(char**)NULL,10);
+			game->minmaxDepth = d;
+			getBestMoveForUser(game);
+		}
+
 		else {
 			print_message(ILLEGAL_COMMAND);
 		}
@@ -216,6 +220,17 @@ void userTurn(Game* game){
 
 }
 
+void getBestMoveForUser(Game* game){
+
+	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
+	printMove(game->minmaxMove);
+
+	freeMove(game->minmaxMove);
+	game->minmaxScore = INT_MIN;
+	game->minmaxMove = NULL; //just in case
+}
+
+
 Move* createMoveFromString(char* cmd) {
 	Move* move = NULL;
 	move = malloc(sizeof(move));
@@ -223,7 +238,6 @@ Move* createMoveFromString(char* cmd) {
 		notifyFunctionFailure("creatrMoveFromString");
 		quit();
 	}
-
 	Position* first = malloc(sizeof(Position));
 	if ( first == NULL ) {
 		free(move);
