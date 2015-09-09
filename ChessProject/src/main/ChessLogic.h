@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #include "../services/ErrorHandling.h"
 #include "ChessDefinitions.h"
@@ -26,32 +27,9 @@ void setDifficulty(Game* game, char* pointer);
 void setUserColor(Game* game, char color);
 void loadGameFromXML(Game* game, char* path);
 void clearBoard(Game* game);
-//int setupGame(Game* game, int argc, char** argv);
-//void play(Game*);
-//void quit();
-//// board init and print
-//void print_line();
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]);
-//void init_board(char board[BOARD_SIZE][BOARD_SIZE]);
-//int countPeices(Game* game, char peice);
-//unsigned int yToJ(unsigned int y);
-//unsigned int xToI(char x);
-//int jToY(int j);
-//char iToX(int i);
 int isInvalidXY(char x, unsigned int y);
 void printMove(Move* move);
-//// cmd parsing
-//void getCmdFromUser(char* output);
-//void removeSpaces(char* string);
-//// setup
-//void setGameMode(Game* game, char input);
-//void setDifficulty(Game* game, char* input);
-//void setUserColor(Game* game, char color);
-//void loadGameFromXML(Game* game, char* path);
-//void clearBoard(Game* game);
-//void removeDisk(Game* game, char x, int y);
-//void setDisk(Game* game, char x, int y, char color, char* type);
-//int isLegalPeiceAddition(Game* game, char peice);
 //game
 Moves* getMoves(Game* game, int x, int y, int isCheckRelevence);
 void getMovesForPiece(Game* game, int x, int y, Moves* movesCopy);
@@ -78,13 +56,13 @@ Move* createMoveFromString(char* cmd);
 int isValidMove(Game* game, Move* move);
 int compareMoves(Move* m1, Move* m2);
 int comparePositions(Position* p1, Position* p2);
-//void addMovesToAllMoves(Moves* allMoves);
 Move* cloneMove(Move* move);
 Position* clonePosition(Position* position);
 
 
-void doMove(Game* game, Move* move, int printMove);
-int isCurrentPlayerLose(Game* game);
+void doMove(Game* game, Move* move, int isPrintMove, char specialPawn);
+int isSpecialPawnMove(Game* game, Position* first, Position* last);
+int isCurrentPlayerStuck(Game* game);
 int isCurrentPlayersKingInDanger(Game* game);
 //free
 void freeAndNull(void* obj);
