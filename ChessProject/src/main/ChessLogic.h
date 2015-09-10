@@ -54,10 +54,13 @@ int getPieceColor(Game* game, int i, int j);
 void userTurn(Game* game);
 Move* createMoveFromString(char* cmd);
 int isValidMove(Game* game, Move* move);
+void doMoveIJ(Game* game, int i1, int j1, int i2, int j2, char specialPawnMove);
 int compareMoves(Move* m1, Move* m2);
 int comparePositions(Position* p1, Position* p2);
 Move* cloneMove(Move* move);
 Position* clonePosition(Position* position);
+int isTie(Game* game);
+int isCurrentPlayerLose(Game* game);
 
 
 void doMove(Game* game, Move* move, int isPrintMove, char specialPawn);
