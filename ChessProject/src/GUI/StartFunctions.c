@@ -60,9 +60,9 @@ int startSetDifficultyAndColor(Window* window, Game* game) {
 	if (difficultyButtonsImage == NULL)
 		return 0; //TOODO
 	Button** buttonsArrayDifficulty =
-			createHorizontalButtonsArrayAndApplayToScreen(4, xFirstButton,
+			createHorizontalButtonsArrayAndApplyToScreen(4, xFirstButton,
 					yForButtons, SIZE_OF_DIFFICULTY_SQUARE,
-					difficultyButtonsImage, difficultyClip, 0, window->screen);
+					difficultyButtonsImage, difficultyClip, 0, window->screen, 1);
 	// create buttons widget and add to UITree
 	Buttons* difficultyButtons = createButtons(buttonsArrayDifficulty,
 			difficultyButtonsImage, 4, difficultyClip);
@@ -78,9 +78,9 @@ int startSetDifficultyAndColor(Window* window, Game* game) {
 	buttonsImageColor = loadImage(USER_COLOR_SPRITE);
 	if (buttonsImageColor == NULL)
 		return 0; //TOODO
-	Button** buttonsArrayColor = createHorizontalButtonsArrayAndApplayToScreen(
+	Button** buttonsArrayColor = createHorizontalButtonsArrayAndApplyToScreen(
 			2, xFirstButton, yForColorButtons, WIDTH_OF_COLOR_BUTTON,
-			buttonsImageColor, userColorClip, 0, window->screen);
+			buttonsImageColor, userColorClip, 0, window->screen, 1);
 	// create buttons widget and add to UITree
 	Buttons* colorButtons = createButtons(buttonsArrayColor, buttonsImageColor,
 			2, userColorClip);
@@ -151,11 +151,46 @@ int startSetBoard(Window* window, Game* game) {
 	Button** buttonsArray = createVerticalButtonsArrayAndApplyToScreen(6,
 			xForGameButtons, yFirstButtonGame, BUTTON_WIDTH, BUTTON_HEIGHT,
 			buttonsImages, menuClip, 0, window->screen);
-
 	// create buttons widget and add to UITree
 	Buttons* buttons = createButtons(buttonsArray, buttonsImages, 6, menuClip);
 	appendChild(window->UITreeHead, buttons, BUTTONS);
 
+	// create panel for add panel - we will only show it later
+	SDL_Rect box2 = { X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };
+	Panel* panel2 = createPanel(box2, CHOOSE_PIECE_PANEL_BACKGROUND);
+	appendChild(window->UITreeHead, panel2, PANEL);
+//	applySurface(X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, panel2->panelBackground,
+//			window->screen, NULL);
+
+
+	// create buttons for add panel - we will only show it later
+	SDL_Rect* blackPiecesClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 6);
+	clipSixPeices(blackPiecesClip, 0);
+	SDL_Surface* blackButtonsImage = NULL;
+	blackButtonsImage = loadImage(PIECES_SPRITE);
+	if (blackButtonsImage == NULL)
+		return 0; //TOODO
+	// we call the next function with a flag saying not to apply on screen
+	Button** blackPeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(6,
+			FIRST_X_FOR_PEICES_ON_PANEL, FIRST_Y_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE,
+			blackButtonsImage, blackPiecesClip, 0, window->screen, 0);
+	// create buttons widget and add to UITree
+	Buttons* peicesButtons = createButtons(blackPeicesButtonsArray, blackButtonsImage, 6, blackPiecesClip);
+	appendChild(window->UITreeHead, peicesButtons, BUTTONS);
+
+	SDL_Rect* whitePiecesClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 6);
+	clipSixPeices(whitePiecesClip, 1);
+	SDL_Surface* whiteButtonsImage = NULL;
+	whiteButtonsImage = loadImage(PIECES_SPRITE);
+	if (whiteButtonsImage == NULL)
+		return 0; //TOODO
+	// we call the next function with a flag saying not to apply on screen
+	Button** whitePeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(6,
+			FIRST_X_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE +FIRST_Y_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE,
+			whiteButtonsImage, whitePiecesClip, 0, window->screen, 0);
+	// create buttons widget and add to UITree
+	Buttons* whitePeicesButtons = createButtons(whitePeicesButtonsArray, whiteButtonsImage, 6, whitePiecesClip);
+	appendChild(window->UITreeHead, whitePeicesButtons, BUTTONS);
 
 	SDL_Flip(window->screen);
 	return 1;
@@ -228,6 +263,15 @@ int updateSetBoard(Window* activeWindow, Game* game, GUIMemory* memory) {
 			activeWindow->screen, NULL);
 	drawMatrix(matrix, activeWindow->screen);
 
+	// draw add panel and buttons if needed
+	if (memory->commandType == ADD) {
+		Panel* panel = (Panel*) activeWindow->UITreeHead->child->child->child->child->widget;
+		applySurface(panel->relevantArea.x, panel->relevantArea.y, panel->panelBackground,
+				activeWindow->screen, NULL);
+		drawButtons(activeWindow->UITreeHead->child->child->child->child->child->widget, activeWindow->screen);
+		drawButtons(activeWindow->UITreeHead->child->child->child->child->child->child->widget, activeWindow->screen);
+	}
+
 	//update buttons display
 	Buttons* buttons =
 			(Buttons*) activeWindow->UITreeHead->child->child->child->widget;
@@ -286,6 +330,18 @@ void clipPeices(SDL_Rect* clip) {
 			clip[i * 6 + j].h = BOARD_MATRIX_SQUARE_SIZE;
 
 		}
+	}
+}
+
+void clipSixPeices(SDL_Rect* clip, int isWhitePieces) {
+	int toAddToY = 0;
+	if  ( isWhitePieces )
+		toAddToY = BOARD_MATRIX_SQUARE_SIZE;
+	for (int i = 0; i<6; i++) {
+		clip[i].x = i*BOARD_MATRIX_SQUARE_SIZE;
+		clip[i].y = toAddToY;
+		clip[i].w = BOARD_MATRIX_SQUARE_SIZE;
+		clip[i].h = BOARD_MATRIX_SQUARE_SIZE;
 	}
 }
 

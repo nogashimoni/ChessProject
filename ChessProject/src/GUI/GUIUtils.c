@@ -15,6 +15,7 @@ Button** createVerticalButtonsArrayAndApplyToScreen(int numOfButtons,
 		button = createButton(box);
 		applySurface(xForButtons, yFirstButton + i * height,
 				buttonsImages, screen, &clipArray[i]);
+
 		if (button == NULL) {
 			//quitGUI(); TODO
 		}
@@ -23,9 +24,11 @@ Button** createVerticalButtonsArrayAndApplyToScreen(int numOfButtons,
 	return buttons;
 }
 
-Button** createHorizontalButtonsArrayAndApplayToScreen(int numOfButtons,
+
+
+Button** createHorizontalButtonsArrayAndApplyToScreen(int numOfButtons,
 		int xFirsButton, int yForButtons, int buttonWidth, SDL_Surface* buttonsImage,
-		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen) {
+		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen, int toApply) {
 	/** For difficulty screen **/
 
 	Button** buttons = (Button**) malloc(sizeof(Button*) * numOfButtons);
@@ -34,13 +37,23 @@ Button** createHorizontalButtonsArrayAndApplayToScreen(int numOfButtons,
 		Button* button = NULL;
 		SDL_Rect box = { xFirsButton + i*buttonWidth, yForButtons, buttonWidth, HEIGHT_OF_COLOR_BUTTON };
 		button = createButton(box); //should the relevantArea also be alloced?
-		applySurface(xFirsButton + i*buttonWidth, yForButtons, buttonsImage, screen, &clipArray[i]);
+		if ( toApply ) {
+			applySurface(xFirsButton + i*buttonWidth, yForButtons, buttonsImage, screen, &clipArray[i]);
+		}
 		if (button == NULL) {
-			//quitGUI(); TODO
+				//quitGUI(); TODO
 		}
 		buttons[i] = button;
 	}
 	return buttons;
+}
+
+void drawButtons(Buttons* buttons, SDL_Surface* screen) {
+	for (int i=0; i<buttons->numOfButtons; i++) {
+		int x = buttons->buttonArray[i]->relevantArea.x;
+		int y = buttons->buttonArray[i]->relevantArea.y;
+		applySurface(x,y,buttons->buttonsImages, screen, &buttons->clipArray[i]);
+	}
 }
 
 SDL_Surface* loadImage(char* imagePath) {
@@ -183,8 +196,8 @@ Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip, Game* game) {
 	matrix->buttonsMatrix = createButtonsForMatrix(BOARD_MATRIX_TOP_LEFT_X,
 			BOARD_MATRIX_TOP_LEFT_Y, BOARD_MATRIX_SQUARE_SIZE, BOARD_SIZE,
 			BOARD_SIZE);
-	matrix->peicesClipArray = clip;
-	matrix->piecesImages = loadImage(PEICES_SPRITE);
+	matrix->piecesClipArray = clip;
+	matrix->piecesImages = loadImage(PIECES_SPRITE);
 	matrix->m = BOARD_SIZE;
 	matrix->n = BOARD_SIZE;
 //	matrix->drawIJ
@@ -193,14 +206,14 @@ Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip, Game* game) {
 	updateMatrixByGame(matrix, game);
 
 //	matrix->fatherPanel
-//	int (*drawIJ)(Panel* panel, Matrix* matrix, PieceID peiceType, int i, int j);
+//	int (*drawIJ)(Panel* panel, Matrix* matrix, PieceID PIECEType, int i, int j);
 	return matrix;
 }
 
 void updateMatrixByGame(Matrix* matrix, Game* game) {
 	for (int i=0; i<BOARD_SIZE; i++ ) {
 		for (int j=0; j<BOARD_SIZE; j++ ) {
-			((matrix->buttonsMatrix)[i][j])->peiceToDraw = game->board[j][i];
+			((matrix->buttonsMatrix)[i][j])->pieceToDraw = game->board[j][i];
 		}
 	}
 }
@@ -208,44 +221,44 @@ void updateMatrixByGame(Matrix* matrix, Game* game) {
 void drawMatrix(Matrix* matrix, SDL_Surface* screen) {
 	for (int i=0; i<BOARD_SIZE; i++ ) {
 		for (int j=0; j<BOARD_SIZE; j++ ) {
-			char peiceChar = (matrix->buttonsMatrix[i][j])->peiceToDraw;
+			char pieceChar = (matrix->buttonsMatrix[i][j])->pieceToDraw;
 			SDL_Rect* relevantClip;
-			switch (peiceChar){
+			switch (pieceChar){
 				case ('m'):
-					relevantClip = &matrix->peicesClipArray[11];
+					relevantClip = &matrix->piecesClipArray[11];
 					break;
 				case ('b'):
-					relevantClip = &matrix->peicesClipArray[7];
+					relevantClip = &matrix->piecesClipArray[7];
 					break;
 				case ('n'):
-					relevantClip = &matrix->peicesClipArray[10];
+					relevantClip = &matrix->piecesClipArray[10];
 					break;
 				case ('r'):
-					relevantClip = &matrix->peicesClipArray[6];
+					relevantClip = &matrix->piecesClipArray[6];
 					break;
 				case ('q'):
-					relevantClip = &matrix->peicesClipArray[8];
+					relevantClip = &matrix->piecesClipArray[8];
 					break;
 				case ('k'):
-					relevantClip = &matrix->peicesClipArray[9];
+					relevantClip = &matrix->piecesClipArray[9];
 					break;
 				case ('M'):
-					relevantClip = &matrix->peicesClipArray[5];
+					relevantClip = &matrix->piecesClipArray[5];
 					break;
 				case ('B'):
-					relevantClip = &matrix->peicesClipArray[1];
+					relevantClip = &matrix->piecesClipArray[1];
 					break;
 				case ('N'):
-					relevantClip = &matrix->peicesClipArray[4];
+					relevantClip = &matrix->piecesClipArray[4];
 					break;
 				case ('R'):
-					relevantClip = &matrix->peicesClipArray[0];
+					relevantClip = &matrix->piecesClipArray[0];
 					break;
 				case ('Q'):
-					relevantClip = &matrix->peicesClipArray[2];
+					relevantClip = &matrix->piecesClipArray[2];
 					break;
 				case ('K'):
-					relevantClip = &matrix->peicesClipArray[3];
+					relevantClip = &matrix->piecesClipArray[3];
 					break;
 				case (' '):
 					relevantClip = NULL;
@@ -515,7 +528,7 @@ void freeMatrix(Matrix* matrix) {
 	}
 	free(matrix->buttonsMatrix);
 
-	free(matrix->peicesClipArray);
+	free(matrix->piecesClipArray);
 
 	SDL_FreeSurface(matrix->piecesImages);
 	free(matrix);

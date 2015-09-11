@@ -86,6 +86,52 @@ EventID translateEventSetBoard(Window* window, SDL_Event event, GUIMemory* memor
 		return QUIT_EVENT;
 	}
 
+	if (memory->commandType == ADD) {
+		Buttons* blackButtons = (Buttons*)window->UITreeHead->child->child->child->child->child->widget;
+		Buttons* whiteButtons = (Buttons*)window->UITreeHead->child->child->child->child->child->child->widget;
+		// TODO add cancel button
+
+
+		for ( int i=0; i<blackButtons->numOfButtons; i++ ) {
+			Button* blackButton = blackButtons->buttonArray[i];
+			if (blackButton->isButtonPressed(blackButton, event)) {
+				char chosenPiece;
+				switch(i) {
+					case 0: chosenPiece=BLACK_R; break;
+					case 1: chosenPiece=BLACK_B; break;
+					case 2: chosenPiece=BLACK_Q; break;
+					case 3: chosenPiece=BLACK_K; break;
+					case 4: chosenPiece=BLACK_N; break;
+					case 5: chosenPiece=BLACK_P; break;
+					default: chosenPiece=EMPTY; break;
+				}
+				memory->pieceChosen = chosenPiece;
+				break;
+				return CHOSE_PIECE;
+			}
+			Button* whiteButton = whiteButtons->buttonArray[i];
+			if (whiteButton->isButtonPressed(whiteButton, event)) {
+				char chosenPiece;
+
+				switch(i) {
+					case 0: chosenPiece=WHITE_R; break;
+					case 1: chosenPiece=WHITE_B; break;
+					case 2: chosenPiece=WHITE_Q; break;
+					case 3: chosenPiece=WHITE_K; break;
+					case 4: chosenPiece=WHITE_N; break;
+					case 5: chosenPiece=WHITE_P; break;
+					default: chosenPiece=EMPTY; break;
+				}
+				memory->pieceChosen = chosenPiece;
+				break;
+
+				return CHOSE_PIECE;
+			}
+		}
+		// make sure there's nothing to do but choose piece
+		return NOTHING_HAPPANED;
+	}
+
 	for (int i=0; i<BOARD_SIZE; i++) {
 		for (int j=0; j<BOARD_SIZE; j++) {
 			Matrix* matrix = (Matrix*)window->UITreeHead->child->child->widget ;

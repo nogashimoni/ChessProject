@@ -19,6 +19,7 @@
 #define SET_BOARD_BACKGROUND "images/board_background.png"
 
 #define BOARD_PANEL_BACKGROUND "images/board.png"
+#define CHOOSE_PIECE_PANEL_BACKGROUND "images/choose_piece_panel_background.png"
 
 #define WELCOME_SPRITE "images/main_menu_sprite.png"
 #define PLAYER_SELECTION_SPRITE "images/player_selection_sprite.png"
@@ -28,7 +29,7 @@
 #define TO_SET_WHO_STARTS_SPRITE "images/to_set_who_starts_sprite.png"
 #define TO_SET_BOARD_SPRITE "images/to_set_board_sprite.png"
 #define SET_WHO_STARTS_SPRITE "images/set_who_starts_sprite.png"
-#define PEICES_SPRITE "images/chess_symbols.png"
+#define PIECES_SPRITE "images/chess_symbols.png"
 #define SET_BOARD_BUTTONS_SPRITE "images/set_board_sprite.png"
 
 #define SCREEN_WIDTH 800
@@ -51,8 +52,15 @@
 #define PANEL_WIDTH 461
 #define PANEL_HEIGHT 463
 
-#define BOARD_MATRIX_TOP_LEFT_X 49// not regarding it's father panel!
-#define BOARD_MATRIX_TOP_LEFT_Y 55 // not regarding it's father panel!
+#define X_FOR_ADD_PANEL 75
+#define Y_FOR_ADD_PANEL 75
+#define ADD_PANEL_WIDTH 421
+#define ADD_PANEL_HEIGHT 423
+#define FIRST_X_FOR_PEICES_ON_PANEL 90
+#define FIRST_Y_FOR_PEICES_ON_PANEL 200
+
+#define BOARD_MATRIX_TOP_LEFT_X 49
+#define BOARD_MATRIX_TOP_LEFT_Y 55
 #define BOARD_MATRIX_SQUARE_SIZE 55
 #define SET_BOARD_MENU_X 550
 #define SET_BOARD_MENU_Y 55
@@ -85,7 +93,8 @@ typedef enum {
 	SEVENTH_PRESSED,
 	EIGHTH_PRESSED,
 
-	SOME_SQUARE_PRESSED // relevant in windows with matrix widget
+	SOME_SQUARE_PRESSED, // relevant in windows with matrix widget
+	CHOSE_PIECE // relevant in setup's add piece
 } EventID;
 
 typedef enum {
@@ -123,6 +132,8 @@ struct GUIMemory {
 	int pressedSquarsNum;
 	CommandType commandType;
 	int isScreenUpdated;
+
+	int pieceChosen; //relevant in setup's add
 };
 
 typedef struct Window Window;
@@ -149,7 +160,7 @@ struct Button {
 	SDL_Rect *clip;//*sprite_map;
 
 	// for Game use
-	char peiceToDraw;
+	char pieceToDraw;
 
 	/* methods */
 	int (*isButtonPressed)(Button *button, SDL_Event sdlEvent);
@@ -184,7 +195,7 @@ typedef struct Matrix Matrix;
 struct Matrix {
 	Button*** buttonsMatrix;
 	SDL_Surface* piecesImages;
-	SDL_Rect* peicesClipArray; // white queen , black queen...
+	SDL_Rect* piecesClipArray; // white queen , black queen...
 
 	SDL_Surface* fatherPanel;
 
@@ -192,7 +203,7 @@ struct Matrix {
 	int m;
 
 	int (*isIJPressed)(SDL_Event event, Matrix* matrix, int i, int j);
-	int (*drawIJ)(Panel* panel, Matrix* matrix, char peiceType, int i, int j);
+	int (*drawIJ)(Panel* panel, Matrix* matrix, char pieceType, int i, int j);
 };
 
 typedef struct GameBoard GameBoard;

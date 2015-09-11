@@ -27,6 +27,7 @@ void clipUserColor(SDL_Rect* clip);
 void clipPeices(SDL_Rect* clip);
 void clipCancelContinue(SDL_Rect* clip);
 void clipSetBoard(SDL_Rect* clip);
+void clipSixPeices(SDL_Rect* clip, int isWhitePieces);
 
 char* getSpriteByWindowID(WindowId windowID);
 

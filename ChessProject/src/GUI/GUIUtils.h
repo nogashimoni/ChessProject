@@ -26,12 +26,10 @@ Button*** createButtonsForMatrix(int matrixTopLeftX, int matrixTopLeftY,
 Button** createVerticalButtonsArrayAndApplyToScreen(int numOfButtons,
 		int xForButtons, int yFirstButton, int weidth, int height, SDL_Surface* buttonsImages,
 		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen);
-Button** createHorizontalButtonsArrayAndApplayToScreen(int numOfButtons,
-		int xForButtons, int yFirstButton, int buttonWidth, SDL_Surface* buttonsImages,
-		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen);
-void applyButtonsOnScreen(int numOfButtons, int xForButtons,
-		int yFirstButton, SDL_Surface* buttonsImages, SDL_Rect* clipArray,
-		SDL_Surface* screen);
+Button** createHorizontalButtonsArrayAndApplyToScreen(int numOfButtons,
+		int xFirsButton, int yForButtons, int buttonWidth, SDL_Surface* buttonsImage,
+		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen, int toApply);
+void drawButtons(Buttons* buttons, SDL_Surface* screen);
 int isButtonPressed(Button *button, SDL_Event sdlEvent);
 int isXYInRelevantArea(Button *button, int x, int y);
 

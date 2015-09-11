@@ -175,27 +175,42 @@ int handleEventSetBoard(Window* window, EventID eventID, Game* game,
 		case (REMOVE):
 			i = memory->newI;
 			j = memory->newJ;
-			game->board[getBoardI(i)][getBoardJ(j)] = ' ';
+			game->board[getBoardI(i)][getBoardJ(j)] = EMPTY;
 			memory->commandType = NO_COMMAND;
 			memory->isScreenUpdated = 0;
 			break;
 		case (MOVE):
 			memory->pressedSquarsNum++;
-			if (memory->pressedSquarsNum == 1
+			int newPlaceTaken = memory->pressedSquarsNum == 2
+					&& game->board[memory->newI][getBoardJ(memory->newJ)] != EMPTY;
+			int wantToMoveEmptySquare = memory->pressedSquarsNum == 1
 					&& game->board[memory->newI][getBoardJ(memory->newJ)]
-							== ' ') {
+							== EMPTY;
+
+			if (newPlaceTaken || wantToMoveEmptySquare) {
 				memory->commandType = NO_COMMAND;
 				memory->isScreenUpdated = 0;
 			} else if (memory->pressedSquarsNum == 2) {
 				game->board[memory->newI][getBoardJ(memory->newJ)] =
 						game->board[memory->oldI][getBoardJ(memory->oldJ)];
 				game->board[getBoardI(memory->oldI)][getBoardJ(memory->oldJ)] =
-						' ';
+						EMPTY;
 				memory->commandType = NO_COMMAND;
 				memory->pressedSquarsNum = 0;
 				memory->isScreenUpdated = 0;
 			}
 			break;
+			case (ADD):
+//				memory->pressedSquarsNum++;
+//				int placeTaken = (memory->pressedSquarsNum == 1 )
+//							&& (game->board[memory->newI][getBoardJ(memory->newJ)] != EMPTY);
+//				if (placeTaken) {
+//					memory->commandType = NO_COMMAND;
+//					memory->isScreenUpdated = 0;
+//					break;
+//				}
+
+				break;
 		}
 		break;
 
