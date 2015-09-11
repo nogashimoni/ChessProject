@@ -19,6 +19,7 @@
 
 int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory);
 int handleEventSelectionWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory);
+int handleEventSetDiffAndColor(Window* window, EventID eventID, Game* game, GUIMemory* memory);
 int handleEventToSetWhoStarts(Window* window, EventID eventID, Game* game, GUIMemory* memory);
 int handleEventSetWhoStarts(Window* window, EventID eventID, Game* game, GUIMemory* memory);
 int handleEventToSetBoard(Window* window, EventID eventID, Game* game, GUIMemory* memory);

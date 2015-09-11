@@ -23,8 +23,12 @@ Panel* createPanel(SDL_Rect relevantArea, char* backgroundPath);
 //Buttons functions
 Button*** createButtonsForMatrix(int matrixTopLeftX, int matrixTopLeftY,
 		int squareSize, int n, int m);
-Button** createVerticalButtonsArrayAndApplayToScreen(int numOfButtons, int xForButtons,
-		int yFirstButton, SDL_Surface* buttonsImages, SDL_Rect* clip, int relevantFirstClipIndex, SDL_Surface* screen);
+Button** createVerticalButtonsArrayAndApplyToScreen(int numOfButtons,
+		int xForButtons, int yFirstButton, int weidth, int height, SDL_Surface* buttonsImages,
+		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen);
+Button** createHorizontalButtonsArrayAndApplayToScreen(int numOfButtons,
+		int xForButtons, int yFirstButton, int buttonWidth, SDL_Surface* buttonsImages,
+		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen);
 void applyButtonsOnScreen(int numOfButtons, int xForButtons,
 		int yFirstButton, SDL_Surface* buttonsImages, SDL_Rect* clipArray,
 		SDL_Surface* screen);
@@ -39,19 +43,27 @@ Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip, Game* game);
 void updateMatrixByGame(Matrix* matrix, Game* game);
 int isIJPressed(SDL_Event event, Matrix* matrix, int i, int j) ;
 void drawMatrix(Matrix* matrix, SDL_Surface* screen);
+int getBoardI(int i);
+int getBoardJ(int j);
 
 // Tree functions
 UITreeNode* createNode(void* headData, TreeWidgetType widgetType);
 UITreeNode* addChildNode(UITreeNode* parent, void * data, TreeWidgetType widgetType);
 UITreeNode* appendChild(UITreeNode* list, void* data, TreeWidgetType widgetType);
 int treeDFS(UITreeNode* root, int (* treeNodePreFunction) (UITreeNode* node), int (* treeNodePostFunction)(UITreeNode* node, SDL_Surface* screen), SDL_Surface* screen);
+
 //draw functions
 void drawGUI(Window* window);
 int drawNode(UITreeNode* UITreeNode, SDL_Surface* screen);
+
 //free functions
 void freeWidget(void* widget, TreeWidgetType widgetType) ;
 void freeTree(UITreeNode* root);
 void freeButtons(Buttons* buttons);
 void freeBackground(Background* background);
+void freePanel(Panel* panel);
+void freeMatrix(Matrix* panel);
 
+//GUIMemory utils
+void initMemory(GUIMemory* memory);
 #endif /* GUIUTILS_H_ */

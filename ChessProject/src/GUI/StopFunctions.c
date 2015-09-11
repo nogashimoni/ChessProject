@@ -13,6 +13,14 @@ void* stopGeneralSetup (Window* window) {
 	return NULL;
 }
 
+void* stopSetDiffAndColor(Window* window) {
+	freeTree(window->UITreeHead);
+	SDL_Flip(window->screen);
+	return NULL;
+}
+
 void* stopSetBoard (Window* window) {
+	freeTree(window->UITreeHead);
+	SDL_Flip(window->screen);
 	return NULL;
 }

@@ -1,20 +1,40 @@
 #include "GUIUtils.h"
 
 
-Button** createVerticalButtonsArrayAndApplayToScreen(int numOfButtons,
-		int xForButtons, int yFirstButton, SDL_Surface* buttonsImages,
+Button** createVerticalButtonsArrayAndApplyToScreen(int numOfButtons,
+		int xForButtons, int yFirstButton, int weidth, int height, SDL_Surface* buttonsImages,
 		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen) {
-	/** assuming clips are serially organized as needed **/
+	/** For general setup screens **/
 
 	Button** buttons = (Button**) malloc(sizeof(Button*) * numOfButtons);
 	int i;
 	for (i = 0; i < numOfButtons; i++) {
 		Button* button = NULL;
-		SDL_Rect box = { xForButtons, yFirstButton + i * BUTTON_HEIGHT,
-				BUTTON_WIDTH, BUTTON_HEIGHT };
-		button = createButton(box); //should the relevantArea also be alloced?
-		applySurface(xForButtons, yFirstButton + i * BUTTON_HEIGHT,
+		SDL_Rect box = { xForButtons, yFirstButton + i * height,
+				weidth, height };
+		button = createButton(box);
+		applySurface(xForButtons, yFirstButton + i * height,
 				buttonsImages, screen, &clipArray[i]);
+		if (button == NULL) {
+			//quitGUI(); TODO
+		}
+		buttons[i] = button;
+	}
+	return buttons;
+}
+
+Button** createHorizontalButtonsArrayAndApplayToScreen(int numOfButtons,
+		int xFirsButton, int yForButtons, int buttonWidth, SDL_Surface* buttonsImage,
+		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen) {
+	/** For difficulty screen **/
+
+	Button** buttons = (Button**) malloc(sizeof(Button*) * numOfButtons);
+	int i;
+	for (i = 0; i < numOfButtons; i++) {
+		Button* button = NULL;
+		SDL_Rect box = { xFirsButton + i*buttonWidth, yForButtons, buttonWidth, HEIGHT_OF_COLOR_BUTTON };
+		button = createButton(box); //should the relevantArea also be alloced?
+		applySurface(xFirsButton + i*buttonWidth, yForButtons, buttonsImage, screen, &clipArray[i]);
 		if (button == NULL) {
 			//quitGUI(); TODO
 		}
@@ -77,6 +97,9 @@ Background* createBackground(WindowId windowID) {
 	case (PLAYER_SELECTION):
 		imagePath = PLAYER_SELECTION_BACKGROUND;
 		break;
+	case (SET_DIFFICULTY_AND_COLOR):
+		imagePath = SET_DIFFICULTY_AND_COLOR_BACKGROUND;
+		break;
 	case (TO_SET_WHO_STARTS):
 		imagePath = TO_SET_WHO_STARTS_BACKGROUND;
 		break;
@@ -88,6 +111,9 @@ Background* createBackground(WindowId windowID) {
 		break;
 	case (SET_WHO_STARTS):
 		imagePath = SET_WHO_STARTS_BACKGROUND;
+		break;
+	case (GAME_WINDOW):
+		imagePath = SET_BOARD_BACKGROUND;
 		break;
 	case (QUIT_WINDOW):
 		break;
@@ -225,11 +251,23 @@ void drawMatrix(Matrix* matrix, SDL_Surface* screen) {
 					relevantClip = NULL;
 					break;
 			}
-			if ( relevantClip != NULL )
+			if ( relevantClip != NULL ) {
 				applySurface(matrix->buttonsMatrix[i][j]->relevantArea.x,matrix->buttonsMatrix[i][j]->relevantArea.y,matrix->piecesImages,screen,relevantClip);
+				SDL_Flip(screen);
+			}
 		}
 	}
 }
+
+int getBoardJ(int j) {
+	/** translates from game point of view 'i' to board point of view 'i'. 0,1 ->  **/
+	return BOARD_SIZE-j-1;
+}
+
+int getBoardI(int i) {
+	return i;
+}
+
 int isIJPressed(SDL_Event event, Matrix* matrix, int i, int j) {
 	if ( i> matrix->n || j> matrix -> m)
 		return 0;
@@ -347,12 +385,6 @@ UITreeNode* appendChild(UITreeNode* list, void* widget, TreeWidgetType widgetTyp
 	return appendedNode; /* return the node appended */
 }
 
-//int isEmpty(UITreeNode* list) {
-//	if (list->widget == NULL) { /* if the data pointer is NULL.*/
-//		return 1;
-//	}
-//	return 0;
-//}
 
 /*
  * adds a new child to a listNode, at the end of the child list, and return it
@@ -435,6 +467,12 @@ void freeWidget(void* widget, TreeWidgetType widgetType) {
 	case (BACKGROUND):
 		freeBackground((Background*) widget);
 		break;
+	case (PANEL):
+		freePanel((Panel*) widget);
+		break;
+	case (MATRIX):
+		freeMatrix((Matrix*) widget);
+		break;
 	}
 }
 
@@ -446,6 +484,7 @@ void freeButtons(Buttons* buttons) {
 			free(buttons->buttonArray[i]);
 		}
 	free(buttons->buttonArray);
+	free(buttons->clipArray);
 	SDL_FreeSurface(buttons->buttonsImages);
 	free(buttons);
 }
@@ -456,4 +495,37 @@ void freeBackground(Background* background) {
 		SDL_FreeSurface(background->image);
 	}
 	free(background);
+}
+
+void freePanel(Panel* panel) {
+	/* frees all panel fields, and panel widget itself */
+	if (panel->panelBackground != NULL)
+		SDL_FreeSurface(panel->panelBackground);
+	free(panel);
+}
+
+void freeMatrix(Matrix* matrix) {
+	// free matrix buttons
+	int i, j;
+	for (i = 0; i < matrix->n; i++) {
+		for (j = 0; j < matrix->n; j++) {
+			free(matrix->buttonsMatrix[i][j]);
+		}
+		free(matrix->buttonsMatrix[i]);
+	}
+	free(matrix->buttonsMatrix);
+
+	free(matrix->peicesClipArray);
+
+	SDL_FreeSurface(matrix->piecesImages);
+	free(matrix);
+}
+
+void initMemory(GUIMemory* memory) {
+	memory->newI = -1;
+	memory->newJ = -1;
+	memory->oldI = -1;
+	memory->oldJ = -1;
+	memory->pressedSquarsNum = 0;
+	memory->commandType = NO_COMMAND;
 }

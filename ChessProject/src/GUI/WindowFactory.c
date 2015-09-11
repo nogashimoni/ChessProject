@@ -19,6 +19,12 @@ Window initWindow(WindowId id, SDL_Surface* screen) {
 		window.handleEvent = handleEventSelectionWindow;
 		window.stop = stopGeneralSetup;
 		break;
+	case SET_DIFFICULTY_AND_COLOR:
+		window.start = startSetDifficultyAndColor;
+		window.translateEvent = translateEventSetDiffAndColor;
+		window.handleEvent = handleEventSetDiffAndColor;
+		window.stop = stopSetDiffAndColor;
+		break;
 	case TO_SET_WHO_STARTS:
 		window.start = startGeneralSetup;
 		window.translateEvent = translateEventGeneralSetup;

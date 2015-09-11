@@ -22,6 +22,7 @@ int GUIMain(Game* game) {
 
 		windows[WELCOME] = initWindow(WELCOME, screen);
 		windows[PLAYER_SELECTION] = initWindow(PLAYER_SELECTION, screen);
+		windows[SET_DIFFICULTY_AND_COLOR] = initWindow(SET_DIFFICULTY_AND_COLOR, screen);
 		windows[TO_SET_WHO_STARTS] = initWindow(TO_SET_WHO_STARTS, screen);
 		windows[SET_WHO_STARTS] = initWindow(SET_WHO_STARTS, screen);
 		windows[TO_SET_BOARD] = initWindow(TO_SET_BOARD, screen);
@@ -35,9 +36,8 @@ int GUIMain(Game* game) {
 
 		activeWindow.start(&activeWindow, game);
 
-		GUIMemory memory;
-		memory.pressedI = -1;
-		memory.pressedJ = -1;
+		GUIMemory* memory = (GUIMemory*)malloc(sizeof(GUIMemory));
+		initMemory(memory);
 
 		while (!isError && nextWindowId != QUIT_WINDOW) {
 //			if (activeGUI.stateId == PLAY_GAME){ /* if we are currently playing the game */
@@ -51,18 +51,20 @@ int GUIMain(Game* game) {
 				/* translating the SDL event to a logical event using the view: */
 
 
-
-				EventID eventID = activeWindow.translateEvent(&activeWindow, event, &memory);
-				if (isError) /* PHE function may result in an error */
+				EventID eventID = activeWindow.translateEvent(&activeWindow, event, memory);
+				if (isError)
 					break;
 
 				/* Handling the event */
-				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID, game, &memory);
-				if (isError) /* PHE function may result in an error */
+				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID, game, memory);
+				if (isError)
 					break;
+
+				updateWindow(&activeWindow, game, memory);
 
 				/* if state has changed, stop the active GUI and move to the next one: */
 				if (activeWindow.windowId != nextWindowId) {
+					initMemory(memory);
 					if (nextWindowId == QUIT_WINDOW) {
 						break;
 					}
@@ -80,6 +82,7 @@ int GUIMain(Game* game) {
 
 		/* stop the active GUI (stop function will return NULL stop if called from here) */
 		activeWindow.stop(&activeWindow);
+		free(memory);
 return 1;
 }
 

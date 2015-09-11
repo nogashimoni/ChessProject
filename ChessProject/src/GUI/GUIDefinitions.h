@@ -12,6 +12,7 @@
 //macros for files
 #define WELCOME_BACKGROUND "images/welcome_background.png"
 #define PLAYER_SELECTION_BACKGROUND "images/player_selection_background.png"
+#define SET_DIFFICULTY_AND_COLOR_BACKGROUND "images/welcome_background.png"
 #define TO_SET_WHO_STARTS_BACKGROUND "images/to_set_who_starts_background.png"
 #define TO_SET_BOARD_BACKGROUND "images/to_set_the_board_background.png"
 #define SET_WHO_STARTS_BACKGROUND "images/set_who_starts_background.png"
@@ -21,6 +22,9 @@
 
 #define WELCOME_SPRITE "images/main_menu_sprite.png"
 #define PLAYER_SELECTION_SPRITE "images/player_selection_sprite.png"
+#define DIFFICULTY_SPRITE "images/difficulty_sprite.png"
+#define USER_COLOR_SPRITE "images/user_color_sprite.png"
+#define CANCEL_CONTINUE_SPRITE "images/cancel_continue_sprite.png"
 #define TO_SET_WHO_STARTS_SPRITE "images/to_set_who_starts_sprite.png"
 #define TO_SET_BOARD_SPRITE "images/to_set_board_sprite.png"
 #define SET_WHO_STARTS_SPRITE "images/set_who_starts_sprite.png"
@@ -36,6 +40,12 @@
 #define BUTTON_WIDTH 220
 #define BUTTON_HEIGHT 50
 
+#define SIZE_OF_DIFFICULTY_SQUARE 45
+#define WIDTH_OF_COLOR_BUTTON 90
+#define HEIGHT_OF_COLOR_BUTTON 45
+#define AI_SETTINGS_BUTTONS_X 400
+#define AI_SETTINGS_BUTTONS_FIRST_Y 200
+
 #define X_FOR_PANEL 30
 #define Y_FOR_PANEL 55
 #define PANEL_WIDTH 461
@@ -44,14 +54,15 @@
 #define BOARD_MATRIX_TOP_LEFT_X 49// not regarding it's father panel!
 #define BOARD_MATRIX_TOP_LEFT_Y 55 // not regarding it's father panel!
 #define BOARD_MATRIX_SQUARE_SIZE 55
-#define SET_BOARD_MENU_X 520
+#define SET_BOARD_MENU_X 550
 #define SET_BOARD_MENU_Y 55
 
-#define WINDOWS_COUNT 7
+#define WINDOWS_COUNT 8
 
 typedef enum {
 	WELCOME,
 	PLAYER_SELECTION,
+	SET_DIFFICULTY_AND_COLOR,
 	TO_SET_WHO_STARTS,
 	TO_SET_BOARD,
 	SET_WHO_STARTS,
@@ -68,8 +79,13 @@ typedef enum {
 	FIRST_PRESSED,
 	SECOND_PRESSED,
 	THIRD_PRESSED,
+	FOURTH_PRESSED, // relevant only in difficulty and color window
+	FIFTH_PRESSED,
+	SIXTH_PRESSED,
+	SEVENTH_PRESSED,
+	EIGHTH_PRESSED,
 
-	SOME_SQUARE_PRESSED
+	SOME_SQUARE_PRESSED // relevant in windows with matrix widget
 } EventID;
 
 typedef enum {
@@ -79,6 +95,12 @@ typedef enum {
 	MATRIX
 } TreeWidgetType;
 
+typedef enum {
+	MOVE,
+	ADD,
+	REMOVE,
+	NO_COMMAND
+} CommandType;
 
 struct UITreeNode {
     void *widget;
@@ -94,8 +116,13 @@ typedef struct UITreeNode UITreeNode;
 
 typedef struct GUIMemory GUIMemory;
 struct GUIMemory {
-	int pressedI;
-	int pressedJ;
+	int newI;
+	int newJ;
+	int oldI;
+	int oldJ;
+	int pressedSquarsNum;
+	CommandType commandType;
+	int isScreenUpdated;
 };
 
 typedef struct Window Window;

@@ -17,6 +17,7 @@
 #include "GUIDefinitions.h"
 
 EventID translateEventGeneralSetup(Window* window, SDL_Event event, GUIMemory* memory);
+EventID translateEventSetDiffAndColor(Window* window, SDL_Event event, GUIMemory* memory);
 EventID translateEventSetBoard(Window* window, SDL_Event event, GUIMemory* memory);
 EventID translateEventGameWindow(Window* window, SDL_Event event, GUIMemory* memory);
 
