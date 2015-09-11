@@ -10,15 +10,14 @@
 #define BOARD_SIZE 8
 
 //macros for files
-#define WELCOME_BACKGROUND "images/800_600.png"
-#define PLAYER_SELECTION_BACKGROUND "images/800_600.png"
-#define TO_SET_WHO_STARTS_BACKGROUND "images/800_600.png"
-#define TO_SET_BOARD_BACKGROUND "images/800_600.png"
-#define SET_WHO_STARTS_BACKGROUND "images/800_600.png"
-#define SET_BOARD_BACKGROUND "images/800_600.png"
+#define WELCOME_BACKGROUND "images/welcome_background.png"
+#define PLAYER_SELECTION_BACKGROUND "images/player_selection_background.png"
+#define TO_SET_WHO_STARTS_BACKGROUND "images/to_set_who_starts_background.png"
+#define TO_SET_BOARD_BACKGROUND "images/to_set_the_board_background.png"
+#define SET_WHO_STARTS_BACKGROUND "images/set_who_starts_background.png"
+#define SET_BOARD_BACKGROUND "images/board_background.png"
 
-#define BOARD_PANEL_BACKGROUND "images/board_with_characters.png"
-
+#define BOARD_PANEL_BACKGROUND "images/board.png"
 
 #define WELCOME_SPRITE "images/main_menu_sprite.png"
 #define PLAYER_SELECTION_SPRITE "images/player_selection_sprite.png"
@@ -48,7 +47,7 @@
 #define SET_BOARD_MENU_X 520
 #define SET_BOARD_MENU_Y 55
 
-#define WINDOWS_COUNT 6
+#define WINDOWS_COUNT 7
 
 typedef enum {
 	WELCOME,
@@ -57,6 +56,7 @@ typedef enum {
 	TO_SET_BOARD,
 	SET_WHO_STARTS,
 	SET_BOARD,
+	GAME_WINDOW,
 	QUIT_WINDOW
 } WindowId;
 
@@ -68,6 +68,8 @@ typedef enum {
 	FIRST_PRESSED,
 	SECOND_PRESSED,
 	THIRD_PRESSED,
+
+	SOME_SQUARE_PRESSED
 } EventID;
 
 typedef enum {
@@ -89,6 +91,13 @@ typedef struct UITreeNode UITreeNode;
 
 // GUI Structures
 
+
+typedef struct GUIMemory GUIMemory;
+struct GUIMemory {
+	int pressedI;
+	int pressedJ;
+};
+
 typedef struct Window Window;
 struct Window {
 	/* data members */
@@ -97,8 +106,8 @@ struct Window {
 	SDL_Surface* screen;
 	/* methods */
 	int (*start) (Window* window, Game* initData);
-	EventID (*translateEvent)(Window* window, SDL_Event event);
-	int (*handleEvent)(Window* window, EventID event, Game* game);
+	EventID (*translateEvent)(Window* window, SDL_Event event, GUIMemory* memory);
+	int (*handleEvent)(Window* window, EventID event, Game* game, GUIMemory* memory);
 	void* (*stop) (Window* window);
 };
 
@@ -164,6 +173,8 @@ struct GameBoard {
 	SDL_Surface* boardImage;
 	Buttons* ButtonsMatrix;
 };
+
+
 
 
 #endif /* GUIDEFINITIONS_H_ */

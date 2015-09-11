@@ -16,7 +16,8 @@
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
 
-EventID translateEventGeneralSetup(Window* window, SDL_Event event);
-EventID translateEventSetBoard(Window* window, SDL_Event event);
+EventID translateEventGeneralSetup(Window* window, SDL_Event event, GUIMemory* memory);
+EventID translateEventSetBoard(Window* window, SDL_Event event, GUIMemory* memory);
+EventID translateEventGameWindow(Window* window, SDL_Event event, GUIMemory* memory);
 
 #endif /* TRANSLATEFUNCTIONS_H_ */

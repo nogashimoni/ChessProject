@@ -43,6 +43,12 @@ Window initWindow(WindowId id, SDL_Surface* screen) {
 		window.handleEvent = handleEventSetBoard;
 		window.stop = stopSetBoard;
 		break;
+	case GAME_WINDOW:
+		window.start = startGameWindow;
+		window.translateEvent = translateEventGameWindow;
+		window.handleEvent = handleEventGameWindow;
+		window.stop = stopSetBoard;
+		break;
 	default:
 		break;
 	}

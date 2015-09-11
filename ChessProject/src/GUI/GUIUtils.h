@@ -43,7 +43,7 @@ void drawMatrix(Matrix* matrix, SDL_Surface* screen);
 // Tree functions
 UITreeNode* createNode(void* headData, TreeWidgetType widgetType);
 UITreeNode* addChildNode(UITreeNode* parent, void * data, TreeWidgetType widgetType);
-UITreeNode* append(UITreeNode* list, void* data, TreeWidgetType widgetType);
+UITreeNode* appendChild(UITreeNode* list, void* data, TreeWidgetType widgetType);
 int treeDFS(UITreeNode* root, int (* treeNodePreFunction) (UITreeNode* node), int (* treeNodePostFunction)(UITreeNode* node, SDL_Surface* screen), SDL_Surface* screen);
 //draw functions
 void drawGUI(Window* window);

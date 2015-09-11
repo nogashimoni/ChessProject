@@ -26,7 +26,7 @@ int GUIMain(Game* game) {
 		windows[SET_WHO_STARTS] = initWindow(SET_WHO_STARTS, screen);
 		windows[TO_SET_BOARD] = initWindow(TO_SET_BOARD, screen);
 		windows[SET_BOARD] = initWindow(SET_BOARD, screen);
-
+		windows[GAME_WINDOW] = initWindow(GAME_WINDOW, screen);
 
 		/* Starting the default/initial GUI: */
 
@@ -34,6 +34,10 @@ int GUIMain(Game* game) {
 		WindowId nextWindowId = WELCOME;
 
 		activeWindow.start(&activeWindow, game);
+
+		GUIMemory memory;
+		memory.pressedI = -1;
+		memory.pressedJ = -1;
 
 		while (!isError && nextWindowId != QUIT_WINDOW) {
 //			if (activeGUI.stateId == PLAY_GAME){ /* if we are currently playing the game */
@@ -45,12 +49,15 @@ int GUIMain(Game* game) {
 			while (SDL_PollEvent(&event)) {
 
 				/* translating the SDL event to a logical event using the view: */
-				EventID eventID = activeWindow.translateEvent(&activeWindow, event);
+
+
+
+				EventID eventID = activeWindow.translateEvent(&activeWindow, event, &memory);
 				if (isError) /* PHE function may result in an error */
 					break;
 
 				/* Handling the event */
-				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID, game);
+				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID, game, &memory);
 				if (isError) /* PHE function may result in an error */
 					break;
 

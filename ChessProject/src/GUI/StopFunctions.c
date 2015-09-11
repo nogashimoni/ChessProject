@@ -9,6 +9,7 @@
 
 void* stopGeneralSetup (Window* window) {
 	freeTree(window->UITreeHead);
+	SDL_Flip(window->screen);
 	return NULL;
 }
 

@@ -18,6 +18,7 @@
 
 int startGeneralSetup (Window* window, Game* initData);
 int startSetBoard(Window* window, Game* initData);
+int startGameWindow(Window* window, Game* game);
 
 void clipGeneralSetup( SDL_Rect* clip );
 void clipPeices(SDL_Rect* clip);

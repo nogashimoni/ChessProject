@@ -17,11 +17,12 @@
 #include "GUIDefinitions.h"
 #include "../main/ChessLogic.h"
 
-int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game);
-int handleEventSelectionWindow(Window* window, EventID eventID, Game* game);
-int handleEventToSetWhoStarts(Window* window, EventID eventID, Game* game);
-int handleEventSetWhoStarts(Window* window, EventID eventID, Game* game);
-int handleEventToSetBoard(Window* window, EventID eventID, Game* game);
-int handleEventSetBoard(Window* window, EventID eventID, Game* game);
+int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory);
+int handleEventSelectionWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory);
+int handleEventToSetWhoStarts(Window* window, EventID eventID, Game* game, GUIMemory* memory);
+int handleEventSetWhoStarts(Window* window, EventID eventID, Game* game, GUIMemory* memory);
+int handleEventToSetBoard(Window* window, EventID eventID, Game* game, GUIMemory* memory);
+int handleEventSetBoard(Window* window, EventID eventID, Game* game, GUIMemory* memory);
+int handleEventGameWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory);
 
 #endif /* HANDLEFUNCTIONS_H_ */

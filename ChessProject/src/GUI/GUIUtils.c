@@ -1,15 +1,5 @@
 #include "GUIUtils.h"
 
-//SDL_Surface* openScreen() {
-//	SDL_Surface* screen = malloc(sizeof(SDL_Surface));
-//	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP,
-//			SDL_SWSURFACE);
-//	//If there was an error in setting up the screen
-//	if (screen == NULL)
-//		return 0;
-//	SDL_WM_SetCaption("Noa and Noga's World Of Fun!", NULL);
-//	return screen;
-//}
 
 Button** createVerticalButtonsArrayAndApplayToScreen(int numOfButtons,
 		int xForButtons, int yFirstButton, SDL_Surface* buttonsImages,
@@ -339,32 +329,22 @@ UITreeNode* createNode(void* widget, TreeWidgetType widgetType) {
 	return newNode;
 }
 
-UITreeNode* append(UITreeNode* list, void* widget, TreeWidgetType widgetType) {
+UITreeNode* appendChild(UITreeNode* list, void* widget, TreeWidgetType widgetType) {
 	if (widget == NULL) {
 		return list;
 	}
-//	if (isEmpty(list)) {
-//		/* an empty list is a one node list
-//		 * that has its data pointer points to NULL. Thus adding the
-//		 * data to an empty list will be done by changing the data
-//		 * pointer to the new data. */
-//		list->widget = data;
-//		return list;
-//	} else { /* list is not empty */
+
 	UITreeNode* appendedNode = createNode(widget, widgetType); /* create a new list node */
-	if (appendedNode == NULL) { /* failed to create the list node */
+	if (appendedNode == NULL) {
 		return NULL;
-//		}
-		/* Loop until reached the last node of the list.
-		 * If the list passed to the function is the last node
-		 * of the list, then this loop will take O(1) time.
-		 */
-		while (list->next != NULL) { /* while last node not reached */
-			list = list->next; /* advance to the next node */
-		}
-		list->next = appendedNode; /* append the node at the end of the list */
-		return appendedNode; /* return the node appended */
 	}
+
+	while (list->child != NULL) { /* while last node not reached */
+		list = list->child; /* advance to the next node */
+	}
+	list->child = appendedNode; /* append the node at the end of the list */
+	appendedNode->parent =list;
+	return appendedNode; /* return the node appended */
 }
 
 //int isEmpty(UITreeNode* list) {
@@ -466,7 +446,7 @@ void freeButtons(Buttons* buttons) {
 			free(buttons->buttonArray[i]);
 		}
 	free(buttons->buttonArray);
-
+	SDL_FreeSurface(buttons->buttonsImages);
 	free(buttons);
 }
 

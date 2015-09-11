@@ -1,7 +1,7 @@
 
 #include "HandleFunctions.h"
 
-int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game) {
+int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory) {
 	switch (eventID) {
 		case (FIRST_PRESSED): //new game
 			printf("first pressed\n");
@@ -22,7 +22,7 @@ int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game) {
 	return WELCOME;
 }
 
-int handleEventSelectionWindow(Window* window, EventID eventID, Game* game) {
+int handleEventSelectionWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory) {
 	switch (eventID) {
 		case (FIRST_PRESSED): //player vs. player
 			printf("first pressed\n");
@@ -46,7 +46,7 @@ int handleEventSelectionWindow(Window* window, EventID eventID, Game* game) {
 	return PLAYER_SELECTION;
 }
 
-int handleEventToSetWhoStarts(Window* window, EventID eventID, Game* game) {
+int handleEventToSetWhoStarts(Window* window, EventID eventID, Game* game, GUIMemory* memory) {
 	switch (eventID) {
 		case (FIRST_PRESSED): //set who starts
 			printf("first pressed\n");
@@ -69,7 +69,7 @@ int handleEventToSetWhoStarts(Window* window, EventID eventID, Game* game) {
 }
 
 
-int handleEventSetWhoStarts(Window* window, EventID eventID, Game* game) {
+int handleEventSetWhoStarts(Window* window, EventID eventID, Game* game, GUIMemory* memory) {
 	switch (eventID) {
 		case (FIRST_PRESSED): //white
 			printf("first pressed\n");
@@ -92,18 +92,20 @@ int handleEventSetWhoStarts(Window* window, EventID eventID, Game* game) {
 	return SET_WHO_STARTS;
 }
 
-int handleEventSetBoard(Window* window, EventID eventID, Game* game) {
+int handleEventSetBoard(Window* window, EventID eventID, Game* game, GUIMemory* memory) {
 	switch (eventID) {
 		case (QUIT_EVENT):
 			return QUIT_WINDOW;
 			break;
+		case (FIRST_PRESSED):
+			return GAME_WINDOW;
 		default:
 			return SET_BOARD;
 	}
 
 }
 
-int handleEventToSetBoard(Window* window, EventID eventID, Game* game) {
+int handleEventToSetBoard(Window* window, EventID eventID, Game* game, GUIMemory* memory) {
 	switch (eventID) {
 		case (FIRST_PRESSED): //set board
 			printf("first pressed\n");
@@ -111,7 +113,7 @@ int handleEventToSetBoard(Window* window, EventID eventID, Game* game) {
 			break;
 		case (SECOND_PRESSED): //continue
 			printf("2nd pressed\n");
-			return TO_SET_BOARD; //TODO start game!
+			return GAME_WINDOW; //Start game! (continue)
 			break;
 		case (THIRD_PRESSED): //cancel
 			printf("3rd pressed\n");
@@ -122,4 +124,19 @@ int handleEventToSetBoard(Window* window, EventID eventID, Game* game) {
 			return QUIT_WINDOW;
 	}
 	return TO_SET_BOARD;
+}
+
+int handleEventGameWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory) {
+	switch (eventID) {
+		case (QUIT_EVENT):
+			return QUIT_WINDOW;
+		case (SOME_SQUARE_PRESSED):
+			printf("%d, %d\n", memory->pressedI, memory->pressedJ);
+			break;
+		case (NOTHING_HAPPANED):
+			break;
+		default:
+			break;
+	}
+	return GAME_WINDOW;
 }

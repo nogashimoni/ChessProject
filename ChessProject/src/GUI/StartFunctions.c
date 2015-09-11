@@ -15,7 +15,7 @@ int startGeneralSetup(Window* window, Game* gmae) {
 	SDL_Rect clip[4];
 	clipGeneralSetup(clip);
 	int xForButtons = 0.5 * SCREEN_WIDTH - 0.5 * BUTTON_WIDTH;
-	int yFirstButton = 0.5 * SCREEN_HEIGHT - 1.5 * BUTTON_HEIGHT;
+	int yFirstButton = 0.5 * SCREEN_HEIGHT - 1.5 * BUTTON_HEIGHT -30;
 	SDL_Surface* buttonsImages = NULL;
 	char* imagePath = getSpriteByWindowID(window->windowId);
 	buttonsImages = loadImage(imagePath);
@@ -37,6 +37,51 @@ int startGeneralSetup(Window* window, Game* gmae) {
 }
 int startSetBoard(Window* window, Game* game) {
 
+	// create background widget, which is Tree head, apply it to screen and add to UITree
+	Background* background = createBackground(window->windowId);
+	applySurface(0, 0, background->image, window->screen, NULL);
+	window->UITreeHead = NULL;
+	window->UITreeHead = createNode(background, BACKGROUND);
+	if (window->UITreeHead == NULL) {
+		//TODO
+	}
+
+	SDL_Rect box = { X_FOR_PANEL, Y_FOR_PANEL, PANEL_WIDTH, PANEL_HEIGHT };
+	Panel* panel = createPanel(box, BOARD_PANEL_BACKGROUND);
+	appendChild(window->UITreeHead, panel, PANEL);
+
+	applySurface(X_FOR_PANEL,Y_FOR_PANEL,panel->panelBackground,window->screen,NULL);
+
+	SDL_Rect clip[12];
+	clipPeices(clip);
+	Matrix* matrix = createChessBoardMatrix(panel,clip,game);
+	appendChild(window->UITreeHead, matrix, MATRIX);
+
+	drawMatrix(matrix, window->screen);
+
+	// from start function
+	int xForButtons = SET_BOARD_MENU_X;
+	int yFirstButton = SET_BOARD_MENU_Y;
+
+	SDL_Rect menuClip[3];
+	clipGeneralSetup(menuClip);
+	SDL_Surface* buttonsImages = NULL;
+	buttonsImages = loadImage(SET_BOARD_BUTTONS_SPRITE);
+	if (buttonsImages == NULL)
+		return 0; //TOODO
+	Button** buttonsArray = createVerticalButtonsArrayAndApplayToScreen(3,
+			xForButtons, yFirstButton, buttonsImages, menuClip, 0, window->screen);
+
+	// create buttons widget and add to UITree
+	Buttons* buttons = createButtons(buttonsArray, buttonsImages, 3, menuClip);
+	appendChild(window->UITreeHead, buttons, BUTTONS);
+
+
+	SDL_Flip(window->screen);
+	return 1;
+}
+
+int startGameWindow(Window* window, Game* game) {
 	// create background widget, which is Tree head, apply it to screen and add to UITree
 	Background* background = createBackground(window->windowId);
 	//	drawGUI(); todo - draw by tree
@@ -83,6 +128,7 @@ int startSetBoard(Window* window, Game* game) {
 	SDL_Flip(window->screen);
 	return 1;
 }
+
 
 void clipGeneralSetup(SDL_Rect* clip) {
 	//Clip range for the top left
