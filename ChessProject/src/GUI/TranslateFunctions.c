@@ -86,7 +86,7 @@ EventID translateEventSetBoard(Window* window, SDL_Event event, GUIMemory* memor
 		return QUIT_EVENT;
 	}
 
-	if (memory->commandType == ADD) {
+	if ((memory->commandType == ADD) && (memory->pressedSquarsNum==0) ){
 		Buttons* blackButtons = (Buttons*)window->UITreeHead->child->child->child->child->child->widget;
 		Buttons* whiteButtons = (Buttons*)window->UITreeHead->child->child->child->child->child->child->widget;
 		// TODO add cancel button
@@ -106,7 +106,6 @@ EventID translateEventSetBoard(Window* window, SDL_Event event, GUIMemory* memor
 					default: chosenPiece=EMPTY; break;
 				}
 				memory->pieceChosen = chosenPiece;
-				break;
 				return CHOSE_PIECE;
 			}
 			Button* whiteButton = whiteButtons->buttonArray[i];
@@ -123,8 +122,6 @@ EventID translateEventSetBoard(Window* window, SDL_Event event, GUIMemory* memor
 					default: chosenPiece=EMPTY; break;
 				}
 				memory->pieceChosen = chosenPiece;
-				break;
-
 				return CHOSE_PIECE;
 			}
 		}

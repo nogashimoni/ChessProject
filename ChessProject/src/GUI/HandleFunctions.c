@@ -168,6 +168,10 @@ int handleEventSetBoard(Window* window, EventID eventID, Game* game,
 		return WELCOME;
 	case (SIXTH_PRESSED): //start game
 		return GAME_WINDOW;
+	case (CHOSE_PIECE):
+		memory->pressedSquarsNum = 1; // not really a square
+		memory->isScreenUpdated = 0;
+		break;
 	case (SOME_SQUARE_PRESSED):
 		switch (memory->commandType) {
 		case (NO_COMMAND):
@@ -201,15 +205,22 @@ int handleEventSetBoard(Window* window, EventID eventID, Game* game,
 			}
 			break;
 			case (ADD):
-//				memory->pressedSquarsNum++;
-//				int placeTaken = (memory->pressedSquarsNum == 1 )
-//							&& (game->board[memory->newI][getBoardJ(memory->newJ)] != EMPTY);
-//				if (placeTaken) {
-//					memory->commandType = NO_COMMAND;
-//					memory->isScreenUpdated = 0;
-//					break;
-//				}
+				memory->pressedSquarsNum++;
+				int isPlaceTaken = (memory->pressedSquarsNum == 2 )
+							&& (game->board[memory->newI][getBoardJ(memory->newJ)] != EMPTY);
 
+				int isWrongInitialization = (memory->pressedSquarsNum == 2) && !isLegalPeiceAddition(game, memory->pieceChosen);
+				if ( !isPlaceTaken && isWrongInitialization ) {
+					memory->toShowWrongInitBubble = 1;
+				}
+				memory->commandType = NO_COMMAND;
+				memory->pressedSquarsNum = 0;
+				memory->isScreenUpdated = 0;
+				// addition is legal
+				if ( !isPlaceTaken && !isWrongInitialization ) {
+					game->board[memory->newI][getBoardJ(memory->newJ)] = memory->pieceChosen;
+				}
+				memory->pieceChosen = -1;
 				break;
 		}
 		break;

@@ -264,7 +264,7 @@ int updateSetBoard(Window* activeWindow, Game* game, GUIMemory* memory) {
 	drawMatrix(matrix, activeWindow->screen);
 
 	// draw add panel and buttons if needed
-	if (memory->commandType == ADD) {
+	if ( (memory->commandType == ADD) && (memory->pressedSquarsNum == 0) ){
 		Panel* panel = (Panel*) activeWindow->UITreeHead->child->child->child->child->widget;
 		applySurface(panel->relevantArea.x, panel->relevantArea.y, panel->panelBackground,
 				activeWindow->screen, NULL);
@@ -275,7 +275,7 @@ int updateSetBoard(Window* activeWindow, Game* game, GUIMemory* memory) {
 	//update buttons display
 	Buttons* buttons =
 			(Buttons*) activeWindow->UITreeHead->child->child->child->widget;
-	// clear all yellow marks
+	// clear all yellow marks (redraw them if needed)
 	for (int i = 0; i < 6; i++) {
 		applySurface(SET_BOARD_MENU_X, SET_BOARD_MENU_Y + i * BUTTON_HEIGHT,
 				buttons->buttonsImages, activeWindow->screen,

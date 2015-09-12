@@ -541,4 +541,8 @@ void initMemory(GUIMemory* memory) {
 	memory->oldJ = -1;
 	memory->pressedSquarsNum = 0;
 	memory->commandType = NO_COMMAND;
+	memory->pieceChosen = 'a';
+
+	memory->toShowCheckBubble = 0;
+	memory->toShowWrongInitBubble = 0;
 }

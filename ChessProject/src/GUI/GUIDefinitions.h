@@ -133,7 +133,10 @@ struct GUIMemory {
 	CommandType commandType;
 	int isScreenUpdated;
 
-	int pieceChosen; //relevant in setup's add
+	int toShowWrongInitBubble;
+	int toShowCheckBubble;
+
+	char pieceChosen; //relevant in setup's add
 };
 
 typedef struct Window Window;
