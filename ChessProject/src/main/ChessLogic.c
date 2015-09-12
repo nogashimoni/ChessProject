@@ -209,6 +209,21 @@ int isInvalidXY(char x, unsigned int y) {
 	return !isValidIJ(i,j);
 }
 
+
+int isTie(Game* game){
+	if (!isCurrentPlayersKingInDanger(game) && isCurrentPlayerStuck(game)){
+		return 1;
+	}
+	return 0;
+}
+
+int isCurrentPlayerLose(Game* game){
+	if (isCurrentPlayersKingInDanger(game) && isCurrentPlayerStuck(game)){
+		return 1;
+	}
+	return 0;
+}
+
 int isCurrentPlayerStuck(Game* game){
 
 	for (int i=0; i<BOARD_SIZE; i++){
@@ -225,6 +240,7 @@ int isCurrentPlayerStuck(Game* game){
 }
 
 int isCurrentPlayersKingInDanger(Game* game){
+/*Checks if current player's king is in danger - 'Check' for current player*/
 
 	Game* gameCopy = cloneGame(game);
 	switchTurns(gameCopy);
@@ -272,6 +288,23 @@ int isValidMove(Game* game, Move* move) {
 	}
 	print_message(ILLEGAL_MOVE);
 	return 0;
+}
+
+int isValidMoveIJ(Game* game, int i1, int j1, int i2, int j2){
+
+	Move* move = creatNewMove(i1, j1, i2, j2);
+	int result = isValidMove(game, move);
+	freeMove(move);
+	return result;
+
+}
+
+void doMoveIJ(Game* game, int i1, int j1, int i2, int j2, char specialPawn){
+
+	Move* move = creatNewMove(i1, j1, i2, j2);
+	doMove(game, move, 0, specialPawn);
+	freeMove(move);
+
 }
 
 int compareMoves(Move* m1, Move* m2){
@@ -830,6 +863,72 @@ Position* clonePosition(Position* position){
 	positionCopy->next = NULL;
 	return positionCopy;
 }
+/* XML file - TODO
+void saveGameGUI(Game* game, FILE* f){
+	int i, j;
+	fprintf(f, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	fprintf(f, "<game>\n");
+	fprintf(f, "\t<type>%d</type>\n", game->isComputerTurn + 1);
+	if (game->isComputerTurn == 1){
+		if (game->minmaxDepth == BEST_DEPTH)
+			fprintf(f, "\t<difficulty>Best</difficulty>\n");
+		else
+			fprintf(f, "\t<difficulty>%d</difficulty>\n", game->minmaxDepth);
+		fprintf(f, "\t<user_color>%s</user_color>\n", game->isUserWhite == 1 ? "White" : "Black");
+	}
+	fprintf(f, "\t<next_turn>%s</next_turn>\n", game->isWhiteTurn == 1 ? "White" : "Black");
+	fprintf(f, "\t<board>\n");
+	for (i = 0; i < BOARD_SIZE; i++){
+		fprintf(f, "\t\t<row_%d>", 8 - i);
+		for (j = 0; j < BOARD_SIZE; j++){
+			switch (game->board[j][7 - i]){
+			case WHITE_P:
+				fprintf(f, "m");
+				break;
+			case WHITE_K:
+				fprintf(f, "k");
+				break;
+			case BLACK_P:
+				fprintf(f, "M");
+				break;
+			case BLACK_K:
+				fprintf(f, "K");
+				break;
+			case WHITE_B:
+				fprintf(f, "b");
+				break;
+			case BLACK_B:
+				fprintf(f, "B");
+				break;
+			case WHITE_R:
+				fprintf(f, "r");
+				break;
+			case BLACK_R:
+				fprintf(f, "R");
+				break;
+			case WHITE_N:
+				fprintf(f, "n");
+				break;
+			case BLACK_N:
+				fprintf(f, "N");
+				break;
+			case WHITE_Q:
+				fprintf(f, "q");
+				break;
+			case BLACK_Q:
+				fprintf(f, "Q");
+				break;
+			case EMPTY:
+				fprintf(f, "_");
+				break;
+			}
+		}
+		fprintf(f, "</row_%d>\n", 8 - i);
+	}
+	fprintf(f, "\t</board>\n");
+	fprintf(f, "</game>\n");
+}
+*/
 
 void freeAndNull(void* obj) {
 	if ( obj != NULL ) {

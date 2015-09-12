@@ -223,6 +223,8 @@ void userTurn(Game* game){
 				continue;
 			}
 			getBestMoveForUser(game);
+			freeMove(game->minmaxMove);
+			game->minmaxMove = NULL; //just in case
 		}
 		else if (!strncmp(cmd,"get_score",9)){
 			int d = (int)strtol(cmd+9,(char**)NULL,10);
@@ -248,6 +250,15 @@ void userTurn(Game* game){
 
 }
 
+Move* getBestMoveForUser(Game* game){
+
+	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
+	printMove(game->minmaxMove);
+	game->minmaxScore = INT_MIN;
+	return game->minmaxMove;
+
+}
+
 int getScore(Game* game, Move* move, int d){
 
 	Game* gameCopy = cloneGame(game);
@@ -262,16 +273,6 @@ int getScore(Game* game, Move* move, int d){
 	return minmaxScore;
 
 
-}
-
-void getBestMoveForUser(Game* game){
-
-	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
-	printMove(game->minmaxMove);
-
-	freeMove(game->minmaxMove);
-	game->minmaxScore = INT_MIN;
-	game->minmaxMove = NULL; //just in case
 }
 
 
