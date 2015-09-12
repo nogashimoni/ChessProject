@@ -139,6 +139,18 @@ Background* createBackground(WindowId windowID) {
 	return background;
 }
 
+void showBubble(GUIMemory* memory, SDL_Surface* screen) {
+	if ( memory-> pathOfBubbleToShow == NULL ) {
+		return;
+	}
+	SDL_Surface* image = loadImage(memory->pathOfBubbleToShow);
+	applySurface(BUBBLE_X, BUBBLE_Y, image, screen, NULL);
+	SDL_Flip(screen);
+	SDL_Delay(BUBBLE_TIME);
+	memory->pathOfBubbleToShow = NULL;
+	SDL_FreeSurface(image);
+}
+
 Panel* createPanel(SDL_Rect relevantArea, char* backgroundPath) {
 	Panel* panel = NULL;
 
@@ -543,6 +555,5 @@ void initMemory(GUIMemory* memory) {
 	memory->commandType = NO_COMMAND;
 	memory->pieceChosen = 'a';
 
-	memory->toShowCheckBubble = 0;
-	memory->toShowWrongInitBubble = 0;
+	memory->pathOfBubbleToShow = NULL;
 }

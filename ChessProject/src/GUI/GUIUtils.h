@@ -33,6 +33,9 @@ void drawButtons(Buttons* buttons, SDL_Surface* screen);
 int isButtonPressed(Button *button, SDL_Event sdlEvent);
 int isXYInRelevantArea(Button *button, int x, int y);
 
+//BubbleFunctions
+void showBubble(GUIMemory* memory, SDL_Surface* screen);
+
 //Panel Functions
 void applyOnPanel(SDL_Surface* screen,Panel* panel, SDL_Surface* whatToApply, int relativeX, int relativeY);
 

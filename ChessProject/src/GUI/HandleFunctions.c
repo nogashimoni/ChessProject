@@ -167,7 +167,15 @@ int handleEventSetBoard(Window* window, EventID eventID, Game* game,
 		initGameFields(game, 1);
 		return WELCOME;
 	case (SIXTH_PRESSED): //start game
-		return GAME_WINDOW;
+		if ( (countPeices(game, WHITE_K) == 1) && (countPeices(game, BLACK_K) == 1) ) {
+			return GAME_WINDOW;
+		} else {
+			memory->pathOfBubbleToShow = WRONG_INIT_BUBBLE;
+			memory->isScreenUpdated = 0;
+			memory->commandType = NO_COMMAND;
+			print_message(WROND_BOARD_INITIALIZATION);
+			return SET_BOARD;
+		}
 	case (CHOSE_PIECE):
 		memory->pressedSquarsNum = 1; // not really a square
 		memory->isScreenUpdated = 0;
@@ -211,7 +219,7 @@ int handleEventSetBoard(Window* window, EventID eventID, Game* game,
 
 				int isWrongInitialization = (memory->pressedSquarsNum == 2) && !isLegalPeiceAddition(game, memory->pieceChosen);
 				if ( !isPlaceTaken && isWrongInitialization ) {
-					memory->toShowWrongInitBubble = 1;
+					memory->pathOfBubbleToShow = WRONG_INIT_BUBBLE;
 				}
 				memory->commandType = NO_COMMAND;
 				memory->pressedSquarsNum = 0;

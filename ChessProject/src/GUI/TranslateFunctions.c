@@ -86,6 +86,10 @@ EventID translateEventSetBoard(Window* window, SDL_Event event, GUIMemory* memor
 		return QUIT_EVENT;
 	}
 
+//	if (memory->pathOfBubbleToShow != NULL) {
+//		return NOTHING_HAPPANED;
+//	}
+
 	if ((memory->commandType == ADD) && (memory->pressedSquarsNum==0) ){
 		Buttons* blackButtons = (Buttons*)window->UITreeHead->child->child->child->child->child->widget;
 		Buttons* whiteButtons = (Buttons*)window->UITreeHead->child->child->child->child->child->child->widget;

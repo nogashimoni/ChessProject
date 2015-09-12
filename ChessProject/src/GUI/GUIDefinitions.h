@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h> // for sleep
 #include "../main/ChessDefinitions.h"
 
 #define BOARD_SIZE 8
@@ -20,6 +21,8 @@
 
 #define BOARD_PANEL_BACKGROUND "images/board.png"
 #define CHOOSE_PIECE_PANEL_BACKGROUND "images/choose_piece_panel_background.png"
+
+#define WRONG_INIT_BUBBLE "images/wrong_board_init_bubble.png" // TODO change
 
 #define WELCOME_SPRITE "images/main_menu_sprite.png"
 #define PLAYER_SELECTION_SPRITE "images/player_selection_sprite.png"
@@ -58,6 +61,10 @@
 #define ADD_PANEL_HEIGHT 423
 #define FIRST_X_FOR_PEICES_ON_PANEL 90
 #define FIRST_Y_FOR_PEICES_ON_PANEL 200
+
+#define BUBBLE_X 550
+#define BUBBLE_Y 360
+#define BUBBLE_TIME 1500
 
 #define BOARD_MATRIX_TOP_LEFT_X 49
 #define BOARD_MATRIX_TOP_LEFT_Y 55
@@ -133,8 +140,7 @@ struct GUIMemory {
 	CommandType commandType;
 	int isScreenUpdated;
 
-	int toShowWrongInitBubble;
-	int toShowCheckBubble;
+	char* pathOfBubbleToShow;
 
 	char pieceChosen; //relevant in setup's add
 };

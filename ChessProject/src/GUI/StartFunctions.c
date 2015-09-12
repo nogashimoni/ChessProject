@@ -255,6 +255,15 @@ int updateWindow(Window* activeWindow, Game* game, GUIMemory* memory) {
 }
 
 int updateSetBoard(Window* activeWindow, Game* game, GUIMemory* memory) {
+	if ( memory->pathOfBubbleToShow != NULL ) {
+		showBubble(memory, activeWindow->screen);
+		memory->pathOfBubbleToShow = NULL;
+		// redraw background
+		Background* background = (Background*)activeWindow->UITreeHead->widget;
+		applySurface(0,0,background->image, activeWindow->screen, NULL );
+	}
+
+
 	// update matrix
 	Matrix* matrix = (Matrix*) activeWindow->UITreeHead->child->child->widget;
 	updateMatrixByGame(matrix, game);
