@@ -139,6 +139,7 @@ Background* createBackground(WindowId windowID) {
 	return background;
 }
 
+
 void showBubble(GUIMemory* memory, SDL_Surface* screen) {
 	if ( memory-> pathOfBubbleToShow == NULL ) {
 		return;
@@ -210,6 +211,7 @@ Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip, Game* game) {
 			BOARD_SIZE);
 	matrix->piecesClipArray = clip;
 	matrix->piecesImages = loadImage(PIECES_SPRITE);
+	matrix->highlightImage = loadImage(HIGHLIGHT_CELL);
 	matrix->m = BOARD_SIZE;
 	matrix->n = BOARD_SIZE;
 //	matrix->drawIJ
@@ -225,7 +227,7 @@ Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip, Game* game) {
 void updateMatrixByGame(Matrix* matrix, Game* game) {
 	for (int i=0; i<BOARD_SIZE; i++ ) {
 		for (int j=0; j<BOARD_SIZE; j++ ) {
-			((matrix->buttonsMatrix)[i][j])->pieceToDraw = game->board[j][i];
+			((matrix->buttonsMatrix)[i][j])->pieceToDraw = game->board[j][getBoardJ(i)];
 		}
 	}
 }
@@ -542,6 +544,7 @@ void freeMatrix(Matrix* matrix) {
 
 	free(matrix->piecesClipArray);
 
+	SDL_FreeSurface(matrix->highlightImage);
 	SDL_FreeSurface(matrix->piecesImages);
 	free(matrix);
 }

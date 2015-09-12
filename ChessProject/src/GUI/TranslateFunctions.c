@@ -178,7 +178,7 @@ EventID translateEventGameWindow(Window* window, SDL_Event event, GUIMemory* mem
 	if (event.type == SDL_QUIT) {
 		return QUIT_EVENT;
 	}
-
+	// is matrix pressed
 	for (int i=0; i<BOARD_SIZE; i++) {
 		for (int j=0; j<BOARD_SIZE; j++) {
 			Matrix* matrix = (Matrix*)window->UITreeHead->child->child->widget ;
@@ -191,11 +191,10 @@ EventID translateEventGameWindow(Window* window, SDL_Event event, GUIMemory* mem
 			}
 		}
 	}
-	// are buttons pressed (from previous function)
 
+	// are buttons pressed
 	UITreeNode* buttonsNode = window->UITreeHead->child->child->child;
 	Buttons* buttons = ((Buttons*) buttonsNode->widget);
-
 	int buttonNumber;
 	for (buttonNumber = 0; buttonNumber < buttons->numOfButtons;
 			buttonNumber++) {
@@ -209,6 +208,13 @@ EventID translateEventGameWindow(Window* window, SDL_Event event, GUIMemory* mem
 				return THIRD_PRESSED;
 		}
 	}
+	UITreeNode* getBestMovesbuttonsNode = window->UITreeHead->child->child->child->child;
+	Buttons* getBestMoveButtons = ((Buttons*) getBestMovesbuttonsNode->widget);
+	Button* getBestMoveButton = getBestMoveButtons->buttonArray[0];
+	if (getBestMoveButton->isButtonPressed(getBestMoveButton, event)) {
+		return FOURTH_PRESSED;
+	}
+
 	return NOTHING_HAPPANED;
 
 

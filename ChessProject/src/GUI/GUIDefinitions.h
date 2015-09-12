@@ -15,14 +15,16 @@
 #define PLAYER_SELECTION_BACKGROUND "images/player_selection_background.png"
 #define SET_DIFFICULTY_AND_COLOR_BACKGROUND "images/welcome_background.png"
 #define TO_SET_WHO_STARTS_BACKGROUND "images/to_set_who_starts_background.png"
-#define TO_SET_BOARD_BACKGROUND "images/to_set_the_board_background.png"
+#define TO_SET_BOARD_BACKGROUND "images/to_set_board_background.png"
 #define SET_WHO_STARTS_BACKGROUND "images/set_who_starts_background.png"
 #define SET_BOARD_BACKGROUND "images/board_background.png"
 
 #define BOARD_PANEL_BACKGROUND "images/board.png"
 #define CHOOSE_PIECE_PANEL_BACKGROUND "images/choose_piece_panel_background.png"
 
-#define WRONG_INIT_BUBBLE "images/wrong_board_init_bubble.png" // TODO change
+#define WRONG_INIT_BUBBLE "images/wrong_board_init_bubble.png"
+
+#define HIGHLIGHT_CELL "images/highlight_possible_cell.png"
 
 #define WELCOME_SPRITE "images/main_menu_sprite.png"
 #define PLAYER_SELECTION_SPRITE "images/player_selection_sprite.png"
@@ -34,6 +36,8 @@
 #define SET_WHO_STARTS_SPRITE "images/set_who_starts_sprite.png"
 #define PIECES_SPRITE "images/chess_symbols.png"
 #define SET_BOARD_BUTTONS_SPRITE "images/set_board_sprite.png"
+#define GAME_MENU_BUTTONS_SPRITE "images/game_menu_sprite.png"
+#define GET_BEST_MOVE_SPRITE "images/get_best_move_sprite.png"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -64,13 +68,16 @@
 
 #define BUBBLE_X 550
 #define BUBBLE_Y 360
-#define BUBBLE_TIME 1500
+#define BUBBLE_TIME 1000
 
 #define BOARD_MATRIX_TOP_LEFT_X 49
 #define BOARD_MATRIX_TOP_LEFT_Y 55
 #define BOARD_MATRIX_SQUARE_SIZE 55
 #define SET_BOARD_MENU_X 550
 #define SET_BOARD_MENU_Y 55
+
+#define GET_BEST_MOVE_BUTTON_X 155
+#define GET_BEST_MOVE_BUTTON_Y 535
 
 #define WINDOWS_COUNT 8
 
@@ -115,6 +122,11 @@ typedef enum {
 	MOVE,
 	ADD,
 	REMOVE,
+
+	GET_BEST_MOVE,
+	SAVE,
+	DO_MOVE,
+
 	NO_COMMAND
 } CommandType;
 
@@ -207,6 +219,7 @@ struct Matrix {
 	SDL_Rect* piecesClipArray; // white queen , black queen...
 
 	SDL_Surface* fatherPanel;
+	SDL_Surface* highlightImage;
 
 	int n;
 	int m;

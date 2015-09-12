@@ -26,4 +26,13 @@ int handleEventToSetBoard(Window* window, EventID eventID, Game* game, GUIMemory
 int handleEventSetBoard(Window* window, EventID eventID, Game* game, GUIMemory* memory);
 int handleEventGameWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory);
 
+// update window functions
+int updateWindow(Window* activeWindow,Game* game, GUIMemory* memory);
+int updateSetBoard(Window* activeWindow,Game* game, GUIMemory* memory);
+int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory);
+
+// helper functions
+void displayAllPossibleMoves(Matrix* matrix,GUIMemory* memory, Game* game, SDL_Surface* screen);
+
+
 #endif /* HANDLEFUNCTIONS_H_ */

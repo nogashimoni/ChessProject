@@ -197,9 +197,9 @@ int startSetBoard(Window* window, Game* game) {
 }
 
 int startGameWindow(Window* window, Game* game) {
-	// Create background widget, which is Tree head, apply it to screen and add to UITree
-	Background* background = createBackground(window->windowId);
 
+	// create background widget, which is Tree head, apply it to screen and add to UITree
+	Background* background = createBackground(window->windowId);
 	applySurface(0, 0, background->image, window->screen, NULL);
 	window->UITreeHead = NULL;
 	window->UITreeHead = createNode(background, BACKGROUND);
@@ -207,105 +207,101 @@ int startGameWindow(Window* window, Game* game) {
 		//TODO
 	}
 
-	// Create panel, containing the board matrix
+	// create panel (containing the game matrix)
 	SDL_Rect box = { X_FOR_PANEL, Y_FOR_PANEL, PANEL_WIDTH, PANEL_HEIGHT };
 	Panel* panel = createPanel(box, BOARD_PANEL_BACKGROUND);
-	addChildNode(window->UITreeHead, panel, PANEL);
+	appendChild(window->UITreeHead, panel, PANEL);
 	applySurface(X_FOR_PANEL, Y_FOR_PANEL, panel->panelBackground,
 			window->screen, NULL);
 
-	// Create matrix
+	// create matrix
 	SDL_Rect* clip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 12);
 	clipPeices(clip);
 	Matrix* matrix = createChessBoardMatrix(panel, clip, game);
-	addChildNode(window->UITreeHead->child, matrix, MATRIX);
+	appendChild(window->UITreeHead, matrix, MATRIX);
 	drawMatrix(matrix, window->screen);
 
-	// Create buttons
-	int xForMenuButtons = SET_BOARD_MENU_X;
-	int yFirstMenuButton = SET_BOARD_MENU_Y;
-	SDL_Rect* menuClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 3);
-	clipGeneralSetup(menuClip);
-	SDL_Surface* buttonsImages = NULL;
-	buttonsImages = loadImage(SET_BOARD_BUTTONS_SPRITE);
-	if (buttonsImages == NULL)
-		return 0; //TOODO
+	// create buttons
+	int xForGameButtons = SET_BOARD_MENU_X;
+	int yFirstButtonGame = SET_BOARD_MENU_Y;
+	SDL_Rect* gameMenuClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 3);
+	clipGeneralSetup(gameMenuClip);
+	SDL_Surface* menuButtonsImage = NULL;
+	menuButtonsImage = loadImage(GAME_MENU_BUTTONS_SPRITE);
+	if (menuButtonsImage == NULL)
+		return 0; //TODO
 	Button** buttonsArray = createVerticalButtonsArrayAndApplyToScreen(3,
-			BUTTON_WIDTH, BUTTON_HEIGHT, xForMenuButtons, yFirstMenuButton,
-			buttonsImages, menuClip, 0, window->screen);
-	// create buttons widget and add to UITree
-	Buttons* buttons = createButtons(buttonsArray, buttonsImages, 3, menuClip);
-	addChildNode(window->UITreeHead->child->child, buttons, BUTTONS);
+			xForGameButtons, yFirstButtonGame, BUTTON_WIDTH, BUTTON_HEIGHT,
+			menuButtonsImage, gameMenuClip, 0, window->screen);
+	Buttons* buttons = createButtons(buttonsArray, menuButtonsImage, 3, gameMenuClip);
+	appendChild(window->UITreeHead, buttons, BUTTONS);
+
+	// crate get best move button (as a buttons widget)
+	int xForBestMoveButton = GET_BEST_MOVE_BUTTON_X;
+	int yForBestMoveButton = GET_BEST_MOVE_BUTTON_Y;
+	SDL_Rect* bestMovelip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 2);
+	clipBestMove(bestMovelip);
+	SDL_Surface* bestMoveImage = NULL;
+	bestMoveImage = loadImage(GET_BEST_MOVE_SPRITE);
+	if (bestMoveImage == NULL)
+		return 0; //TODO
+	Button** bestMoveButtonsArray = createVerticalButtonsArrayAndApplyToScreen(1,
+			xForBestMoveButton, yForBestMoveButton, BUTTON_WIDTH, BUTTON_HEIGHT,
+			bestMoveImage, bestMovelip, 0, window->screen);
+	Buttons* bestMovesButtons = createButtons(bestMoveButtonsArray, bestMoveImage, 1, bestMovelip);
+	appendChild(window->UITreeHead, bestMovesButtons, BUTTONS);
+
+//	// create panel for promotion - we will only show it later
+//	SDL_Rect box2 = { X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };
+//	Panel* panel2 = createPanel(box2, CHOOSE_PIECE_PANEL_BACKGROUND);
+//	appendChild(window->UITreeHead, panel2, PANEL);
+////	applySurface(X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, panel2->panelBackground,
+////			window->screen, NULL);
+//
+//	// create buttons for promotion panel - we will only show it later
+//	SDL_Rect* blackPiecesClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
+//	clipPromotionPeices(blackPiecesClip, 0);
+//	SDL_Surface* blackButtonsImage = NULL;
+//	blackButtonsImage = loadImage(PIECES_SPRITE);
+//	if (blackButtonsImage == NULL)
+//		return 0; //TOODO
+//	// we call the next function with a flag saying not to apply on screen
+//	Button** blackPeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
+//			FIRST_X_FOR_PEICES_ON_PANEL, FIRST_Y_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE,
+//			blackButtonsImage, blackPiecesClip, 0, window->screen, 0);
+//	// create buttons widget and add to UITree
+//	Buttons* blackPeicesButtons = createButtons(blackPeicesButtonsArray, blackButtonsImage, 4, blackPiecesClip);
+//	appendChild(window->UITreeHead, blackPeicesButtons, BUTTONS);
+//
+//	SDL_Rect* whitePiecesClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
+//	clipPromotionPeices(whitePiecesClip, 1);
+//	SDL_Surface* whiteButtonsImage = NULL;
+//	whiteButtonsImage = loadImage(PIECES_SPRITE);
+//	if (whiteButtonsImage == NULL)
+//		return 0; //TOODO
+//	// we call the next function with a flag saying not to apply on screen
+//	Button** whitePeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
+//			FIRST_X_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE +FIRST_Y_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE,
+//			whiteButtonsImage, whitePiecesClip, 0, window->screen, 0);
+//	// create buttons widget and add to UITree
+//	Buttons* whitePeicesButtons = createButtons(whitePeicesButtonsArray, whiteButtonsImage, 4, whitePiecesClip);
+//	appendChild(window->UITreeHead, whitePeicesButtons, BUTTONS);
 
 	SDL_Flip(window->screen);
 	return 1;
+
+
 }
 
-int updateWindow(Window* activeWindow, Game* game, GUIMemory* memory) {
-	if (memory->isScreenUpdated == 1)
-		return 1;
-
-	if (activeWindow->windowId == SET_BOARD) {
-		updateSetBoard(activeWindow, game, memory);
-	}
-	SDL_Flip(activeWindow->screen);
-	memory->isScreenUpdated = 1;
-
-	return 1;
-}
-
-int updateSetBoard(Window* activeWindow, Game* game, GUIMemory* memory) {
-	if ( memory->pathOfBubbleToShow != NULL ) {
-		showBubble(memory, activeWindow->screen);
-		memory->pathOfBubbleToShow = NULL;
-		// redraw background
-		Background* background = (Background*)activeWindow->UITreeHead->widget;
-		applySurface(0,0,background->image, activeWindow->screen, NULL );
-	}
 
 
-	// update matrix
-	Matrix* matrix = (Matrix*) activeWindow->UITreeHead->child->child->widget;
-	updateMatrixByGame(matrix, game);
-	Panel* panel = (Panel*) activeWindow->UITreeHead->child->widget;
-	applySurface(X_FOR_PANEL, Y_FOR_PANEL, panel->panelBackground,
-			activeWindow->screen, NULL);
-	drawMatrix(matrix, activeWindow->screen);
-
-	// draw add panel and buttons if needed
-	if ( (memory->commandType == ADD) && (memory->pressedSquarsNum == 0) ){
-		Panel* panel = (Panel*) activeWindow->UITreeHead->child->child->child->child->widget;
-		applySurface(panel->relevantArea.x, panel->relevantArea.y, panel->panelBackground,
-				activeWindow->screen, NULL);
-		drawButtons(activeWindow->UITreeHead->child->child->child->child->child->widget, activeWindow->screen);
-		drawButtons(activeWindow->UITreeHead->child->child->child->child->child->child->widget, activeWindow->screen);
+void clipBestMove(SDL_Rect* clip) {
+	for (int i=0; i<2; i++) {
+		clip[i].x = i*BUTTON_WIDTH;
+		clip[i].y = 0;
+		clip[i].w = BUTTON_WIDTH;
+		clip[i].h = BUTTON_HEIGHT;
 	}
-
-	//update buttons display
-	Buttons* buttons =
-			(Buttons*) activeWindow->UITreeHead->child->child->child->widget;
-	// clear all yellow marks (redraw them if needed)
-	for (int i = 0; i < 6; i++) {
-		applySurface(SET_BOARD_MENU_X, SET_BOARD_MENU_Y + i * BUTTON_HEIGHT,
-				buttons->buttonsImages, activeWindow->screen,
-				&buttons->clipArray[i]);
-	}
-	// draw yellow marks if needed
-	if (memory->commandType == REMOVE) {
-		applySurface(SET_BOARD_MENU_X, SET_BOARD_MENU_Y + 2 * BUTTON_HEIGHT,
-				buttons->buttonsImages, activeWindow->screen,
-				&buttons->clipArray[8]);
-	}
-	if (memory->commandType == ADD) {
-		applySurface(SET_BOARD_MENU_X, SET_BOARD_MENU_Y + BUTTON_HEIGHT,
-				buttons->buttonsImages, activeWindow->screen,
-				&buttons->clipArray[7]);
-	}
-	if (memory->commandType == MOVE) {
-		applySurface(SET_BOARD_MENU_X, SET_BOARD_MENU_Y, buttons->buttonsImages,
-				activeWindow->screen, &buttons->clipArray[6]);
-	}
-	return 1;
 }
 
 void clipGeneralSetup(SDL_Rect* clip) {
@@ -354,6 +350,22 @@ void clipSixPeices(SDL_Rect* clip, int isWhitePieces) {
 	}
 }
 
+void clipPromotionPeices(SDL_Rect* clip, int isWhitePieces) {
+	int toAddToY = 0;
+	if  ( isWhitePieces )
+		toAddToY = BOARD_MATRIX_SQUARE_SIZE;
+	for (int i = 0; i<3; i++) {
+		clip[i].x = i*BOARD_MATRIX_SQUARE_SIZE;
+		clip[i].y = toAddToY;
+		clip[i].w = BOARD_MATRIX_SQUARE_SIZE;
+		clip[i].h = BOARD_MATRIX_SQUARE_SIZE;
+	}
+	clip[3].x = 4*BOARD_MATRIX_SQUARE_SIZE;
+	clip[3].y = toAddToY;
+	clip[3].w = BOARD_MATRIX_SQUARE_SIZE;
+	clip[3].h = BOARD_MATRIX_SQUARE_SIZE;
+}
+
 void clipDifficulty(SDL_Rect* clip) {
 	for (int i = 0; i < 4; i++) {
 		clip[i].x = i * SIZE_OF_DIFFICULTY_SQUARE;
@@ -396,6 +408,7 @@ void clipUserColor(SDL_Rect* clip) {
 		clip[i].h = HEIGHT_OF_COLOR_BUTTON;
 	}
 }
+
 
 char* getSpriteByWindowID(WindowId windowID) {
 	switch (windowID) {

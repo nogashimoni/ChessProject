@@ -21,6 +21,7 @@ int startSetDifficultyAndColor(Window* window, Game* game);
 int startSetBoard(Window* window, Game* initData);
 int startGameWindow(Window* window, Game* game);
 
+void clipBestMove(SDL_Rect* clip);
 void clipGeneralSetup( SDL_Rect* clip );
 void clipDifficulty(SDL_Rect* clip);
 void clipUserColor(SDL_Rect* clip);
@@ -28,10 +29,10 @@ void clipPeices(SDL_Rect* clip);
 void clipCancelContinue(SDL_Rect* clip);
 void clipSetBoard(SDL_Rect* clip);
 void clipSixPeices(SDL_Rect* clip, int isWhitePieces);
+void clipPromotionPeices(SDL_Rect* clip, int isWhitePieces);
 
 char* getSpriteByWindowID(WindowId windowID);
 
-int updateWindow(Window* activeWindow,Game* game, GUIMemory* memory);
-int updateSetBoard(Window* activeWindow,Game* game, GUIMemory* memory);
+
 
 #endif /* STARTFUNCTIONS_H_ */
