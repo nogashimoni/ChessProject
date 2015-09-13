@@ -34,16 +34,22 @@ int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
 
 			Move* tmpMove = move;
 			move = move->next;
-			if ( val > bestValue ) {
+
+			if ( val == bestValue ) {
+				Move* tmpMoveCopy = cloneMove(tmpMove);
+				addToMinmaxMoves(game,tmpMoveCopy);
+			}
+			else if ( val > bestValue ) {
 				bestValue = val;
 				game->minmaxScore = bestValue;
 				if ( game->minmaxMove != NULL ) {
-					freeMove(game->minmaxMove); //frees only when not null
+					freeMinmaxMove(game->minmaxMove); //frees only when not null
 				}
 				game->minmaxMove = cloneMove(tmpMove);
 			}
 
-			freeMove(gameCopy->minmaxMove);
+
+			freeMinmaxMove(gameCopy->minmaxMove);
 			free(gameCopy);
 			gameCopy = NULL;
 
@@ -78,16 +84,21 @@ int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
 
 			Move* tmpMove = move;
 			move = move->next;
-			if ( val < bestValue ) {
+			if ( val == bestValue ) {
+				Move* tmpMoveCopy = cloneMove(tmpMove);
+				addToMinmaxMoves(game,tmpMoveCopy);
+			}
+			else if ( val < bestValue ) {
 				bestValue = val;
 				game->minmaxScore = bestValue;
 				if ( game->minmaxMove != NULL ) {
-					freeMove(game->minmaxMove); //frees only when not null
+					freeMinmaxMove(game->minmaxMove); //frees only when not null
 				}
 				game->minmaxMove = cloneMove(tmpMove);
 			}
 
-			freeMove(gameCopy->minmaxMove);
+			freeMinmaxMove(gameCopy->minmaxMove);
+			gameCopy->minmaxMove = NULL;
 			free(gameCopy);
 			gameCopy = NULL;
 
@@ -99,6 +110,30 @@ int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
 		}
 		freeAllMoves(allMoves);
 		return bestValue;
+	}
+}
+
+void addToMinmaxMoves(Game* game, Move* tempMoveCopy){
+	/* Add a move to the linked list */
+	if (game->minmaxMove == NULL){
+		game->minmaxMove = tempMoveCopy;
+		return;
+	}
+
+	Move* temp = game->minmaxMove;
+	game->minmaxMove = tempMoveCopy;
+	game->minmaxMove->next = temp;
+}
+
+void freeMinmaxMove(Move* move){
+	if (move != NULL){
+		Move* currMove = move;
+		while ( currMove != NULL ) {
+			Move* prevMove=currMove;
+			currMove = currMove->next;
+			freeMove(prevMove);
+			prevMove = NULL;
+		}
 	}
 }
 
@@ -261,4 +296,17 @@ void addMovesToAllMoves(Moves* allMoves){
 			movesCurrMove = movesCurrMove->next;
 		}
 	}
+}
+
+Move* getBestMoveForUser(Game* game){
+
+	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
+	Move* currMove = game->minmaxMove;
+	while (currMove != NULL){
+		printMove(currMove);
+		currMove = currMove->next;
+	}
+	game->minmaxScore = INT_MIN;
+	return game->minmaxMove;
+
 }

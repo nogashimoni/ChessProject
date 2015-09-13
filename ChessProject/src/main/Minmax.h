@@ -20,5 +20,8 @@ Moves* getAllMoves(Game* game);
 int scoringFunction(Game* game);
 void addMovesToAllMoves(Moves* allMoves);
 void freeAllMoves(Moves* allMoves);
+Move* getBestMoveForUser(Game* game);
+void freeMinmaxMove(Move* move);
+void addToMinmaxMoves(Game* game, Move* move);
 
 #endif /* MINMAX_H_ */

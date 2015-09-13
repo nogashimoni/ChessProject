@@ -223,7 +223,7 @@ void userTurn(Game* game){
 				continue;
 			}
 			getBestMoveForUser(game);
-			freeMove(game->minmaxMove);
+			freeMinmaxMove(game->minmaxMove);
 			game->minmaxMove = NULL; //just in case
 		}
 		else if (!strncmp(cmd,"get_score",9)){
