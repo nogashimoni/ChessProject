@@ -215,15 +215,15 @@ void userTurn(Game* game){
 			}
 			freeMove(move);
 		}
-		else if (!strncmp(cmd,"get_best_move",13)){
-			int d = (int)strtol(cmd+13,(char**)NULL,10);
+		else if (!strncmp(cmd,"get_best_moves",14)){
+			int d = (int)strtol(cmd+14,(char**)NULL,10);
 			game->minmaxDepth = d;
 			if (d == 0){
 				print_message(ILLEGAL_COMMAND);
 				continue;
 			}
 			getBestMoveForUser(game);
-			freeMove(game->minmaxMove);
+			freeMinmaxMove(game->minmaxMove);
 			game->minmaxMove = NULL; //just in case
 		}
 		else if (!strncmp(cmd,"get_score",9)){
@@ -250,14 +250,7 @@ void userTurn(Game* game){
 
 }
 
-Move* getBestMoveForUser(Game* game){
 
-	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
-	printMove(game->minmaxMove);
-	game->minmaxScore = INT_MIN;
-	return game->minmaxMove;
-
-}
 
 int getScore(Game* game, Move* move, int d){
 

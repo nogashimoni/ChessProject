@@ -24,7 +24,6 @@ void userTurn(Game* game);
 Move* createMoveFromString(char* cmd);
 void setDisk(Game* game, char x, int y, char color, char* type);
 int getScore(Game* game, Move* move, int d);
-Move* getBestMoveForUser(Game* game);
 
 
 
