@@ -3,7 +3,7 @@ OFILES= ErrorHandling.o ChessDefinitions.o ChessLogic.o Minmax.o GUIDefinitions.
 SDL_L=`sdl-config --libs` 
 SDL_C=`sdl-config --cflags`
 
-all: chessprog #test
+all: chessprog test
 
 clean:
 	-rm chessprog $(OFILES)
@@ -26,7 +26,7 @@ StartFunctions.o: src/GUI/StartFunctions.c src/GUI/StartFunctions.h src/GUI/GUIU
 TranslateFunctions.o: src/GUI/TranslateFunctions.c src/GUI/TranslateFunctions.h src/GUI/GUIUtils.h
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 	
-HandleFunctions.o: src/GUI/HandleFunctions.c src/GUI/HandleFunctions.h src/GUI/GUIUtils.h src/main/ChessLogic.h
+HandleFunctions.o: src/GUI/HandleFunctions.c src/GUI/HandleFunctions.h src/GUI/GUIUtils.h src/main/ChessLogic.h src/main/Minmax.h
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 	
 StopFunctions.o: src/GUI/StopFunctions.c src/GUI/StopFunctions.h src/GUI/GUIUtils.h
