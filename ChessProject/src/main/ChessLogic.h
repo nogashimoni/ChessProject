@@ -62,6 +62,12 @@ Position* clonePosition(Position* position);
 int isTie(Game* game);
 int isCurrentPlayerLose(Game* game);
 
+int getBestMoveI1(Move* move);
+int getBestMoveI2(Move* move);
+int getBestMoveJ1(Move* move);
+int getBestMoveJ2(Move* move);
+int isValidMoveIJ(Game* game, int i1, int j1, int i2, int j2);
+void doMoveIJ(Game* game, int i1, int j1, int i2, int j2, char specialPawnMove);
 
 void doMove(Game* game, Move* move, int isPrintMove, char specialPawn);
 int isSpecialPawnMove(Game* game, Position* first, Position* last);

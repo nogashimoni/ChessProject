@@ -542,7 +542,6 @@ int isOpponentKingPosition(Game* game, int x, int y){
 }
 
 
-//TODO add special pawn move (what happens when pawn reaches end f board).
 void getPawnMoves(Game* game, Moves* movesCopy, int x, int y){
 	//Pawn is white - standard move.
 	if (isValidIJ(x,y+1)){
@@ -988,5 +987,29 @@ void freeMoves(int isTmpMoves){
 		}
 		moves = NULL;
 	}
+}
+
+int getBestMoveI1(Move* move){
+
+	return move->first->x;
+
+}
+
+int getBestMoveI2(Move* move){
+
+	return move->first->next->x;
+
+}
+
+int getBestMoveJ1(Move* move){
+
+	return move->first->y;
+
+}
+
+int getBestMoveJ2(Move* move){
+
+	return move->first->next->y;
+
 }
 
