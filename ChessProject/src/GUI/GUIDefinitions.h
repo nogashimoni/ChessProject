@@ -20,7 +20,7 @@
 #define SET_BOARD_BACKGROUND "images/board_background.png"
 
 #define BOARD_PANEL_BACKGROUND "images/board.png"
-#define CHOOSE_PIECE_PANEL_BACKGROUND "images/choose_piece_panel_background.png"
+#define CHOOSE_PIECE_PANEL_BACKGROUND "images/choose.png"//"images/choose_piece_panel_background.png"
 
 #define WRONG_INIT_BUBBLE "images/wrong_board_init_bubble.png"
 
@@ -59,12 +59,13 @@
 #define PANEL_WIDTH 461
 #define PANEL_HEIGHT 463
 
-#define X_FOR_ADD_PANEL 75
-#define Y_FOR_ADD_PANEL 75
-#define ADD_PANEL_WIDTH 421
-#define ADD_PANEL_HEIGHT 423
-#define FIRST_X_FOR_PEICES_ON_PANEL 90
-#define FIRST_Y_FOR_PEICES_ON_PANEL 200
+#define X_FOR_ADD_PANEL 70
+#define Y_FOR_ADD_PANEL 100
+
+#define ADD_PANEL_WIDTH 400
+#define ADD_PANEL_HEIGHT 280
+#define FIRST_X_FOR_PEICES_ON_PANEL 105
+#define FIRST_Y_FOR_PEICES_ON_PANEL 210
 
 #define BUBBLE_X 550
 #define BUBBLE_Y 360
@@ -78,6 +79,8 @@
 
 #define GET_BEST_MOVE_BUTTON_X 155
 #define GET_BEST_MOVE_BUTTON_Y 535
+#define FIRST_X_FOR_DIFFICULTY_ON_PANEL 150
+#define Y_FOR_DIFFICULTY_ON_PANEL 210
 
 #define WINDOWS_COUNT 8
 
@@ -108,7 +111,8 @@ typedef enum {
 	EIGHTH_PRESSED,
 
 	SOME_SQUARE_PRESSED, // relevant in windows with matrix widget
-	CHOSE_PIECE // relevant in setup's add piece
+	CHOSE_PIECE, // relevant in setup's add piece
+	CHOSE_MINMAX_DEPTH
 } EventID;
 
 typedef enum {
@@ -154,6 +158,7 @@ struct GUIMemory {
 
 	char* pathOfBubbleToShow;
 
+	int minmaxDepthChosen; // relevant in game's get best move
 	char pieceChosen; //relevant in setup's add
 };
 

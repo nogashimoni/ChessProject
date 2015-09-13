@@ -274,7 +274,6 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 	case (FIRST_PRESSED): //save game
 		memory->commandType = SAVE;
 		memory->isScreenUpdated = 0;
-//		memory->pressedSquarsNum = 0;
 		return GAME_WINDOW;
 	case (SECOND_PRESSED): // main menu
 		initMemory(memory);
@@ -285,18 +284,19 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 	case (FOURTH_PRESSED): //get best moves
 		memory->commandType = GET_BEST_MOVE;
 		memory->isScreenUpdated = 0;
-//		memory->pressedSquarsNum = 0;
+		return GAME_WINDOW;
+
+	case (CHOSE_MINMAX_DEPTH):
+		memory->isScreenUpdated = 0;
 		return GAME_WINDOW;
 
 	case (SOME_SQUARE_PRESSED):
-//		memory->pressedSquarsNum ++;
 
 		if (memory->commandType == NO_COMMAND) {
 			// Player chose an empty square or an opponent square
 			int whitePlayerChoosesWhite = (game->isWhiteTurn == 1 && getPieceColor(game,memory->newI,memory->newJ) == 1);
 			int blackPlayerChoosesBlack = (game->isWhiteTurn == 0 && getPieceColor(game,memory->newI,memory->newJ) == 0);
 			if ( !(whitePlayerChoosesWhite || blackPlayerChoosesBlack) ) {
-//				memory->pressedSquarsNum = 0;
 				memory->isScreenUpdated = 0;
 				return GAME_WINDOW;
 			}
@@ -308,6 +308,7 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 		else if (memory->commandType == DO_MOVE) {
 			if (isValidMoveIJCopy(game,memory->oldI,memory->oldJ,memory->newI, memory->newJ)) {
 				doMoveIJ(game, memory->oldI,memory->oldJ,memory->newI, memory->newJ,EMPTY );
+				switchTurns(game);
 			}
 			memory->commandType = NO_COMMAND;
 			memory->isScreenUpdated = 0;
@@ -413,6 +414,7 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 	// redraw matrix by game
 	Matrix* matrix = (Matrix*) activeWindow->UITreeHead->child->child->widget;
 	updateMatrixByGame(matrix, game);
+	// delete matrix yellow marks
 	Panel* panel = (Panel*) activeWindow->UITreeHead->child->widget;
 	applySurface(X_FOR_PANEL, Y_FOR_PANEL, panel->panelBackground,
 			activeWindow->screen, NULL);
@@ -428,7 +430,6 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 //	}
 
 	//update yellow marks
-
 	Buttons* getBestMoveButton =
 			(Buttons*)activeWindow->UITreeHead->child->child->child->child->widget;
 	// clear best move yellow mark
@@ -443,8 +444,14 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 				getBestMoveButton->buttonsImages, activeWindow->screen,
 					&getBestMoveButton->clipArray[1]);
 	}
+	// draw matrix yellow marks if needed
 	if (memory->commandType == DO_MOVE) {
 		displayAllPossibleMoves(matrix,memory, game, activeWindow->screen);
+	}
+	if (memory->minmaxDepthChosen != 0) {
+		displayBestMove(matrix, memory, game, activeWindow->screen);
+		memory->commandType = NO_COMMAND;
+		memory->minmaxDepthChosen = 0;
 	}
 	return 1;
 }
@@ -468,6 +475,15 @@ void displayAllPossibleMoves(Matrix* matrix,GUIMemory* memory, Game* game, SDL_S
 		}
 	}
 	SDL_Flip(screen);
+}
+
+void displayBestMove(Matrix* matrix,GUIMemory* memory, Game* game, SDL_Surface* screen) {
+	SDL_Rect clip;
+	clip.x = 0;
+	clip.y = 0;
+	clip.w = BOARD_MATRIX_SQUARE_SIZE;
+	clip.h = BOARD_MATRIX_SQUARE_SIZE;
+//	applySurface(button->relevantArea.x, button->relevantArea.y, matrix->highlightImage, screen, &clip);
 }
 
 // TO DELETE !!!

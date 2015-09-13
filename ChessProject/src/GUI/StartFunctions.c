@@ -12,7 +12,6 @@ int startGeneralSetup(Window* window, Game* game) {
 	}
 
 	// create arguments for buttons creation
-//	SDL_Rect clip[4];
 	SDL_Rect* clip = (SDL_Rect*) malloc(4 * sizeof(SDL_Rect));
 	clipGeneralSetup(clip);
 	int xForButtons = 0.5 * SCREEN_WIDTH - 0.5 * BUTTON_WIDTH;
@@ -50,7 +49,6 @@ int startSetDifficultyAndColor(Window* window, Game* game) {
 	}
 
 	// create arguments for difficulty buttons creation
-//	SDL_Rect difficultyClip[4];
 	SDL_Rect* difficultyClip = (SDL_Rect*) malloc(4 * sizeof(SDL_Rect));
 	clipDifficulty(difficultyClip);
 	int xFirstButton = AI_SETTINGS_BUTTONS_X;
@@ -69,7 +67,6 @@ int startSetDifficultyAndColor(Window* window, Game* game) {
 	appendChild(window->UITreeHead, difficultyButtons, BUTTONS);
 
 	// create arguments for user color buttons creation
-//	SDL_Rect userColorClip[2];
 	SDL_Rect* userColorClip = (SDL_Rect*) malloc(2 * sizeof(SDL_Rect));
 	clipUserColor(userColorClip);
 	int yForColorButtons = AI_SETTINGS_BUTTONS_FIRST_Y
@@ -87,7 +84,6 @@ int startSetDifficultyAndColor(Window* window, Game* game) {
 	appendChild(window->UITreeHead, colorButtons, BUTTONS);
 
 	// create arguments for cancel and continue buttons
-//	SDL_Rect cancelContinueClip[2];
 	SDL_Rect* cancelContinueClip = (SDL_Rect*) malloc(2 * sizeof(SDL_Rect));
 	clipCancelContinue(cancelContinueClip);
 	int yForCancelButtons = AI_SETTINGS_BUTTONS_FIRST_Y
@@ -159,8 +155,6 @@ int startSetBoard(Window* window, Game* game) {
 	SDL_Rect box2 = { X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };
 	Panel* panel2 = createPanel(box2, CHOOSE_PIECE_PANEL_BACKGROUND);
 	appendChild(window->UITreeHead, panel2, PANEL);
-//	applySurface(X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, panel2->panelBackground,
-//			window->screen, NULL);
 
 
 	// create buttons for add panel - we will only show it later
@@ -169,7 +163,7 @@ int startSetBoard(Window* window, Game* game) {
 	SDL_Surface* blackButtonsImage = NULL;
 	blackButtonsImage = loadImage(PIECES_SPRITE);
 	if (blackButtonsImage == NULL)
-		return 0; //TOODO
+		return 0; //TODO
 	// we call the next function with a flag saying not to apply on screen
 	Button** blackPeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(6,
 			FIRST_X_FOR_PEICES_ON_PANEL, FIRST_Y_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE,
@@ -250,6 +244,29 @@ int startGameWindow(Window* window, Game* game) {
 			bestMoveImage, bestMovelip, 0, window->screen);
 	Buttons* bestMovesButtons = createButtons(bestMoveButtonsArray, bestMoveImage, 1, bestMovelip);
 	appendChild(window->UITreeHead, bestMovesButtons, BUTTONS);
+
+
+	// create panel for choose minmax depth - we will only show it later
+	SDL_Rect minMaxBox = { X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };
+	Panel* minMaxPanel = createPanel(minMaxBox, CHOOSE_PIECE_PANEL_BACKGROUND);
+	appendChild(window->UITreeHead, minMaxPanel, PANEL);
+
+
+	// create buttons for choose minmax depth - we will only show it later
+	SDL_Rect* difficaltyClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
+	clipDifficulty(difficaltyClip);
+	SDL_Surface* difficultyImage = NULL;
+	difficultyImage = loadImage(DIFFICULTY_SPRITE);
+	if (difficultyImage == NULL)
+		return 0; //TOODO
+	// we call the next function with a flag saying not to apply on screen
+	Button** difficultyButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
+				FIRST_X_FOR_DIFFICULTY_ON_PANEL, Y_FOR_DIFFICULTY_ON_PANEL, SIZE_OF_DIFFICULTY_SQUARE,
+				difficultyImage, difficaltyClip, 0, window->screen, 0);
+	// create buttons widget and add to UITree
+	Buttons* difficultyButtons = createButtons(difficultyButtonsArray, difficultyImage, 4, difficaltyClip);
+	appendChild(window->UITreeHead, difficultyButtons, BUTTONS);
+
 
 //	// create panel for promotion - we will only show it later
 //	SDL_Rect box2 = { X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };

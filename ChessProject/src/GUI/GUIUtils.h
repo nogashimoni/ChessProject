@@ -52,6 +52,7 @@ UITreeNode* createNode(void* headData, TreeWidgetType widgetType);
 UITreeNode* addChildNode(UITreeNode* parent, void * data, TreeWidgetType widgetType);
 UITreeNode* appendChild(UITreeNode* list, void* data, TreeWidgetType widgetType);
 int treeDFS(UITreeNode* root, int (* treeNodePreFunction) (UITreeNode* node), int (* treeNodePostFunction)(UITreeNode* node, SDL_Surface* screen), SDL_Surface* screen);
+UITreeNode* getMinmaxPanelNodeGameWindow(UITreeNode* UITreeHead);
 
 //draw functions
 void drawGUI(Window* window);
@@ -67,4 +68,5 @@ void freeMatrix(Matrix* panel);
 
 //GUIMemory utils
 void initMemory(GUIMemory* memory);
+
 #endif /* GUIUTILS_H_ */

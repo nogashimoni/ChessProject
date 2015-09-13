@@ -33,6 +33,6 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory);
 
 // helper functions
 void displayAllPossibleMoves(Matrix* matrix,GUIMemory* memory, Game* game, SDL_Surface* screen);
-
+void displayBestMove(Matrix* matrix,GUIMemory* memory, Game* game, SDL_Surface* screen);
 
 #endif /* HANDLEFUNCTIONS_H_ */

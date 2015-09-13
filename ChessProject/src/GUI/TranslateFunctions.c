@@ -86,9 +86,6 @@ EventID translateEventSetBoard(Window* window, SDL_Event event, GUIMemory* memor
 		return QUIT_EVENT;
 	}
 
-//	if (memory->pathOfBubbleToShow != NULL) {
-//		return NOTHING_HAPPANED;
-//	}
 
 	if ((memory->commandType == ADD) && (memory->pressedSquarsNum==0) ){
 		Buttons* blackButtons = (Buttons*)window->UITreeHead->child->child->child->child->child->widget;
@@ -178,6 +175,21 @@ EventID translateEventGameWindow(Window* window, SDL_Event event, GUIMemory* mem
 	if (event.type == SDL_QUIT) {
 		return QUIT_EVENT;
 	}
+
+	if (memory->commandType == GET_BEST_MOVE && memory->minmaxDepthChosen == 0){
+			Buttons* difficultyButtons = (Buttons*)(getMinmaxPanelNodeGameWindow(window->UITreeHead)->child->widget);
+			// TODO add cancel button
+			for ( int i=0; i<difficultyButtons->numOfButtons; i++ ) {
+				Button* button = difficultyButtons->buttonArray[i];
+				if (button->isButtonPressed(button, event)) {
+					memory->minmaxDepthChosen = i+1;
+					return CHOSE_MINMAX_DEPTH;
+				}
+			}
+		return NOTHING_HAPPANED;
+	}
+
+
 	// is matrix pressed
 	for (int i=0; i<BOARD_SIZE; i++) {
 		for (int j=0; j<BOARD_SIZE; j++) {

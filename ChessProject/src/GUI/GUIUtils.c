@@ -469,6 +469,10 @@ int treeDFS(UITreeNode* root, int (*treeNodePreFunction)(UITreeNode* node),
 	return 0;
 }
 
+UITreeNode* getMinmaxPanelNodeGameWindow(UITreeNode* UITreeHead) {
+	return UITreeHead->child->child->child->child->child;
+}
+
 // free functions
 
 /* freeTree frees the tree nodes and frees their data using a free data function */
@@ -557,6 +561,7 @@ void initMemory(GUIMemory* memory) {
 	memory->pressedSquarsNum = 0;
 	memory->commandType = NO_COMMAND;
 	memory->pieceChosen = 'a';
+	memory->minmaxDepthChosen = 0;
 
 	memory->pathOfBubbleToShow = NULL;
 }
