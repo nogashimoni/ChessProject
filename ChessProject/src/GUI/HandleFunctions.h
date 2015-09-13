@@ -16,6 +16,10 @@
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
 #include "../main/ChessLogic.h"
+#include "../main/Minmax.h"
+
+extern Moves* moves;
+extern Moves* tmpMoves;
 
 int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory);
 int handleEventSelectionWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory);

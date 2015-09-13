@@ -1,7 +1,5 @@
 #include "HandleFunctions.h"
 
-//TODO DELETE!!!
-int isValidMoveIJCopy(Game* game, int i1, int j1, int i2, int j2);
 
 int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game,
 		GUIMemory* memory) {
@@ -281,6 +279,7 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 		return WELCOME;
 	case (THIRD_PRESSED): //quit
 		return QUIT_WINDOW;
+
 	case (FOURTH_PRESSED): //get best moves
 		memory->commandType = GET_BEST_MOVE;
 		memory->isScreenUpdated = 0;
@@ -306,7 +305,7 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 			return GAME_WINDOW;
 		}
 		else if (memory->commandType == DO_MOVE) {
-			if (isValidMoveIJCopy(game,memory->oldI,memory->oldJ,memory->newI, memory->newJ)) {
+			if (isValidMoveIJ(game,memory->oldI,memory->oldJ,memory->newI, memory->newJ)) {
 				doMoveIJ(game, memory->oldI,memory->oldJ,memory->newI, memory->newJ,EMPTY );
 				switchTurns(game);
 			}
@@ -429,6 +428,15 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 //		drawButtons(activeWindow->UITreeHead->child->child->child->child->child->child->widget, activeWindow->screen);
 //	}
 
+	// draw choose minmax depth panel
+	if ( (memory->commandType == GET_BEST_MOVE) && (memory->minmaxDepthChosen == 0) ){
+			UITreeNode* mimaxPanelNode = getMinmaxPanelNodeGameWindow(activeWindow->UITreeHead);
+			Panel* minmaxPanel = (Panel*) mimaxPanelNode->widget;
+			applySurface(minmaxPanel->relevantArea.x, minmaxPanel->relevantArea.y, minmaxPanel->panelBackground,
+					activeWindow->screen, NULL);
+			drawButtons(mimaxPanelNode->child->widget, activeWindow->screen);
+	}
+
 	//update yellow marks
 	Buttons* getBestMoveButton =
 			(Buttons*)activeWindow->UITreeHead->child->child->child->child->widget;
@@ -448,11 +456,13 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 	if (memory->commandType == DO_MOVE) {
 		displayAllPossibleMoves(matrix,memory, game, activeWindow->screen);
 	}
-	if (memory->minmaxDepthChosen != 0) {
+
+	if (memory->commandType == GET_BEST_MOVE && memory->minmaxDepthChosen != 0) {
 		displayBestMove(matrix, memory, game, activeWindow->screen);
 		memory->commandType = NO_COMMAND;
 		memory->minmaxDepthChosen = 0;
 	}
+	SDL_Flip(activeWindow->screen);
 	return 1;
 }
 
@@ -464,7 +474,7 @@ void displayAllPossibleMoves(Matrix* matrix,GUIMemory* memory, Game* game, SDL_S
 	for (int i=0; i<BOARD_SIZE; i++) {
 		for (int j=0; j<BOARD_SIZE; j++) {
 			Button* button = matrix->buttonsMatrix[getBoardJ(j)][i];
-			if (isValidMoveIJCopy(game, memory->newI, memory->newJ, i, j )) {
+			if (isValidMoveIJ(game, memory->newI, memory->newJ, i, j )) {
 				SDL_Rect clip;
 				clip.x = 0;
 				clip.y = 0;
@@ -483,15 +493,21 @@ void displayBestMove(Matrix* matrix,GUIMemory* memory, Game* game, SDL_Surface* 
 	clip.y = 0;
 	clip.w = BOARD_MATRIX_SQUARE_SIZE;
 	clip.h = BOARD_MATRIX_SQUARE_SIZE;
-//	applySurface(button->relevantArea.x, button->relevantArea.y, matrix->highlightImage, screen, &clip);
-}
 
-// TO DELETE !!!
-int isValidMoveIJCopy(Game* game, int i1, int j1, int i2, int j2){
+	Move* move = getBestMoveForUser(game);
+	int i1 = getBestMoveI1(move);
+	int j1 = getBestMoveJ1(move);
+	int i2 = getBestMoveI2(move);
+	int j2 = getBestMoveJ2(move);
 
-	Move* move = creatNewMove(i1, j1, i2, j2);
-	int result = isValidMove(game, move);
 	freeMove(move);
-	return result;
 
+	Button* button1 = matrix->buttonsMatrix[getBoardJ(j1)][i1];
+	Button* button2 = matrix->buttonsMatrix[getBoardJ(j2)][i2];
+	applySurface(button1->relevantArea.x, button1->relevantArea.y, matrix->highlightImage, screen, &clip);
+	applySurface(button2->relevantArea.x, button2->relevantArea.y, matrix->highlightImage, screen, &clip);
+
+	SDL_Flip(screen);
 }
+
+
