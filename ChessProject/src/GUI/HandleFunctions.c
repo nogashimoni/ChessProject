@@ -289,6 +289,23 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 		memory->isScreenUpdated = 0;
 		return GAME_WINDOW;
 
+	case (CHOSE_PIECE):
+		if (game->isWhiteTurn) {
+			switchChosenPieceToWhite(memory);
+		}
+		doMoveIJ(game, memory->oldI,memory->oldJ,memory->newI, memory->newJ,memory->pieceChosen );
+		switchTurns(game);
+		memory->commandType = NO_COMMAND;
+		memory->pieceChosen = 'a';
+		memory->isScreenUpdated = 0;
+		return GAME_WINDOW;
+//	case (CHOOSE_PROMOTION_AND_DO_MOVE):
+//		doMoveIJ(game, memory->oldI,memory->oldJ,memory->newI, memory->newJ,EMPTY );
+//		switchTurns(game);
+//		memory->commandType = NO_COMMAND;
+//		memory->isScreenUpdated = 0;
+//TODO
+
 	case (SOME_SQUARE_PRESSED):
 
 		if (memory->commandType == NO_COMMAND) {
@@ -306,6 +323,12 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 		}
 		else if (memory->commandType == DO_MOVE) {
 			if (isValidMoveIJ(game,memory->oldI,memory->oldJ,memory->newI, memory->newJ)) {
+				if (isPromotionMove(game, memory->oldI,memory->oldJ,memory->newI, memory->newJ)) {
+					memory->commandType = CHOOSE_PROMOTION_AND_DO_MOVE;
+					memory->isScreenUpdated = 0;
+					return GAME_WINDOW;
+					// will do move later
+				}
 				doMoveIJ(game, memory->oldI,memory->oldJ,memory->newI, memory->newJ,EMPTY );
 				switchTurns(game);
 			}
@@ -428,13 +451,30 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 //		drawButtons(activeWindow->UITreeHead->child->child->child->child->child->child->widget, activeWindow->screen);
 //	}
 
-	// draw choose minmax depth panel
+	// draw choose minmax depth panel if needed
 	if ( (memory->commandType == GET_BEST_MOVE) && (memory->minmaxDepthChosen == 0) ){
 			UITreeNode* mimaxPanelNode = getMinmaxPanelNodeGameWindow(activeWindow->UITreeHead);
 			Panel* minmaxPanel = (Panel*) mimaxPanelNode->widget;
 			applySurface(minmaxPanel->relevantArea.x, minmaxPanel->relevantArea.y, minmaxPanel->panelBackground,
 					activeWindow->screen, NULL);
 			drawButtons(mimaxPanelNode->child->widget, activeWindow->screen);
+	}
+	// draw promotion panel if needed
+	if ( memory->commandType == CHOOSE_PROMOTION_AND_DO_MOVE ) {
+		UITreeNode* piecesPanelNode = getMinmaxPanelNodeGameWindow(activeWindow->UITreeHead)->child->child;
+		UITreeNode* blackPiecesButtonsNode = getMinmaxPanelNodeGameWindow(activeWindow->UITreeHead)->child->child->child;
+		UITreeNode* whitePiecesButtonsNode = getMinmaxPanelNodeGameWindow(activeWindow->UITreeHead)->child->child->child->child;
+		Panel* piecesPanel = (Panel*)piecesPanelNode->widget;
+		Buttons* blackPiecesButtons = (Buttons*)blackPiecesButtonsNode->widget;
+		Buttons* whitePiecesButtons = (Buttons*)whitePiecesButtonsNode->widget;
+		applySurface(X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, piecesPanel->panelBackground,
+				activeWindow->screen, NULL);
+		if ( game->isWhiteTurn == 1 ) {
+			drawButtons(whitePiecesButtons, activeWindow->screen);
+		}
+		else {
+			drawButtons(blackPiecesButtons, activeWindow->screen);
+		}
 	}
 
 	//update yellow marks
@@ -510,4 +550,27 @@ void displayBestMove(Matrix* matrix,GUIMemory* memory, Game* game, SDL_Surface* 
 	SDL_Flip(screen);
 }
 
+void switchChosenPieceToWhite(GUIMemory* memory) {
+	if (memory->pieceChosen == BLACK_B)
+		memory->pieceChosen = WHITE_B;
+	if (memory->pieceChosen == BLACK_N)
+		memory->pieceChosen = WHITE_N;
+	if (memory->pieceChosen == BLACK_Q)
+		memory->pieceChosen = WHITE_Q;
+	if (memory->pieceChosen == BLACK_R)
+		memory->pieceChosen = WHITE_R;
+}
 
+int isPromotionMove(Game* game, int i1, int j1, int i2, int j2) {
+	Position position1;
+	Position position2;
+
+	position1.x = i1;
+	position1.y = j1;
+	position2.x = i2;
+	position2.y = j2;
+
+	int result = isSpecialPawnMove(game, &position1, &position2);
+
+	return result;
+}

@@ -248,7 +248,7 @@ int startGameWindow(Window* window, Game* game) {
 
 	// create panel for choose minmax depth - we will only show it later
 	SDL_Rect minMaxBox = { X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };
-	Panel* minMaxPanel = createPanel(minMaxBox, CHOOSE_PIECE_PANEL_BACKGROUND);
+	Panel* minMaxPanel = createPanel(minMaxBox, CHOOSE_DIFFICULTY_PANEL_BACKGROUND);
 	appendChild(window->UITreeHead, minMaxPanel, PANEL);
 
 
@@ -263,46 +263,41 @@ int startGameWindow(Window* window, Game* game) {
 	Button** difficultyButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
 				FIRST_X_FOR_DIFFICULTY_ON_PANEL, Y_FOR_DIFFICULTY_ON_PANEL, SIZE_OF_DIFFICULTY_SQUARE,
 				difficultyImage, difficaltyClip, 0, window->screen, 0);
-	// create buttons widget and add to UITree
 	Buttons* difficultyButtons = createButtons(difficultyButtonsArray, difficultyImage, 4, difficaltyClip);
 	appendChild(window->UITreeHead, difficultyButtons, BUTTONS);
 
 
-//	// create panel for promotion - we will only show it later
-//	SDL_Rect box2 = { X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };
-//	Panel* panel2 = createPanel(box2, CHOOSE_PIECE_PANEL_BACKGROUND);
-//	appendChild(window->UITreeHead, panel2, PANEL);
-////	applySurface(X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, panel2->panelBackground,
-////			window->screen, NULL);
-//
-//	// create buttons for promotion panel - we will only show it later
-//	SDL_Rect* blackPiecesClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
-//	clipPromotionPeices(blackPiecesClip, 0);
-//	SDL_Surface* blackButtonsImage = NULL;
-//	blackButtonsImage = loadImage(PIECES_SPRITE);
-//	if (blackButtonsImage == NULL)
-//		return 0; //TOODO
-//	// we call the next function with a flag saying not to apply on screen
-//	Button** blackPeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
-//			FIRST_X_FOR_PEICES_ON_PANEL, FIRST_Y_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE,
-//			blackButtonsImage, blackPiecesClip, 0, window->screen, 0);
-//	// create buttons widget and add to UITree
-//	Buttons* blackPeicesButtons = createButtons(blackPeicesButtonsArray, blackButtonsImage, 4, blackPiecesClip);
-//	appendChild(window->UITreeHead, blackPeicesButtons, BUTTONS);
-//
-//	SDL_Rect* whitePiecesClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
-//	clipPromotionPeices(whitePiecesClip, 1);
-//	SDL_Surface* whiteButtonsImage = NULL;
-//	whiteButtonsImage = loadImage(PIECES_SPRITE);
-//	if (whiteButtonsImage == NULL)
-//		return 0; //TOODO
-//	// we call the next function with a flag saying not to apply on screen
-//	Button** whitePeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
-//			FIRST_X_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE +FIRST_Y_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE,
-//			whiteButtonsImage, whitePiecesClip, 0, window->screen, 0);
-//	// create buttons widget and add to UITree
-//	Buttons* whitePeicesButtons = createButtons(whitePeicesButtonsArray, whiteButtonsImage, 4, whitePiecesClip);
-//	appendChild(window->UITreeHead, whitePeicesButtons, BUTTONS);
+	// create panel for promotion - we will only show it later
+	SDL_Rect promotionBox = { X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };
+	Panel* promotionPanel = createPanel(promotionBox, CHOOSE_PIECE_PANEL_BACKGROUND);
+	appendChild(window->UITreeHead, promotionPanel, PANEL);
+	// create buttons for promotion panel - we will only show it later
+	// black buttons
+	SDL_Rect* blackPiecesClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
+	clipPromotionPeices(blackPiecesClip, 0);
+	SDL_Surface* blackButtonsImage = NULL;
+	blackButtonsImage = loadImage(PIECES_SPRITE);
+	if (blackButtonsImage == NULL)
+		return 0; //TODO
+	// we call the next function with a flag saying not to apply on screen
+	Button** blackPeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
+			FIRST_X_FOR_PEICES_ON_PANEL+20, FIRST_Y_FOR_PEICES_ON_PANEL+BOARD_MATRIX_SQUARE_SIZE/2, BOARD_MATRIX_SQUARE_SIZE,
+			blackButtonsImage, blackPiecesClip, 0, window->screen, 0);
+	Buttons* blackPeicesButtons = createButtons(blackPeicesButtonsArray, blackButtonsImage, 4, blackPiecesClip);
+	appendChild(window->UITreeHead, blackPeicesButtons, BUTTONS);
+	// white buttons
+	SDL_Rect* whitePiecesClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
+	clipPromotionPeices(whitePiecesClip, 1);
+	SDL_Surface* whiteButtonsImage = NULL;
+	whiteButtonsImage = loadImage(PIECES_SPRITE);
+	if (whiteButtonsImage == NULL)
+		return 0; //TODO
+		// we call the next function with a flag saying not to apply on screen
+	Button** whitePeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
+			FIRST_X_FOR_PEICES_ON_PANEL+20, FIRST_Y_FOR_PEICES_ON_PANEL+BOARD_MATRIX_SQUARE_SIZE/2, BOARD_MATRIX_SQUARE_SIZE,
+			whiteButtonsImage, whitePiecesClip, 0, window->screen, 0);
+	Buttons* whitePeicesButtons = createButtons(whitePeicesButtonsArray, whiteButtonsImage, 4, whitePiecesClip);
+	appendChild(window->UITreeHead, whitePeicesButtons, BUTTONS);
 
 	SDL_Flip(window->screen);
 	return 1;

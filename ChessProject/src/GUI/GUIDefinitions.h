@@ -21,6 +21,7 @@
 
 #define BOARD_PANEL_BACKGROUND "images/board.png"
 #define CHOOSE_PIECE_PANEL_BACKGROUND "images/choose.png"//"images/choose_piece_panel_background.png"
+#define CHOOSE_DIFFICULTY_PANEL_BACKGROUND "images/choose.png"
 
 #define WRONG_INIT_BUBBLE "images/wrong_board_init_bubble.png"
 
@@ -111,7 +112,7 @@ typedef enum {
 	EIGHTH_PRESSED,
 
 	SOME_SQUARE_PRESSED, // relevant in windows with matrix widget
-	CHOSE_PIECE, // relevant in setup's add piece
+	CHOSE_PIECE, // relevant in setup's add piece or game's promotion
 	CHOSE_MINMAX_DEPTH
 } EventID;
 
@@ -130,6 +131,7 @@ typedef enum {
 	GET_BEST_MOVE,
 	SAVE,
 	DO_MOVE,
+	CHOOSE_PROMOTION_AND_DO_MOVE,
 
 	NO_COMMAND
 } CommandType;
