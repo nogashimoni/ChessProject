@@ -190,15 +190,11 @@ int scoringFunction(Game* game) {
 	int result;
 
 	//someone lost
-	if ( isCurrentPlayerStuck(game) ) {
-		int sign;
-		if  (game->isComputerTurn) {
-			sign = -1;
-		}
-		else {
-			sign = 1;
-		}
-		return sign * 100;
+	if ( isCurrentPlayerLose(game) ) {
+		return INT_MIN;
+	}
+	if (isTie(game)){
+		return (INT_MIN+1);
 	}
 
 	// no one lost- we got to depth 0
