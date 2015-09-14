@@ -54,9 +54,9 @@ int loadGameFromFile(Game* game, char* path) {
 		return 0;
 	}
 	char row[50], *p;
+	fgets(row, 50, fp);
 
 	while ( !strstr(row, TAG_GAME_E) ) {
-		fgets(row, 50, fp);
 		if (strstr(row, TAG_NEXT_TURN_S)) {
 			if (strstr(row, NEXT_IS_WHITE)) {
 				game->isWhiteTurn = 1;
@@ -105,7 +105,11 @@ int loadGameFromFile(Game* game, char* path) {
 				}
 				fgets(row, 50, fp);
 			}
+		fclose(fp);
+		return 1;
 		}
+		fgets(row, 50, fp);
 	}
+	fclose(fp);
 	return 1;
 }
