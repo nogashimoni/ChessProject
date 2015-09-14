@@ -12,6 +12,23 @@ EventID translateEventGeneralSetup(Window* window, SDL_Event event,
 		return QUIT_EVENT;
 	}
 
+	if (window->windowId == WELCOME && memory->commandType == CHOOSE_SLOT) {
+		Buttons* slotsButtons = (Buttons*)window->UITreeHead->child->child->child->widget;
+		for (int i=0; i<slotsButtons->numOfButtons; i++) {
+			Button* button = slotsButtons->buttonArray[i];
+			if (button->isButtonPressed(button,event)) {
+				memory->numOfSlotPressed = i;
+			}
+		}
+		Buttons* continueButtons = (Buttons*)window->UITreeHead->child->child->child->child->widget;
+		Button* continueButton = continueButtons->buttonArray[0];
+		if (continueButton->isButtonPressed(continueButton)) {
+			memory->commandType = NO_COMMAND;
+			memory->isScreenUpdated = 0;
+		}
+		return NOTHING_HAPPANED;
+	}
+
 	for (buttonNumber = 0; buttonNumber < buttons->numOfButtons;
 			buttonNumber++) {
 		Button* button = buttons->buttonArray[buttonNumber];

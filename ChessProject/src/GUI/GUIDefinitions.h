@@ -9,6 +9,7 @@
 #include "../main/ChessDefinitions.h"
 
 #define BOARD_SIZE 8
+#define NUM_OF_SLOTS 7
 
 //macros for files
 #define WELCOME_BACKGROUND "images/welcome_background.png"
@@ -20,8 +21,9 @@
 #define SET_BOARD_BACKGROUND "images/board_background.png"
 
 #define BOARD_PANEL_BACKGROUND "images/board.png"
-#define CHOOSE_PIECE_PANEL_BACKGROUND "images/choose.png"//"images/choose_piece_panel_background.png"
-#define CHOOSE_DIFFICULTY_PANEL_BACKGROUND "images/choose.png"
+#define CHOOSE_PIECE_PANEL_BACKGROUND "images/choose_piece_panel.png" //"images/choose_piece_panel_background.png"
+#define CHOOSE_DIFFICULTY_PANEL_BACKGROUND "images/choose_minimax_panel.png"
+#define CHOOSE_SLOT_PANEL_BACKGROUND "images/choose_slot_panel.png"
 
 #define WRONG_INIT_BUBBLE "images/wrong_board_init_bubble.png"
 #define CHECK_BUUBLE_IMAGE "images/check_bubble.png"
@@ -34,15 +36,17 @@
 #define WELCOME_SPRITE "images/main_menu_sprite.png"
 #define PLAYER_SELECTION_SPRITE "images/player_selection_sprite.png"
 #define DIFFICULTY_SPRITE "images/difficulty_sprite.png"
+#define SLOTS_IMAGE_SPRITE "images/difficulty_sprite.png"
 #define USER_COLOR_SPRITE "images/user_color_sprite.png"
 #define CANCEL_CONTINUE_SPRITE "images/cancel_continue_sprite.png"
 #define TO_SET_WHO_STARTS_SPRITE "images/to_set_who_starts_sprite.png"
-#define TO_SET_BOARD_SPRITE "images/to_set_board_sprite.png"
+#define TO_SET_BOARD_SPRITE "images/to_set_who_starts_sprite.png"
 #define SET_WHO_STARTS_SPRITE "images/set_who_starts_sprite.png"
 #define PIECES_SPRITE "images/chess_symbols.png"
 #define SET_BOARD_BUTTONS_SPRITE "images/set_board_sprite.png"
 #define GAME_MENU_BUTTONS_SPRITE "images/game_menu_sprite.png"
 #define GET_BEST_MOVE_SPRITE "images/get_best_move_sprite.png"
+#define CONTINUE_IMAGE_SPRITE "images/cancel.png"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -54,6 +58,7 @@
 #define BUTTON_HEIGHT 50
 
 #define SIZE_OF_DIFFICULTY_SQUARE 45
+#define SIZE_OF_SLOT_SQUARE 45
 #define WIDTH_OF_COLOR_BUTTON 90
 #define HEIGHT_OF_COLOR_BUTTON 45
 #define AI_SETTINGS_BUTTONS_X 400
@@ -86,6 +91,11 @@
 #define GET_BEST_MOVE_BUTTON_Y 535
 #define FIRST_X_FOR_DIFFICULTY_ON_PANEL 150
 #define Y_FOR_DIFFICULTY_ON_PANEL 210
+
+#define FIRST_X_FOR_SLOTS_ON_PANEL 150
+#define Y_FOR_SLOTS_ON_PANEL 210
+#define X_FOR_CONTINUE_BUTTON_ON_PANEL 220
+#define Y_FOR_CONTINUE_BUTTON_ON_PANEL 300
 
 #define WINDOWS_COUNT 8
 
@@ -128,6 +138,8 @@ typedef enum {
 } TreeWidgetType;
 
 typedef enum {
+	CHOOSE_SLOT,
+
 	MOVE,
 	ADD,
 	REMOVE,
@@ -154,12 +166,14 @@ typedef struct UITreeNode UITreeNode;
 
 typedef struct GUIMemory GUIMemory;
 struct GUIMemory {
+	CommandType commandType;
+	int numOfSlotPressed;
 	int newI;
 	int newJ;
 	int oldI;
 	int oldJ;
 	int pressedSquarsNum;
-	CommandType commandType;
+
 	int isScreenUpdated;
 
 	char* pathOfBubbleToShow;
@@ -178,7 +192,7 @@ struct Window {
 	WindowId windowId;
 	SDL_Surface* screen;
 	/* methods */
-	int (*start) (Window* window, Game* initData);
+	int (*start) (Window* window, Game* game, GUIMemory* memory);
 	EventID (*translateEvent)(Window* window, SDL_Event event, GUIMemory* memory);
 	int (*handleEvent)(Window* window, EventID event, Game* game, GUIMemory* memory);
 	void* (*stop) (Window* window);

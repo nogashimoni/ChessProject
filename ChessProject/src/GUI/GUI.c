@@ -6,7 +6,7 @@ int GUIMain(Game* game) {
 
 		//init gui
 		if (SDL_Init(SDL_INIT_VIDEO) == -1) {
-			notifyFunctionFailure("GUIMain"); //TODO sdlErrorPrint("unable to init SDL");
+			notifyFunctionFailure("GUIMain");
 			return 0;
 		}
 		SDL_Surface* screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP,
@@ -18,7 +18,6 @@ int GUIMain(Game* game) {
 
 		// init windows
 		Window windows[WINDOWS_COUNT];
-		/* initialize GUI structs mapping by state ids: */
 
 		windows[WELCOME] = initWindow(WELCOME, screen);
 		windows[PLAYER_SELECTION] = initWindow(PLAYER_SELECTION, screen);
@@ -29,23 +28,20 @@ int GUIMain(Game* game) {
 		windows[SET_BOARD] = initWindow(SET_BOARD, screen);
 		windows[GAME_WINDOW] = initWindow(GAME_WINDOW, screen);
 
-		/* Starting the default/initial GUI: */
+		/* Starting the initial window: */
 
 		Window activeWindow = windows[WELCOME];
 		WindowId nextWindowId = WELCOME;
 
-		activeWindow.start(&activeWindow, game);
-
 		GUIMemory* memory = (GUIMemory*)malloc(sizeof(GUIMemory));
 		initMemory(memory);
 
+		activeWindow.start(&activeWindow, game, memory);
+
+
 
 		while (!isError && nextWindowId != QUIT_WINDOW) {
-//			if (activeGUI.stateId == PLAY_GAME){ /* if we are currently playing the game */
-//				updateMachineMoveIfNeeded(activeGUI); /* make machine move if it is machibe turn */
-//				if (isError)
-//					break;
-//			}
+
 			SDL_Event event;
 			while (SDL_PollEvent(&event)) {
 
@@ -75,14 +71,13 @@ int GUIMain(Game* game) {
 						if (isError) /* stop function may result in an error */
 							break;
 						activeWindow = windows[nextWindowId];
-						activeWindow.start(&activeWindow, game);//nextWindowInitData);
+						activeWindow.start(&activeWindow, game, memory);
 					}
 				}
 			}
 			SDL_Delay(POLLING_DELAY);
 		}
 
-		/* stop the active GUI (stop function will return NULL stop if called from here) */
 		activeWindow.stop(&activeWindow);
 		free(memory);
 return 1;

@@ -16,10 +16,10 @@
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
 
-int startGeneralSetup (Window* window, Game* game);
-int startSetDifficultyAndColor(Window* window, Game* game);
-int startSetBoard(Window* window, Game* initData);
-int startGameWindow(Window* window, Game* game);
+int startGeneralSetup (Window* window, Game* game, GUIMemory* memory);
+int startSetDifficultyAndColor(Window* window, Game* game, GUIMemory* memory);
+int startSetBoard(Window* window, Game* game, GUIMemory* memory);
+int startGameWindow(Window* window, Game* game, GUIMemory* memory);
 
 void clipBestMove(SDL_Rect* clip);
 void clipGeneralSetup( SDL_Rect* clip );
@@ -30,6 +30,8 @@ void clipCancelContinue(SDL_Rect* clip);
 void clipSetBoard(SDL_Rect* clip);
 void clipSixPeices(SDL_Rect* clip, int isWhitePieces);
 void clipPromotionPeices(SDL_Rect* clip, int isWhitePieces);
+void clipIContinue(SDL_Rect* clip);
+void clipISlots(SDL_Rect* clip, int numOfSlots);
 
 char* getSpriteByWindowID(WindowId windowID);
 

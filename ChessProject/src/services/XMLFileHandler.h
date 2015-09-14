@@ -32,8 +32,12 @@
 #define USER_COLOR_WHITE "White"
 #define USER_COLOR_BLACK "Black"
 
+#define SLOT_SEED "Slot_"
+
 
 int saveGameToFile(Game* game, char* path);
 int loadGameFromFile(Game* game, char* path);
+int doesSlotContainFile(int i);
+int saveToSlot(Game* game, int i);
 
 #endif /* XMLFILEHANDLER_H_ */

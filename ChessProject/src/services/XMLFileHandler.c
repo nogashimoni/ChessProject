@@ -113,3 +113,35 @@ int loadGameFromFile(Game* game, char* path) {
 	fclose(fp);
 	return 1;
 }
+
+int doesSlotContainFile(int i) {
+	 FILE* file;
+	 char fileName[10];
+	 sprintf(fileName, "%s%d.%s", SLOT_SEED, i,"xml");
+	 if  ( (file = fopen(fileName, "r")) == NULL )   {
+	        fclose(file);
+	        return 1;
+	  }
+	  return 0;
+}
+
+int saveToSlot(Game* game, int i) {
+	/** Saves an xml in a given slot, in the project directory **/
+	 FILE* file;
+	 char fileName[10];
+	 sprintf(fileName, "%s%d.%s", SLOT_SEED, i,"xml");
+
+	 if ( saveGameToFile(game, fileName) == 0) // save failed
+		 return 0;
+	 return 1;
+}
+
+int loadFromAFullSlot(Game* game, int slotNumber) {
+	 FILE* file;
+	 char fileName[10];
+	 sprintf(fileName, "%s%d.%s", SLOT_SEED, slotNumber,"xml");
+	 if ( loadGameFromFile(game, fileName) == 0) {
+		 return 0;
+	 }
+	 return 1;
+}

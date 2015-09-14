@@ -1,6 +1,6 @@
 #include "StartFunctions.h"
 
-int startGeneralSetup(Window* window, Game* game) {
+int startGeneralSetup(Window* window, Game* game, GUIMemory* memory) {
 
 	// create background widget, which is Tree head, apply it to screen and add to UITree
 	Background* background = createBackground(window->windowId);
@@ -12,7 +12,7 @@ int startGeneralSetup(Window* window, Game* game) {
 	}
 
 	// create arguments for buttons creation
-	SDL_Rect* clip = (SDL_Rect*) malloc(4 * sizeof(SDL_Rect));
+	SDL_Rect* clip = (SDL_Rect*) malloc(3 * sizeof(SDL_Rect));
 	clipGeneralSetup(clip);
 	int xForButtons = 0.5 * SCREEN_WIDTH - 0.5 * BUTTON_WIDTH;
 	int yFirstButton = 0.5 * SCREEN_HEIGHT - 1.5 * BUTTON_HEIGHT - 30;
@@ -24,20 +24,56 @@ int startGeneralSetup(Window* window, Game* game) {
 	Button** buttonsArray = createVerticalButtonsArrayAndApplyToScreen(3,
 			xForButtons, yFirstButton, BUTTON_WIDTH, BUTTON_HEIGHT,
 			buttonsImages, clip, 0, window->screen);
-
 	// create buttons widget and add to UITree
 	Buttons* buttons = createButtons(buttonsArray, buttonsImages, 3, clip);
-	addChildNode(window->UITreeHead, buttons, BUTTONS);
+	appendChild(window->UITreeHead, buttons, BUTTONS);
 
+	// add a panel and buttons nodes for load game from slots
+	if (window->windowId == WELCOME) {
+		// create panel for load game - we will only show it later
+		SDL_Rect box = { X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };
+		Panel* panel = createPanel(box, CHOOSE_SLOT_PANEL_BACKGROUND);
+		appendChild(window->UITreeHead, panel, PANEL);
+
+
+		// create buttons for load game panel - we will only show it later
+		SDL_Rect* slotsClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * NUM_OF_SLOTS);
+		clipISlots(slotsClip, NUM_OF_SLOTS);
+		SDL_Surface* slotsImage = NULL;
+		slotsImage = loadImage(SLOTS_IMAGE_SPRITE);
+		if (slotsImage == NULL)
+			return 0; //TODO
+		Button** slotButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(NUM_OF_SLOTS,
+				FIRST_X_FOR_SLOTS_ON_PANEL, Y_FOR_SLOTS_ON_PANEL, SIZE_OF_SLOT_SQUARE,
+				slotsImage, slotsClip, 0, window->screen, 0);
+		// create buttons widget and add to UITree
+		Buttons* slotsButtons = createButtons(slotButtonsArray, slotsImage, NUM_OF_SLOTS, slotsClip);
+		appendChild(window->UITreeHead, slotsButtons, BUTTONS);
+
+		// create button for continue button on panel - we will only show it later
+		SDL_Rect* continueClip = (SDL_Rect*) malloc(sizeof(SDL_Rect));
+		clipIContinue(continueClip);
+		SDL_Surface* continueImage = NULL;
+		continueImage = loadImage(CONTINUE_IMAGE_SPRITE);
+		if (continueImage == NULL)
+			return 0; //TODO
+		// we call the next function with a flag saying not to apply on screen
+		Button** continueButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(1,
+				X_FOR_CONTINUE_BUTTON_ON_PANEL, Y_FOR_CONTINUE_BUTTON_ON_PANEL, BUTTON_WIDTH,
+				continueImage, continueClip, 0, window->screen, 0);
+		// create buttons widget and add to UITree
+		Buttons* continueButtons = createButtons(continueButtonsArray, continueImage, 1, continueClip);
+		appendChild(window->UITreeHead, continueButtons, BUTTONS);
+	}
 	// Update what we see on screen
 	if (SDL_Flip(window->screen) == -1) {
-		printf("ERROR \n");
+//		notifyFunctionFailure("startGeneralSetup");
 		return 0;
 	}
 	return 1;
 }
 
-int startSetDifficultyAndColor(Window* window, Game* game) {
+int startSetDifficultyAndColor(Window* window, Game* game, GUIMemory* memory) {
 
 	// create background widget, which is Tree head, apply it to screen and add to UITree
 	Background* background = createBackground(window->windowId);
@@ -110,7 +146,7 @@ int startSetDifficultyAndColor(Window* window, Game* game) {
 	return 1;
 }
 
-int startSetBoard(Window* window, Game* game) {
+int startSetBoard(Window* window, Game* game, GUIMemory* memory) {
 
 	// create background widget, which is Tree head, apply it to screen and add to UITree
 	Background* background = createBackground(window->windowId);
@@ -190,7 +226,9 @@ int startSetBoard(Window* window, Game* game) {
 	return 1;
 }
 
-int startGameWindow(Window* window, Game* game) {
+int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
+
+	initMemory(memory);
 
 	// create background widget, which is Tree head, apply it to screen and add to UITree
 	Background* background = createBackground(window->windowId);
@@ -412,6 +450,14 @@ void clipSetBoard(SDL_Rect* clip) {
 		clip[i + j].h = BUTTON_HEIGHT;
 	}
 }
+
+void clipIContinue(SDL_Rect* clip) {
+	clip[0].x = 0;
+	clip[0].y = 0;
+	clip[0].w = BUTTON_WIDTH;
+	clip[0].h = BUTTON_HEIGHT;
+}
+
 void clipUserColor(SDL_Rect* clip) {
 	for (int i = 0; i < 2; i++) {
 		clip[i].x = 0;
@@ -421,6 +467,14 @@ void clipUserColor(SDL_Rect* clip) {
 	}
 }
 
+void clipISlots(SDL_Rect* clip, int numOfSlots) {
+	for (int i=0; i<numOfSlots; i++) {
+		clip[i].x = i * SIZE_OF_SLOT_SQUARE;
+		clip[i].y = 0;
+		clip[i].w = SIZE_OF_SLOT_SQUARE;
+		clip[i].h = SIZE_OF_SLOT_SQUARE;
+	}
+}
 
 char* getSpriteByWindowID(WindowId windowID) {
 	switch (windowID) {

@@ -31,6 +31,7 @@ int handleEventSetBoard(Window* window, EventID eventID, Game* game, GUIMemory* 
 int handleEventGameWindow(Window* window, EventID eventID, Game* game, GUIMemory* memory);
 
 // update window functions
+int updateWelcomeWindow(Window* activeWindow,Game* game, GUIMemory* memory);
 int updateWindow(Window* activeWindow,Game* game, GUIMemory* memory);
 int updateSetBoard(Window* activeWindow,Game* game, GUIMemory* memory);
 int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory);

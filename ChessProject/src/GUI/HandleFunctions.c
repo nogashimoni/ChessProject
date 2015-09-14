@@ -5,14 +5,13 @@ int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game,
 		GUIMemory* memory) {
 	switch (eventID) {
 	case (FIRST_PRESSED): //new game
-		printf("first pressed\n");
 		return PLAYER_SELECTION;
 		break;
 	case (SECOND_PRESSED): //load game
-		printf("2nd pressed\n");
+		memory->commandType = CHOOSE_SLOT;
+		memory->isScreenUpdated = 0;
 		break;
 	case (THIRD_PRESSED): //quit
-		printf("3rd pressed\n");
 		return QUIT_WINDOW;
 		break;
 	case (NOTHING_HAPPANED):
@@ -389,6 +388,14 @@ int updateWindow(Window* activeWindow, Game* game, GUIMemory* memory) {
 	if (memory->isScreenUpdated == 1)
 		return 1;
 
+	if (activeWindow->windowId == WELCOME) {
+		updateWelcomeWindow(activeWindow, game, memory);
+	}
+
+	if (activeWindow->windowId == SET_BOARD) {
+		updateSetBoard(activeWindow, game, memory);
+	}
+
 	if (activeWindow->windowId == SET_BOARD) {
 		updateSetBoard(activeWindow, game, memory);
 	}
@@ -403,6 +410,27 @@ int updateWindow(Window* activeWindow, Game* game, GUIMemory* memory) {
 	return 1;
 }
 
+int updateWelcomeWindow(Window* activeWindow,Game* game, GUIMemory* memory) {
+
+	if ( memory->commandType == CHOOSE_SLOT ) {
+		Panel* panel = (Panel*) activeWindow->UITreeHead->child->child->widget;
+			applySurface(panel->relevantArea.x, panel->relevantArea.y, panel->panelBackground,
+					activeWindow->screen, NULL);
+			// slots buttons
+			drawButtons(activeWindow->UITreeHead->child->child->child->widget, activeWindow->screen);
+			// continue button
+			drawButtons(activeWindow->UITreeHead->child->child->child->child->widget, activeWindow->screen);
+	}
+
+	else {
+		// remove choose slot panel
+		Background* Background = (Background*)activeWindow->UITreeHead->widget;
+		applySurface(0,0,Background->image, activeWindow->screen,NULL);
+		drawButtons(activeWindow->UITreeHead->child->widget, activeWindow->screen);
+	}
+
+	return 1;
+}
 
 int updateSetBoard(Window* activeWindow, Game* game, GUIMemory* memory) {
 	if ( memory->pathOfBubbleToShow != NULL ) {
@@ -528,6 +556,7 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 		memory->commandType = NO_COMMAND;
 		memory->minmaxDepthChosen = 0;
 	}
+
 	SDL_Flip(activeWindow->screen);
 
 	if ( memory->pathOfBubbleToShow != NULL ) {
@@ -627,12 +656,8 @@ int isPromotionMove(Game* game, int i1, int j1, int i2, int j2) {
 }
 
 void updateComputerTurnIfNeeded(Window* window, Game* game , GUIMemory* memory) {
-	if ( (!game->isTwoPlayersMode) && game->isComputerTurn ) {
+	if ( (!game->isTwoPlayersMode) && game->isComputerTurn && !(memory->isMate) && !(memory->isTie)) {
 		computerTurn(game);
-
-		UITreeNode* panelNode = window->UITreeHead->child;
-//		memory->isScreenUpdated = 0;
-//		updateGameBoard(window,game,memory);
 
 		switchTurns(game);
 

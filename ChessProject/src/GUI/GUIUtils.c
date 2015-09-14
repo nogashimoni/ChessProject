@@ -554,12 +554,14 @@ void freeMatrix(Matrix* matrix) {
 }
 
 void initMemory(GUIMemory* memory) {
+	memory->commandType = NO_COMMAND;
+
+	memory->numOfSlotPressed;
 	memory->newI = -1;
 	memory->newJ = -1;
 	memory->oldI = -1;
 	memory->oldJ = -1;
 	memory->pressedSquarsNum = 0;
-	memory->commandType = NO_COMMAND;
 	memory->pieceChosen = 'a';
 	memory->minmaxDepthChosen = 0;
 
