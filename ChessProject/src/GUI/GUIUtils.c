@@ -280,7 +280,6 @@ void drawMatrix(Matrix* matrix, SDL_Surface* screen) {
 			}
 			if ( relevantClip != NULL ) {
 				applySurface(matrix->buttonsMatrix[i][j]->relevantArea.x,matrix->buttonsMatrix[i][j]->relevantArea.y,matrix->piecesImages,screen,relevantClip);
-//				SDL_Flip(screen);
 			}
 		}
 	}
