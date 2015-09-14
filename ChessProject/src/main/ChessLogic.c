@@ -119,7 +119,9 @@ void setUserColor(Game* game, char color) {
 }
 
 void loadGameFromXML(Game* game, char* path) {
-	//TODO
+	if (loadFile(path) == 0){
+		print_message(WRONG_FILE_NAME);
+	}
 }
 
 void clearBoard(Game* game) {
