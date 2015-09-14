@@ -58,7 +58,7 @@ void setupGameByConsole(Game* game) {
 		} else if (!strncmp(cmd, "user_color", 10)) {
 			setUserColor(game, cmd[10]);
 		} else if (!strncmp(cmd, "load", 4)) {
-			loadGameFromXML(game, cmd + 4);
+			loadGame(game, cmd + 4);
 		} else if (!strncmp(cmd, "clear", 5)) {
 			clearBoard(game);
 		} else if (!strncmp(cmd, "next_player", 11)) {
@@ -239,6 +239,10 @@ void userTurn(Game* game){
 			printf("%d\n",moveScore);
 			freeMove(move);
 		}
+		else if (!strncmp(cmd,"save",4)){
+			saveFile(game, cmd+4);
+		}
+
 		else {
 			print_message(ILLEGAL_COMMAND);
 		}

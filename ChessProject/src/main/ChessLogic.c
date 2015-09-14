@@ -118,8 +118,20 @@ void setUserColor(Game* game, char color) {
 	}
 }
 
-void loadGameFromXML(Game* game, char* path) {
-	//TODO
+void loadGame(Game* game, char* path) {
+	if (loadGameFromFile(game, path) == 0){
+		print_message(WRONG_FILE_NAME);
+		return;
+	}
+	print_board(game->board);
+}
+
+void saveGame(Game* game, char* path){
+
+	if (saveGameToFile(game, path) == 0){
+		print_message(WRONG_FILE_NAME);
+	}
+
 }
 
 void clearBoard(Game* game) {
@@ -862,72 +874,6 @@ Position* clonePosition(Position* position){
 	positionCopy->next = NULL;
 	return positionCopy;
 }
-/* XML file - TODO
-void saveGameGUI(Game* game, FILE* f){
-	int i, j;
-	fprintf(f, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-	fprintf(f, "<game>\n");
-	fprintf(f, "\t<type>%d</type>\n", game->isComputerTurn + 1);
-	if (game->isComputerTurn == 1){
-		if (game->minmaxDepth == BEST_DEPTH)
-			fprintf(f, "\t<difficulty>Best</difficulty>\n");
-		else
-			fprintf(f, "\t<difficulty>%d</difficulty>\n", game->minmaxDepth);
-		fprintf(f, "\t<user_color>%s</user_color>\n", game->isUserWhite == 1 ? "White" : "Black");
-	}
-	fprintf(f, "\t<next_turn>%s</next_turn>\n", game->isWhiteTurn == 1 ? "White" : "Black");
-	fprintf(f, "\t<board>\n");
-	for (i = 0; i < BOARD_SIZE; i++){
-		fprintf(f, "\t\t<row_%d>", 8 - i);
-		for (j = 0; j < BOARD_SIZE; j++){
-			switch (game->board[j][7 - i]){
-			case WHITE_P:
-				fprintf(f, "m");
-				break;
-			case WHITE_K:
-				fprintf(f, "k");
-				break;
-			case BLACK_P:
-				fprintf(f, "M");
-				break;
-			case BLACK_K:
-				fprintf(f, "K");
-				break;
-			case WHITE_B:
-				fprintf(f, "b");
-				break;
-			case BLACK_B:
-				fprintf(f, "B");
-				break;
-			case WHITE_R:
-				fprintf(f, "r");
-				break;
-			case BLACK_R:
-				fprintf(f, "R");
-				break;
-			case WHITE_N:
-				fprintf(f, "n");
-				break;
-			case BLACK_N:
-				fprintf(f, "N");
-				break;
-			case WHITE_Q:
-				fprintf(f, "q");
-				break;
-			case BLACK_Q:
-				fprintf(f, "Q");
-				break;
-			case EMPTY:
-				fprintf(f, "_");
-				break;
-			}
-		}
-		fprintf(f, "</row_%d>\n", 8 - i);
-	}
-	fprintf(f, "\t</board>\n");
-	fprintf(f, "</game>\n");
-}
-*/
 
 void freeAndNull(void* obj) {
 	if ( obj != NULL ) {
@@ -1012,4 +958,142 @@ int getBestMoveJ2(Move* move){
 	return move->first->next->y;
 
 }
+
+/*
+void load_game_gui(game_status_t *state, FILE *f){
+	int i, k, j;
+	char row[50], *p;
+	char *difficulties[5] = { "1", "2", "3", "4", "Best" };
+	char s1[16], s2[16];
+	char general_label_flag = 0;
+	for (i = 1; i <= 7; i++){
+		fgets(row, 50, f);
+		switch (i){
+		case 3:
+			if (strstr(row, "1")){
+				state->computer_plays = 0;
+				state->minimax_depth = MINIMAX_DEFAULT;
+			}
+			else{
+				state->computer_plays = 1;
+				fgets(row, 50, f);/*<difficulty> row*/
+				for (k = 0; k < 5; k++){
+					if (strstr(row, difficulties[k])){
+						if (k < 4){
+							state->minimax_depth = k + 1;
+							break;
+						}
+						else
+							state->minimax_depth = BEST_DEPTH;
+					}
+				}
+				fgets(row, 50, f);/*<user_color> row*/
+				if (strstr(row, "White"))
+					state->is_user_white = 1;
+				else
+					state->is_user_white = 0;
+			}
+			break;
+		case 4:
+			if (strstr(row, "White"))
+				state->is_current_turn_white = 1;
+			else
+				state->is_current_turn_white = 0;
+			break;
+		case 6:
+			for (k = 0; k < BOARD_SIZE; k++){
+				p = row;
+				p += 9;/*skip \t\t<row x> part*/
+				for (j = 0; j < BOARD_SIZE; j++){
+					switch (*p){
+					case '_':
+						state->board[j][7 - k] = EMPTY;
+						break;
+					case 'K':
+						state->board[j][7 - k] = BLACK_K;
+						state->Black_King_Pos.column = j;
+						state->Black_King_Pos.row = 7 - k;
+						break;
+					case 'M':
+						state->board[j][7 - k] = BLACK_P;
+						break;
+					case 'k':
+						state->board[j][7 - k] = WHITE_K;
+						state->White_King_Pos.column = j;
+						state->White_King_Pos.row = 7 - k;
+						break;
+					case 'm':
+						state->board[j][7 - k] = WHITE_P;
+						break;
+					case 'r':
+						state->board[j][7 - k] = WHITE_R;
+						break;
+					case 'R':
+						state->board[j][7 - k] = BLACK_R;
+						break;
+					case 'b':
+						state->board[j][7 - k] = WHITE_B;
+						break;
+					case 'B':
+						state->board[j][7 - k] = BLACK_B;
+						break;
+					case 'n':
+						state->board[j][7 - k] = WHITE_N;
+						break;
+					case 'N':
+						state->board[j][7 - k] = BLACK_N;
+						break;
+					case 'q':
+						state->board[j][7 - k] = WHITE_Q;
+						break;
+					case 'Q':
+						state->board[j][7 - k] = BLACK_Q;
+						break;
+					}
+					p++;
+				}
+				fgets(row, 50, f); /*reads </board> on the last iteration*/
+			}
+			break;
+		case 7: /*handles <general> label, which contains castling status, if such label exists*/
+			if (strstr(row, "general")){
+				general_label_flag = 1;
+				fgets(row, 50, f);
+				sscanf(row, "\t\t<%s>%c</%s>", s1, &(state->can_white_player_castle[0]), s2);
+				fgets(row, 50, f);
+				sscanf(row, "\t\t<%s>%c</%s>", s1, &(state->can_white_player_castle[1]), s2);
+				fgets(row, 50, f);
+				sscanf(row, "\t\t<%s>%c</%s>", s1, &(state->can_black_player_castle[0]), s2);
+				fgets(row, 50, f);
+				sscanf(row, "\t\t<%s>%c</%s>", s1, &(state->can_black_player_castle[1]), s2);
+			}
+			break;
+		}
+	}
+	if (!general_label_flag){
+		state->can_white_player_castle[0] = state->can_white_player_castle[1] = 1;
+		state->can_black_player_castle[0] = state->can_black_player_castle[1] = 1;
+		if (state->White_King_Pos.column != 4 || state->White_King_Pos.row != 0)
+			state->can_white_player_castle[0] = state->can_white_player_castle[1] = -1;
+		else{
+			if (state->board[0][0] != WHITE_R)
+				state->can_white_player_castle[0] = -1;
+			if (state->board[7][0] != WHITE_R)
+				state->can_white_player_castle[1] = -1;
+		}
+		if (state->Black_King_Pos.column != 4 || state->Black_King_Pos.row != 7)
+			state->can_black_player_castle[0] = state->can_black_player_castle[1] = -1;
+		else{
+			if (state->board[0][7] != BLACK_R)
+				state->can_black_player_castle[0] = -1;
+			if (state->board[7][7] != BLACK_R)
+				state->can_black_player_castle[1] = -1;
+		}
+	}
+	/*printf("state->is_current_turn_white: %d\n", state->is_current_turn_white);
+	printf("state->minimax_depth: %d\n", state->minimax_depth);
+	printf("state->is_user_white: %d\n", state->is_user_white);*/
+}
+*/
+
 
