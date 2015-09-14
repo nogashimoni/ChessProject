@@ -247,15 +247,13 @@ int handleEventToSetBoard(Window* window, EventID eventID, Game* game,
 		GUIMemory* memory) {
 	switch (eventID) {
 	case (FIRST_PRESSED): //set board
-		printf("first pressed\n");
 		return SET_BOARD;
 		break;
 	case (SECOND_PRESSED): //continue
-		printf("2nd pressed\n");
+		setIsComputerTurn(game);
 		return GAME_WINDOW; //Start game! (continue)
 		break;
 	case (THIRD_PRESSED): //cancel
-		printf("3rd pressed\n");
 		return WELCOME;
 	case (NOTHING_HAPPANED):
 		return TO_SET_BOARD;
@@ -316,6 +314,7 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 				memory->pathOfBubbleToShow = MATE_WHITE_WON_BUBBLE;
 			}
 		}
+
 
 		memory->commandType = NO_COMMAND;
 		memory->pieceChosen = 'a';
