@@ -423,10 +423,10 @@ int updateWelcomeWindow(Window* activeWindow,Game* game, GUIMemory* memory) {
 	}
 
 	else {
-		// remove choose slot panel
-		Background* Background = (Background*)activeWindow->UITreeHead->widget;
-		applySurface(0,0,Background->image, activeWindow->screen,NULL);
-		drawButtons(activeWindow->UITreeHead->child->widget, activeWindow->screen);
+//		// remove choose slot panel
+//		Background* Background = (Background*) (activeWindow->UITreeHead->child->widget);
+//		applySurface(0,0,Background->image, activeWindow->screen,NULL);
+//		drawButtons(activeWindow->UITreeHead->child->widget, activeWindow->screen);
 	}
 
 	return 1;

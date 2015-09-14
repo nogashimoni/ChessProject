@@ -19,6 +19,7 @@
 #define TO_SET_BOARD_BACKGROUND "images/to_set_board_background.png"
 #define SET_WHO_STARTS_BACKGROUND "images/set_who_starts_background.png"
 #define SET_BOARD_BACKGROUND "images/board_background.png"
+#define AI_SETTINGS_BACKGROUND "images/ai_settings_background.png"
 
 #define BOARD_PANEL_BACKGROUND "images/board.png"
 #define CHOOSE_PIECE_PANEL_BACKGROUND "images/choose_piece_panel.png" //"images/choose_piece_panel_background.png"
