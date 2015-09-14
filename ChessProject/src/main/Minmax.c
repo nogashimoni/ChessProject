@@ -3,11 +3,11 @@
 #include "Minmax.h"
 
 
-int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
+int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing, int isCalledByWhite) {
 
 	//halting condition.
 	if ( depth == 0 || isCurrentPlayerStuck(game) ) { //change to isPlayerStuck().
-		return scoringFunction(game);
+		return scoringFunction(game, isCalledByWhite);
 	}
 
 	//Current player is maximizing.
@@ -30,7 +30,7 @@ int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
 			switchTurns(gameCopy);
 
 			//find score by rec call
-			val = minmax(gameCopy,depth-1,alpha,beta,0);
+			val = minmax(gameCopy,depth-1,alpha,beta,0, isCalledByWhite);
 
 			Move* tmpMove = move;
 			move = move->next;
@@ -80,7 +80,7 @@ int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing) {
 			switchTurns(gameCopy);
 
 			//find score by rec call
-			val = minmax(gameCopy,depth-1,alpha,beta,1);
+			val = minmax(gameCopy,depth-1,alpha,beta,1,isCalledByWhite);
 
 			Move* tmpMove = move;
 			move = move->next;
@@ -185,16 +185,27 @@ Moves* getAllMoves(Game* game){
 	return allMoves;
 }
 
-int scoringFunction(Game* game) {
+int scoringFunction(Game* game, int isCalledByWhite) {
 	/* Scoring function for the minimax. */
 	int result;
 
-	//someone lost
+	//player lost
 	if ( isCurrentPlayerLose(game) ) {
-		return INT_MIN;
+		if ((isCalledByWhite && game->isWhiteTurn) || (!isCalledByWhite && !game->isWhiteTurn)){
+			return INT_MIN;
+		}
+		else {
+			return INT_MAX;
+		}
 	}
+	//player in tie.
 	if (isTie(game)){
-		return (INT_MIN+1);
+		if ( (isCalledByWhite && game->isWhiteTurn) || (!isCalledByWhite && !game->isWhiteTurn)){
+			return INT_MIN+1;
+		}
+		else {
+			return INT_MAX-1;
+		}
 	}
 
 	// no one lost- we got to depth 0
@@ -256,11 +267,11 @@ int scoringFunction(Game* game) {
 	int whitePlayerScore = numOfWhitePawns + 3*(numOfWhiteKnights+numOfWhiteBishops) + 5*numOfWhiteRooks + 9*numOfWhiteQueens + 400*numOfWhiteKings;
 	int blackPlayerScore = numOfBlackPawns + 3*(numOfBlackKnights+numOfBlackBishops) + 5*numOfBlackRooks + 9*numOfBlackQueens + 400*numOfBlackKings;
 
-	if (game->isWhiteTurn) {
-		result = blackPlayerScore - whitePlayerScore;
+	if (isCalledByWhite) {
+		result = whitePlayerScore - blackPlayerScore;
 	}
 	else {
-		result = whitePlayerScore - blackPlayerScore;
+		result = blackPlayerScore - whitePlayerScore;
 	}
 	return result;
 }

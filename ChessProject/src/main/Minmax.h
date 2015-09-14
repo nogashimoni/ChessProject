@@ -13,11 +13,11 @@ extern Moves* moves;
 extern Moves* movesTemp;
 
 //Function declarations
-int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing);
+int minmax(Game* game,int depth, int alpha, int beta, int isMaximizing, int isCalledByWhite);
 int min(int x, int y);
 int max (int x, int y);
 Moves* getAllMoves(Game* game);
-int scoringFunction(Game* game);
+int scoringFunction(Game* game, int isCalledByWhite);
 void addMovesToAllMoves(Moves* allMoves);
 void freeAllMoves(Moves* allMoves);
 Move* getBestMoveForUser(Game* game);
