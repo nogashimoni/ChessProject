@@ -216,7 +216,17 @@ void userTurn(Game* game){
 			freeMove(move);
 		}
 		else if (!strncmp(cmd,"get_best_moves",14)){
-			int d = (int)strtol(cmd+14,(char**)NULL,10);
+
+			int d;
+			if (cmd+14 == 'b'){
+				d = 4;
+				game->isBest = 1;
+			}
+			else{
+				d = (int)strtol(cmd+14,(char**)NULL,10);
+			}
+
+
 			game->minmaxDepth = d;
 			if (d == 0){
 				print_message(ILLEGAL_COMMAND);
