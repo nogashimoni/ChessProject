@@ -287,6 +287,7 @@ int getScore(Game* game, Move* move, int d){
 	Game* gameCopy = cloneGame(game);
 	gameCopy->minmaxDepth = d;
 	doMove(gameCopy, move, 0, EMPTY);
+	switchTurns(gameCopy);
 	int minmaxScore = minmax(gameCopy, d, INT_MIN, INT_MAX, 0);
 	freeMove(gameCopy->minmaxMove);
 	game->minmaxScore = INT_MIN;
