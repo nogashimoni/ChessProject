@@ -306,7 +306,9 @@ int isValidMove(Game* game, Move* move) {
 	if (moves != NULL){
 		freeMoves(0);
 	}
-	print_message(ILLEGAL_MOVE);
+	if (!game->isGUIMode){
+		print_message(ILLEGAL_MOVE);
+	}
 	return 0;
 }
 
