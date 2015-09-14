@@ -88,7 +88,7 @@ void setDifficulty(Game* game, char* pointer) {
 		return;
 	}
 	if (*pointer == 'd') {
-		int num = (int) *(pointer + 5);
+		int num = (int) strtol(pointer + 5, (char**) NULL, 10);
 		int numIsGreaterThan10 = (*(pointer + 6) == '\0' ? 0 : 1);
 		if (numIsGreaterThan10 || num == 0 || num > 4) {
 			print_message(WRONG_MINIMAX_DEPTH);
@@ -96,7 +96,7 @@ void setDifficulty(Game* game, char* pointer) {
 			game->minmaxDepth = num;
 		}
 	} else if (*pointer == 'b') {
-		// TODO bonus
+		game->minmaxDepth = 4;
 	} else {
 		print_message(ILLEGAL_COMMAND);
 	}
@@ -555,7 +555,7 @@ void getPawnMoves(Game* game, Moves* movesCopy, int x, int y){
 	if (game->isWhiteTurn){
 		for (int i=-1 ; i<=1; i+=2){
 			if (!isValidIJ(x+i,y+1)){
-				break;
+				continue;
 			}
 			if ( (!game->isWhiteTurn)==getPieceColor(game, x+i,y+1) ){
 				Move* move = creatNewMove(x, y, x+i, y+1);
@@ -577,7 +577,7 @@ void getPawnMoves(Game* game, Moves* movesCopy, int x, int y){
 	if (!game->isWhiteTurn){
 		for (int i=-1 ; i<=1; i+=2){
 			if (!isValidIJ(x+i,y-1)){
-				break;
+				continue;
 			}
 			int pieceColor = getPieceColor(game, x+i,y-1);
 			if (pieceColor == 1){
