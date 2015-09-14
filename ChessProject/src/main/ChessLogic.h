@@ -62,6 +62,10 @@ Position* clonePosition(Position* position);
 int isTie(Game* game);
 int isCurrentPlayerLose(Game* game);
 
+//File Handling
+void loadGame(Game* game, char* path);
+void saveGame(Game* game, char* path);
+
 int getBestMoveI1(Move* move);
 int getBestMoveI2(Move* move);
 int getBestMoveJ1(Move* move);
