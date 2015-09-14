@@ -40,5 +40,6 @@ void displayAllPossibleMoves(Matrix* matrix,GUIMemory* memory, Game* game, SDL_S
 void displayBestMove(Matrix* matrix,GUIMemory* memory, Game* game, SDL_Surface* screen);
 int isPromotionMove(Game* game, int i1, int j1, int i2, int j2);
 void switchChosenPieceToWhite(GUIMemory* memory);
+void updateComputerTurnIfNeeded(Window* window, Game* game );
 
 #endif /* HANDLEFUNCTIONS_H_ */
