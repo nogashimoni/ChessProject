@@ -91,7 +91,7 @@ int loadGameFromFile(Game* game, char* path) {
 			game->isUserWhite = 1;
 		}
 
-		if (strstr(row,"<row_8>")) {
+		if (strstr(row,"row_8")) {
 			for (int k = 0; k < BOARD_SIZE; k++){
 				p = row + 9; //skip the tag
 				for (int j = 0; j < BOARD_SIZE; j++){

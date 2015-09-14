@@ -3,7 +3,7 @@ OFILES= ErrorHandling.o ChessDefinitions.o  XMLFileHandler.o ChessLogic.o Minmax
 SDL_L=`sdl-config --libs` 
 SDL_C=`sdl-config --cflags`
 
-all: chessprog test
+all: chessprog #test
 
 clean:
 	-rm chessprog $(OFILES)
