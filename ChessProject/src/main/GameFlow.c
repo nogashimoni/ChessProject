@@ -77,7 +77,7 @@ void setupGameByConsole(Game* game) {
 			print_board(game->board);
 		} else if (!strcmp(cmd, "quit")) {
 			quit();
-		} else if (!strcmp(cmd, "start")) {
+		}else if (!strcmp(cmd, "start")) {
 			int numOfWhiteKIsOk = (countPeices(game, WHITE_K) == 1);
 			int numOfBlackKisOk = (countPeices(game, BLACK_K) == 1);
 			if (numOfWhiteKIsOk && numOfBlackKisOk) {
@@ -89,6 +89,8 @@ void setupGameByConsole(Game* game) {
 			print_message(ILLEGAL_COMMAND);
 		}
 	}
+	setIsComputerTurn(game);
+
 	return;
 }
 
@@ -123,6 +125,7 @@ void playByConsole(Game* game) {
 			switchTurns(game);
 		}
 	}
+
 	else { //computer-user game.
 
 		while ( game->isRunning ) {
