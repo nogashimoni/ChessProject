@@ -7,7 +7,7 @@
 #include <string.h>
 #include "../main/ChessDefinitions.h"
 
-#define XML_DECLARETION '<?xml version="1.0" encoding="UTF-8"?>'
+//#define XML_DECLARETION '<?xml version="1.0" encoding="UTF-8"?>'
 #define TAG_GAME_S "<game>"
 #define TAG_GAME_E "</game>"
 #define TAG_NEXT_TURN_S "<next_turn>"
@@ -26,12 +26,13 @@
 #define TAG_ROW_TEMPLATE_E "<row_%d>"
 
 #define NEXT_IS_WHITE "White"
-#define NEXT_IS_WHITE "Black"
+#define NEXT_IS_BLACK "Black"
 #define GAME_MODE_USER_COMPUTER "2"
 #define GAME_MODE_USER_USER "1"
 
 
 
 int saveGameToFile(Game* game, char* path);
+int loadFileFromFile(Game* game, char* path);
 
 #endif /* XMLFILEHANDLER_H_ */
