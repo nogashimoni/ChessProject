@@ -2,77 +2,78 @@
 
 int saveGameToFile(Game* game, char* path) {
 	FILE* fp;
-	if ( (fp = fopen(path, "w")) == NULL ) {
+	if ( (fp = fopen(path, "w")) == NULL )
 		return 0;
+
+	char* nextTurn = (game->isWhiteTurn ? "Black": "White");
+	int gameMode = (game->isTwoPlayersMode ? 1 : 2);
+	char* userColor = (game->isUserWhite ? "White" : "Black");
+
+	fprintf(fp,"%s\n", XML_DECLARETION);
+	fprintf(fp, "%s\n", TAG_GAME_S);
+	fprintf(fp, "\t%s %s %s \n", TAG_NEXT_TURN_S, nextTurn, TAG_NEXT_TURN_E);
+	fprintf(fp, "\t%s %d %s \n", TAG_GAME_MODE_S, gameMode, TAG_GAME_MODE_E);
+	if ( !game->isTwoPlayersMode ) {
+		fprintf(fp, "\t%s %d %s \n", TAG_DIFFICULTY_S, game->minmaxDepth , TAG_DIFFICULTY_E);
+		fprintf(fp, "\t%s %s %s \n", TAG_USER_COLOE_S, userColor , TAG_USER_COLOE_E);
 	}
+	else {
+		fprintf(fp, "\t%s \n", EMPTY_DIFFICULTY_TAG);
+		fprintf(fp, "\t%s \n", EMPTY_USER_COLOR_TAG);;
+	}
+	fprintf(fp, "\t%s\n", TAG_BOARD_S);
 
-
-	/* XML file - TODO
-	void saveGameGUI(Game* game, FILE* f){
-		int i, j;
-		fprintf(f, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		fprintf(f, "<game>\n");
-		fprintf(f, "\t<type>%d</type>\n", game->isComputerTurn + 1);
-		if (game->isComputerTurn == 1){
-			if (game->minmaxDepth == BEST_DEPTH)
-				fprintf(f, "\t<difficulty>Best</difficulty>\n");
-			else
-				fprintf(f, "\t<difficulty>%d</difficulty>\n", game->minmaxDepth);
-			fprintf(f, "\t<user_color>%s</user_color>\n", game->isUserWhite == 1 ? "White" : "Black");
-		}
-		fprintf(f, "\t<next_turn>%s</next_turn>\n", game->isWhiteTurn == 1 ? "White" : "Black");
-		fprintf(f, "\t<board>\n");
-		for (i = 0; i < BOARD_SIZE; i++){
-			fprintf(f, "\t\t<row_%d>", 8 - i);
-			for (j = 0; j < BOARD_SIZE; j++){
-				switch (game->board[j][7 - i]){
+	for (int i = 0; i < BOARD_SIZE; i++){
+		fprintf(fp, "\t\t<row_%d>", BOARD_SIZE - i);
+			for (int j = 0; j < BOARD_SIZE; j++){
+				switch (game->board[j][BOARD_SIZE -1 - i]){
 				case WHITE_P:
-					fprintf(f, "m");
+					fprintf(fp, "m");
 					break;
 				case WHITE_K:
-					fprintf(f, "k");
+					fprintf(fp, "k");
 					break;
 				case BLACK_P:
-					fprintf(f, "M");
+					fprintf(fp, "M");
 					break;
 				case BLACK_K:
-					fprintf(f, "K");
+					fprintf(fp, "K");
 					break;
 				case WHITE_B:
-					fprintf(f, "b");
+					fprintf(fp, "b");
 					break;
 				case BLACK_B:
-					fprintf(f, "B");
+					fprintf(fp, "B");
 					break;
 				case WHITE_R:
-					fprintf(f, "r");
+					fprintf(fp, "r");
 					break;
 				case BLACK_R:
-					fprintf(f, "R");
+					fprintf(fp, "R");
 					break;
 				case WHITE_N:
-					fprintf(f, "n");
+					fprintf(fp, "n");
 					break;
 				case BLACK_N:
-					fprintf(f, "N");
+					fprintf(fp, "N");
 					break;
 				case WHITE_Q:
-					fprintf(f, "q");
+					fprintf(fp, "q");
 					break;
 				case BLACK_Q:
-					fprintf(f, "Q");
+					fprintf(fp, "Q");
 					break;
 				case EMPTY:
-					fprintf(f, "_");
+					fprintf(fp, "_");
 					break;
 				}
 			}
-			fprintf(f, "</row_%d>\n", 8 - i);
+			fprintf(fp, "</row_%d>\n", BOARD_SIZE - i);
 		}
-		fprintf(f, "\t</board>\n");
-		fprintf(f, "</game>\n");
-	}
-	*/
+		fprintf(fp, "\t%s\n", TAG_BOARD_E);
+		fprintf(fp, "%s/n", TAG_GAME_E);
+
+		fclose(fp);
 
 	return 1;
 }
