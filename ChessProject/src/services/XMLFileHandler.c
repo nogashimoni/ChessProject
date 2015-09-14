@@ -103,9 +103,8 @@ int loadGameFromFile(Game* game, char* path) {
 					}
 					p++;
 				}
-				fgets(row, 50, fp); /*reads </board> on the last iteration*/
+				fgets(row, 50, fp);
 			}
-			return 1;
 		}
 	}
 	return 1;
