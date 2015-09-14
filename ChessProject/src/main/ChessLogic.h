@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include "../services/XMLFileHandler.h"
 
 #include "../services/ErrorHandling.h"
 #include "ChessDefinitions.h"
