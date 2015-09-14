@@ -184,6 +184,14 @@ void userTurn(Game* game){
 			int i = xToI(*(cmd+10));
 			int intY = (int)strtol(cmd+12,(char**)NULL,10);
 			int j = yToJ(intY);
+			if (!isCurrentPlayerPeice(game, i, j)){
+				if (!isValidIJ(i ,j)){
+					print_message(WRONG_POSITION);
+					continue;
+				}
+				print_message("The specified position does not contain your piece\n");
+				continue;
+			}
 			Moves* moves = getMoves(game, i, j, 1);
 			Move* currMove = moves->first;
 			while ( currMove != NULL ) {

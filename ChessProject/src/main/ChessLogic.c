@@ -431,6 +431,7 @@ Moves* getMoves(Game* game, int x, int y, int isCheckRelevence ){
 }
 
 void getMovesForPiece(Game* game, int x, int y, Moves* movesCopy){
+
 	if (isCurrentPlayerPeice(game, x, y)){
 		//Piece is a Pawn
 		if (game->board[x][y] == WHITE_P || game->board[x][y] == BLACK_P){
