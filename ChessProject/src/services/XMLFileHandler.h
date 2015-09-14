@@ -17,9 +17,9 @@
 #define TAG_DIFFICULTY_S "<difficulty>"
 #define TAG_DIFFICULTY_E "</difficulty>"
 #define EMPTY_DIFFICULTY_TAG "<difficulty/>"
-#define TAG_USER_COLOE_S "<user_color>"
+#define TAG_USER_COLOR_S "<user_color>"
 #define TAG_USER_COLOE_E "</user_color>"
-#define EMPTY_USER_COLOR_TAG "<difficulty/>"
+#define EMPTY_USER_COLOR_TAG "<user_color/>"
 #define TAG_BOARD_S "<board>"
 #define TAG_BOARD_E "</board>"
 #define TAG_ROW_TEMPLATE_S "<row_%d>"
@@ -29,10 +29,11 @@
 #define NEXT_IS_BLACK "Black"
 #define GAME_MODE_USER_COMPUTER "2"
 #define GAME_MODE_USER_USER "1"
-
+#define USER_COLOR_WHITE "White"
+#define USER_COLOR_BLACK "Black"
 
 
 int saveGameToFile(Game* game, char* path);
-int loadFileFromFile(Game* game, char* path);
+int loadGameFromFile(Game* game, char* path);
 
 #endif /* XMLFILEHANDLER_H_ */
