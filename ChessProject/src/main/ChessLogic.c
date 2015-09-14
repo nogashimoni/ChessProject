@@ -110,10 +110,8 @@ void setUserColor(Game* game, char color) {
 	}
 	if (color == 'b') {
 		game->isUserWhite = 0;
-		game->isComputerTurn=1;
 	} else if (color == 'w') {
 		game->isUserWhite = 1;
-		game->isComputerTurn=0;
 	} else {
 		print_message(ILLEGAL_COMMAND);
 	}
@@ -216,6 +214,20 @@ int isInvalidIJ(unsigned int i, unsigned int j) {
 	return 0;
 }
 
+void setIsComputerTurn(Game* game){
+
+	game->isComputerTurn = 0;
+	if (!game->isTwoPlayersMode) {
+		if (game->isWhiteTurn && !game->isUserWhite) {
+			game->isComputerTurn = 1;
+		}
+		else if (!game->isWhiteTurn && game->isUserWhite) {
+			game->isComputerTurn = 1;
+		}
+	}
+
+}
+
 int isInvalidXY(char x, unsigned int y) {
 	unsigned int i, j;
 	i = xToI(x);
@@ -306,7 +318,9 @@ int isValidMove(Game* game, Move* move) {
 	if (moves != NULL){
 		freeMoves(0);
 	}
-	print_message(ILLEGAL_MOVE);
+	if (!game->isGUIMode){
+		print_message(ILLEGAL_MOVE);
+	}
 	return 0;
 }
 

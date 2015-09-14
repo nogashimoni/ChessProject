@@ -63,6 +63,7 @@ Position* clonePosition(Position* position);
 int isTie(Game* game);
 int isCurrentPlayerLose(Game* game);
 int isCheck(Game* game);
+void setIsComputerTurn(Game* game);
 
 //File Handling
 void loadGame(Game* game, char* path);
