@@ -218,7 +218,7 @@ void userTurn(Game* game){
 		else if (!strncmp(cmd,"get_best_moves",14)){
 
 			int d;
-			if (cmd+14 == 'b'){
+			if (*(cmd+14) == 'b'){
 				d = 4;
 				game->isBest = 1;
 			}
@@ -250,7 +250,7 @@ void userTurn(Game* game){
 			freeMove(move);
 		}
 		else if (!strncmp(cmd,"save",4)){
-			saveFile(game, cmd+4);
+			saveGame(game, cmd+4);
 		}
 
 		else {
