@@ -578,6 +578,7 @@ int isPromotionMove(Game* game, int i1, int j1, int i2, int j2) {
 void updateComputerTurnIfNeeded(Window* window, Game* game ) {
 	if ( (!game->isTwoPlayersMode) && game->isComputerTurn) {
 		computerTurn(game);
+
 		UITreeNode* panelNode = window->UITreeHead->child;
 		Panel* panel = (Panel*)panelNode->widget;
 		applySurface(panel->relevantArea.x, panel->relevantArea.y, panel->panelBackground,window->screen, NULL);
@@ -585,6 +586,18 @@ void updateComputerTurnIfNeeded(Window* window, Game* game ) {
 		Matrix* matrix = (Matrix*)matrixNode->widget;
 		updateMatrixByGame(matrix, game);
 		drawMatrix(matrix, window->screen);
+
 		switchTurns(game);
+//		int isCheck =
+		int isTie = isTie(game);
+		int isMate = isCurrentPlayerLose(game);
+		if ( isMate ) {
+			int isWinnerWhite;
+			if (game->isWhiteTurn)
+				isWinnerWhite = 0;
+			else {
+				isWinnerWhite = 1;
+			}
+		}
 	}
 }
