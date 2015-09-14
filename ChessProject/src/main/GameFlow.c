@@ -99,6 +99,7 @@ void playByConsole(Game* game) {
 	if (game->isTwoPlayersMode) { //user-user game.
 
 		while ( game->isRunning ) {
+
 			if (isCurrentPlayerStuck(game)){
 				game->isRunning = 0;
 				if (isCurrentPlayersKingInDanger(game)){
@@ -115,6 +116,9 @@ void playByConsole(Game* game) {
 				}
 				break;
 			}
+			if (isCurrentPlayersKingInDanger(game)){
+				print_message("Check!\n");
+			}
 			userTurn(game);
 			switchTurns(game);
 		}
@@ -122,6 +126,7 @@ void playByConsole(Game* game) {
 	else { //computer-user game.
 
 		while ( game->isRunning ) {
+
 			if (isCurrentPlayerStuck(game)){
 				if (isCurrentPlayersKingInDanger(game)){
 					game->isRunning = 0;
@@ -136,6 +141,9 @@ void playByConsole(Game* game) {
 				else {
 					print_message("The game ends in a tie\n");
 				}
+			}
+			if (isCurrentPlayersKingInDanger(game)){
+				print_message("Check!\n");
 			}
 			if ( game->isComputerTurn ) {
 				computerTurn(game);
