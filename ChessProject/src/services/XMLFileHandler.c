@@ -55,7 +55,7 @@ int loadGameFromFile(Game* game, char* path) {
 	}
 	char row[50], *p;
 
-	for (int i = 0; i < 7; i++){
+	while ( !strstr(row, TAG_GAME_E) ) {
 		fgets(row, 50, fp);
 		if (strstr(row, TAG_NEXT_TURN_S)) {
 			if (strstr(row, NEXT_IS_WHITE)) {
@@ -91,20 +91,21 @@ int loadGameFromFile(Game* game, char* path) {
 			game->isUserWhite = 1;
 		}
 
-		if (strstr(row,"row_8")) {
+		if (strstr(row,"row")) {
 			for (int k = 0; k < BOARD_SIZE; k++){
 				p = row + 9; //skip the tag
 				for (int j = 0; j < BOARD_SIZE; j++){
 
 					if ( *p == '_') {
-						game->board[j][7 - k] = EMPTY;
+						game->board[j][BOARD_SIZE-1 - k] = EMPTY;
 					} else {
-						game->board[j][7 - k] = *p;
+						game->board[j][BOARD_SIZE-1 - k] = *p;
 					}
 					p++;
 				}
-//				fgets(row, 50, fp); /*reads </board> on the last iteration*/
+				fgets(row, 50, fp); /*reads </board> on the last iteration*/
 			}
+			return 1;
 		}
 	}
 	return 1;
