@@ -71,6 +71,7 @@ typedef struct Game {
 	int isRunning;
 	int isGUIMode;
 	int isTwoPlayersMode;
+	int isBest;
 
 	// user-user
 	int isWhiteTurn;
