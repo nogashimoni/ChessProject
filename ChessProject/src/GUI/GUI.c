@@ -39,6 +39,7 @@ int GUIMain(Game* game) {
 		GUIMemory* memory = (GUIMemory*)malloc(sizeof(GUIMemory));
 		initMemory(memory);
 
+
 		while (!isError && nextWindowId != QUIT_WINDOW) {
 //			if (activeGUI.stateId == PLAY_GAME){ /* if we are currently playing the game */
 //				updateMachineMoveIfNeeded(activeGUI); /* make machine move if it is machibe turn */
@@ -48,10 +49,9 @@ int GUIMain(Game* game) {
 			SDL_Event event;
 			while (SDL_PollEvent(&event)) {
 
-				if (activeWindow.windowId == GAME_WINDOW) {
-					updateComputerTurnIfNeeded(&activeWindow, game);
+				if (activeWindow.windowId == GAME_WINDOW ) {
+					updateComputerTurnIfNeeded(&activeWindow, game, memory);
 				}
-
 				/* translating the SDL event to a logical event using the view: */
 				EventID eventID = activeWindow.translateEvent(&activeWindow, event, memory);
 				if (isError)

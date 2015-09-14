@@ -209,6 +209,7 @@ EventID translateEventGameWindow(Window* window, SDL_Event event,
 		return QUIT_EVENT;
 	}
 
+
 	if (memory->commandType == GET_BEST_MOVE
 			&& memory->minmaxDepthChosen == 0) {
 		Buttons* difficultyButtons = (Buttons*) (getMinmaxPanelNodeGameWindow(
@@ -252,19 +253,6 @@ EventID translateEventGameWindow(Window* window, SDL_Event event,
 		return NOTHING_HAPPANED;
 	}
 
-	// is matrix pressed
-	for (int i = 0; i < BOARD_SIZE; i++) {
-		for (int j = 0; j < BOARD_SIZE; j++) {
-			Matrix* matrix = (Matrix*) window->UITreeHead->child->child->widget;
-			if (matrix->isIJPressed(event, matrix, i, j)) {
-				memory->oldI = memory->newI;
-				memory->oldJ = memory->newJ;
-				memory->newI = i;
-				memory->newJ = j;
-				return SOME_SQUARE_PRESSED;
-			}
-		}
-	}
 
 	// are buttons pressed
 	UITreeNode* buttonsNode = window->UITreeHead->child->child->child;
@@ -282,6 +270,26 @@ EventID translateEventGameWindow(Window* window, SDL_Event event,
 				return THIRD_PRESSED;
 		}
 	}
+
+	if (memory->isMate || memory->isTie) {
+		return NOTHING_HAPPANED;
+	}
+
+	// is matrix pressed
+	for (int i = 0; i < BOARD_SIZE; i++) {
+		for (int j = 0; j < BOARD_SIZE; j++) {
+			Matrix* matrix = (Matrix*) window->UITreeHead->child->child->widget;
+			if (matrix->isIJPressed(event, matrix, i, j)) {
+				memory->oldI = memory->newI;
+				memory->oldJ = memory->newJ;
+				memory->newI = i;
+				memory->newJ = j;
+				return SOME_SQUARE_PRESSED;
+			}
+		}
+	}
+
+
 	UITreeNode* getBestMovesbuttonsNode =
 			window->UITreeHead->child->child->child->child;
 	Buttons* getBestMoveButtons = ((Buttons*) getBestMovesbuttonsNode->widget);

@@ -170,6 +170,7 @@ int handleEventSetBoard(Window* window, EventID eventID, Game* game,
 		return WELCOME;
 	case (SIXTH_PRESSED): //start game
 		if ( (countPeices(game, WHITE_K) == 1) && (countPeices(game, BLACK_K) == 1) ) {
+			setIsComputerTurn(game);
 			return GAME_WINDOW;
 		} else {
 			memory->pathOfBubbleToShow = WRONG_INIT_BUBBLE;
@@ -295,16 +296,31 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 		}
 		doMoveIJ(game, memory->oldI,memory->oldJ,memory->newI, memory->newJ,memory->pieceChosen );
 		switchTurns(game);
+
+		// check if a check / mate/ tie event
+		int isCheckBubbleNeeded = isCheck(game);
+		if  ( isCheckBubbleNeeded ) {
+			memory->pathOfBubbleToShow = CHECK_BUUBLE_IMAGE;
+		}
+		memory->isTie = isTie(game);
+		if (memory->isTie) {
+			memory->pathOfBubbleToShow = TIE_BUBBLE;
+		}
+
+		int isMate = isCurrentPlayerLose(game);
+		if ( isMate ) {
+			memory->isMate = 1;
+			if (game->isWhiteTurn) {
+				memory->pathOfBubbleToShow = MATE_BLACK_WON_BUUBLE;
+			} else {
+				memory->pathOfBubbleToShow = MATE_WHITE_WON_BUBBLE;
+			}
+		}
+
 		memory->commandType = NO_COMMAND;
 		memory->pieceChosen = 'a';
 		memory->isScreenUpdated = 0;
 		return GAME_WINDOW;
-//	case (CHOOSE_PROMOTION_AND_DO_MOVE):
-//		doMoveIJ(game, memory->oldI,memory->oldJ,memory->newI, memory->newJ,EMPTY );
-//		switchTurns(game);
-//		memory->commandType = NO_COMMAND;
-//		memory->isScreenUpdated = 0;
-//TODO
 
 	case (SOME_SQUARE_PRESSED):
 
@@ -331,6 +347,25 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 				}
 				doMoveIJ(game, memory->oldI,memory->oldJ,memory->newI, memory->newJ,EMPTY );
 				switchTurns(game);
+				// check if a check / mate/ tie event
+				int isCheckBubbleNeeded = isCheck(game);
+				if  ( isCheckBubbleNeeded ) {
+					memory->pathOfBubbleToShow = CHECK_BUUBLE_IMAGE;
+				}
+				memory->isTie = isTie(game);
+				if (memory->isTie) {
+					memory->pathOfBubbleToShow = TIE_BUBBLE;
+				}
+
+				int isMate = isCurrentPlayerLose(game);
+				if ( isMate ) {
+					memory->isMate = 1;
+					if (game->isWhiteTurn) {
+						memory->pathOfBubbleToShow = MATE_BLACK_WON_BUUBLE;
+					} else {
+						memory->pathOfBubbleToShow = MATE_WHITE_WON_BUBBLE;
+					}
+				}
 			}
 			memory->commandType = NO_COMMAND;
 			memory->isScreenUpdated = 0;
@@ -424,14 +459,6 @@ int updateSetBoard(Window* activeWindow, Game* game, GUIMemory* memory) {
 }
 
 int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
-	if ( memory->pathOfBubbleToShow != NULL ) {
-		showBubble(memory, activeWindow->screen);
-		memory->pathOfBubbleToShow = NULL;
-		// redraw background when time is over
-		Background* background = (Background*)activeWindow->UITreeHead->widget;
-		applySurface(0,0,background->image, activeWindow->screen, NULL );
-	}
-
 
 	// redraw matrix by game
 	Matrix* matrix = (Matrix*) activeWindow->UITreeHead->child->child->widget;
@@ -503,6 +530,31 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 		memory->minmaxDepthChosen = 0;
 	}
 	SDL_Flip(activeWindow->screen);
+
+	if ( memory->pathOfBubbleToShow != NULL ) {
+		showBubble(memory, activeWindow->screen);
+		memory->pathOfBubbleToShow = NULL;
+		// redraw background when time is over
+		Background* background = (Background*)activeWindow->UITreeHead->widget;
+		applySurface(0,0,background->image, activeWindow->screen, NULL );
+		//update buttons display
+		Buttons* buttons =
+				(Buttons*) activeWindow->UITreeHead->child->child->child->widget;
+		for (int i = 0; i < buttons->numOfButtons; i++) {
+			applySurface(SET_BOARD_MENU_X, SET_BOARD_MENU_Y + i * BUTTON_HEIGHT,
+					buttons->buttonsImages, activeWindow->screen,
+					&buttons->clipArray[i]);
+		}
+		// redraw matrix by game
+		Matrix* matrix = (Matrix*) activeWindow->UITreeHead->child->child->widget;
+		updateMatrixByGame(matrix, game);
+		// delete matrix yellow marks
+		Panel* panel = (Panel*) activeWindow->UITreeHead->child->widget;
+		applySurface(X_FOR_PANEL, Y_FOR_PANEL, panel->panelBackground,
+				activeWindow->screen, NULL);
+		drawMatrix(matrix, activeWindow->screen);
+		SDL_Flip(activeWindow->screen);
+	}
 	return 1;
 }
 
@@ -575,29 +627,36 @@ int isPromotionMove(Game* game, int i1, int j1, int i2, int j2) {
 	return result;
 }
 
-void updateComputerTurnIfNeeded(Window* window, Game* game ) {
-	if ( (!game->isTwoPlayersMode) && game->isComputerTurn) {
+void updateComputerTurnIfNeeded(Window* window, Game* game , GUIMemory* memory) {
+	if ( (!game->isTwoPlayersMode) && game->isComputerTurn ) {
 		computerTurn(game);
 
 		UITreeNode* panelNode = window->UITreeHead->child;
-		Panel* panel = (Panel*)panelNode->widget;
-		applySurface(panel->relevantArea.x, panel->relevantArea.y, panel->panelBackground,window->screen, NULL);
-		UITreeNode* matrixNode = window->UITreeHead->child->child;
-		Matrix* matrix = (Matrix*)matrixNode->widget;
-		updateMatrixByGame(matrix, game);
-		drawMatrix(matrix, window->screen);
+//		memory->isScreenUpdated = 0;
+//		updateGameBoard(window,game,memory);
 
 		switchTurns(game);
-//		int isCheck =
-		int isTie = isTie(game);
+
+		// check if a check / mate/ tie event
+		int isCheckBubbleNeeded = isCheck(game);
+		if  ( isCheckBubbleNeeded ) {
+			memory->pathOfBubbleToShow = CHECK_BUUBLE_IMAGE;
+		}
+		memory->isTie = isTie(game);
+		if (memory->isTie) {
+			memory->pathOfBubbleToShow = TIE_BUBBLE;
+		}
+
 		int isMate = isCurrentPlayerLose(game);
 		if ( isMate ) {
-			int isWinnerWhite;
-			if (game->isWhiteTurn)
-				isWinnerWhite = 0;
-			else {
-				isWinnerWhite = 1;
+			memory->isMate = 1;
+			if (game->isWhiteTurn) {
+				memory->pathOfBubbleToShow = MATE_BLACK_WON_BUUBLE;
+			} else {
+				memory->pathOfBubbleToShow = MATE_WHITE_WON_BUBBLE;
 			}
 		}
+		memory->isScreenUpdated = 0;
+		updateGameBoard(window, game, memory);
 	}
 }

@@ -24,6 +24,10 @@
 #define CHOOSE_DIFFICULTY_PANEL_BACKGROUND "images/choose.png"
 
 #define WRONG_INIT_BUBBLE "images/wrong_board_init_bubble.png"
+#define CHECK_BUUBLE_IMAGE "images/check_bubble.png"
+#define MATE_BLACK_WON_BUUBLE "images/black_wins_bubble.png"
+#define MATE_WHITE_WON_BUBBLE "images/white_wins_bubble.png"
+#define TIE_BUBBLE "images/tie_bubble.png"
 
 #define HIGHLIGHT_CELL "images/highlight_possible_cell.png"
 
@@ -70,7 +74,7 @@
 
 #define BUBBLE_X 550
 #define BUBBLE_Y 360
-#define BUBBLE_TIME 1000
+#define BUBBLE_TIME 1150
 
 #define BOARD_MATRIX_TOP_LEFT_X 49
 #define BOARD_MATRIX_TOP_LEFT_Y 55
@@ -162,6 +166,9 @@ struct GUIMemory {
 
 	int minmaxDepthChosen; // relevant in game's get best move
 	char pieceChosen; //relevant in setup's add
+
+	int isMate;
+	int isTie;
 };
 
 typedef struct Window Window;

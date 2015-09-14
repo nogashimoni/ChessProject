@@ -564,4 +564,8 @@ void initMemory(GUIMemory* memory) {
 	memory->minmaxDepthChosen = 0;
 
 	memory->pathOfBubbleToShow = NULL;
+	memory->isMate=0;
+	memory->isTie = 0;
+	memory->isScreenUpdated = 1;
+
 }
