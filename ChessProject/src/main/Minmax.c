@@ -307,7 +307,7 @@ void addMovesToAllMoves(Moves* allMoves){
 
 Move* getBestMoveForUser(Game* game){
 
-	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
+	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1, game->isWhiteTurn); //updates game->move
 	Move* currMove = game->minmaxMove;
 	while (currMove != NULL){
 		printMove(currMove);
