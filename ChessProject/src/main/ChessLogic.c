@@ -223,6 +223,12 @@ int isInvalidXY(char x, unsigned int y) {
 	return !isValidIJ(i,j);
 }
 
+int isCheck(Game* game){
+	if (isCurrentPlayersKingInDanger(game) && !isCurrentPlayerLose(game)){
+		return 1;
+	}
+	return 0;
+}
 
 int isTie(Game* game){
 	if (!isCurrentPlayersKingInDanger(game) && isCurrentPlayerStuck(game)){
