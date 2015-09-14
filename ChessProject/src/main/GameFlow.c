@@ -160,7 +160,7 @@ void computerTurn(Game* game){
  * computer isn't stuck, meaning there's at least 1 move. */
 
 	printf("Computer: move ");
-	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1); //updates game->move
+	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1, game->isWhiteTurn); //updates game->move
 	doMove(game, game->minmaxMove, 1, EMPTY);
 	freeMove(game->minmaxMove);
 
@@ -288,7 +288,7 @@ int getScore(Game* game, Move* move, int d){
 	gameCopy->minmaxDepth = d;
 	doMove(gameCopy, move, 0, EMPTY);
 	switchTurns(gameCopy);
-	int minmaxScore = minmax(gameCopy, d, INT_MIN, INT_MAX, 0);
+	int minmaxScore = minmax(gameCopy, d, INT_MIN, INT_MAX, 0, gameCopy->isWhiteTurn);
 	freeMove(gameCopy->minmaxMove);
 	game->minmaxScore = INT_MIN;
 	game->minmaxMove = NULL; //just in case
