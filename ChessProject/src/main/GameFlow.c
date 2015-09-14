@@ -99,6 +99,7 @@ void playByConsole(Game* game) {
 	if (game->isTwoPlayersMode) { //user-user game.
 
 		while ( game->isRunning ) {
+
 			if (isCurrentPlayerStuck(game)){
 				game->isRunning = 0;
 				if (isCurrentPlayersKingInDanger(game)){
@@ -115,6 +116,9 @@ void playByConsole(Game* game) {
 				}
 				break;
 			}
+			if (isCurrentPlayersKingInDanger(game)){
+				print_message("Check!\n");
+			}
 			userTurn(game);
 			switchTurns(game);
 		}
@@ -122,6 +126,7 @@ void playByConsole(Game* game) {
 	else { //computer-user game.
 
 		while ( game->isRunning ) {
+
 			if (isCurrentPlayerStuck(game)){
 				if (isCurrentPlayersKingInDanger(game)){
 					game->isRunning = 0;
@@ -136,6 +141,9 @@ void playByConsole(Game* game) {
 				else {
 					print_message("The game ends in a tie\n");
 				}
+			}
+			if (isCurrentPlayersKingInDanger(game)){
+				print_message("Check!\n");
 			}
 			if ( game->isComputerTurn ) {
 				computerTurn(game);
@@ -176,6 +184,14 @@ void userTurn(Game* game){
 			int i = xToI(*(cmd+10));
 			int intY = (int)strtol(cmd+12,(char**)NULL,10);
 			int j = yToJ(intY);
+			if (!isCurrentPlayerPeice(game, i, j)){
+				if (!isValidIJ(i ,j)){
+					print_message(WRONG_POSITION);
+					continue;
+				}
+				print_message("The specified position does not contain your piece\n");
+				continue;
+			}
 			Moves* moves = getMoves(game, i, j, 1);
 			Move* currMove = moves->first;
 			while ( currMove != NULL ) {
@@ -271,6 +287,7 @@ int getScore(Game* game, Move* move, int d){
 	Game* gameCopy = cloneGame(game);
 	gameCopy->minmaxDepth = d;
 	doMove(gameCopy, move, 0, EMPTY);
+	switchTurns(gameCopy);
 	int minmaxScore = minmax(gameCopy, d, INT_MIN, INT_MAX, 0);
 	freeMove(gameCopy->minmaxMove);
 	game->minmaxScore = INT_MIN;
