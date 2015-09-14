@@ -1,5 +1,5 @@
 CFLAGS=-Wall -std=c99 -pedantic-errors -lm -g
-OFILES= ErrorHandling.o ChessDefinitions.o ChessLogic.o Minmax.o GUIDefinitions.o GUIUtils.o StartFunctions.o TranslateFunctions.o HandleFunctions.o StopFunctions.o WindowFactory.o GUI.o GameFlow.o 
+OFILES= ErrorHandling.o ChessDefinitions.o  XMLFileHandler.o ChessLogic.o Minmax.o GUIDefinitions.o GUIUtils.o StartFunctions.o TranslateFunctions.o HandleFunctions.o StopFunctions.o WindowFactory.o GUI.o GameFlow.o 
 SDL_L=`sdl-config --libs` 
 SDL_C=`sdl-config --cflags`
 
@@ -12,6 +12,9 @@ chessprog: $(OFILES)
 	gcc -o $@ $^ $(CFLAGS) $(SDL_L) -lSDL_image
 	
 ErrorHandling.o: src/services/ErrorHandling.c src/services/ErrorHandling.h
+	gcc -c $(CFLAGS) src/services/$*.c $(SDL_C) -lSDL_image
+
+XMLFileHandler.o: src/services/XMLFileHandler.c src/services/XMLFileHandler.c src/main/ChessDefinitions.h
 	gcc -c $(CFLAGS) src/services/$*.c $(SDL_C) -lSDL_image
 	
 GUIDefinitions.o: src/GUI/GUIDefinitions.c src/GUI/GUIDefinitions.h src/main/ChessDefinitions.h
@@ -35,7 +38,7 @@ StopFunctions.o: src/GUI/StopFunctions.c src/GUI/StopFunctions.h src/GUI/GUIUtil
 ChessDefinitions.o: src/main/ChessDefinitions.c src/main/ChessDefinitions.h
 	gcc -c $(CFLAGS) src/main/$*.c $(SDL_C) -lSDL_image
 
-ChessLogic.o: src/main/ChessLogic.c src/main/ChessLogic.h src/main/ChessDefinitions.h #src/GUI/GUI.h src/services/ErrorHandling.h src/main/Minmax.h src/main/ChessDefinitions.h
+ChessLogic.o: src/main/ChessLogic.c src/main/ChessLogic.h src/main/ChessDefinitions.h src/services/XMLFileHandler.h #src/GUI/GUI.h src/services/ErrorHandling.h src/main/Minmax.h src/main/ChessDefinitions.h
 	gcc -c $(CFLAGS) src/main/$*.c $(SDL_C) -lSDL_image
 
 Minmax.o: src/main/Minmax.c src/main/Minmax.h src/main/ChessDefinitions.h src/main/ChessLogic.h src/services/ErrorHandling.h
