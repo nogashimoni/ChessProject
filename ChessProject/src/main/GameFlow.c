@@ -239,6 +239,10 @@ void userTurn(Game* game){
 			printf("%d\n",moveScore);
 			freeMove(move);
 		}
+		else if (!strncmp(cmd,"save",4)){
+			saveGameToFile(cmd+4);
+		}
+
 		else {
 			print_message(ILLEGAL_COMMAND);
 		}
