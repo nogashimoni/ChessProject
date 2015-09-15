@@ -127,7 +127,7 @@ int doesSlotContainFile(int i) {
 
 int saveToSlot(Game* game, int i) {
 	/** Saves an xml in a given slot, in the project directory **/
-	 FILE* file;
+
 	 char fileName[10];
 	 sprintf(fileName, "%s%d.%s", SLOT_SEED, i,"xml");
 
@@ -137,7 +137,7 @@ int saveToSlot(Game* game, int i) {
 }
 
 int loadFromAFullSlot(Game* game, int slotNumber) {
-	 FILE* file;
+
 	 char fileName[10];
 	 sprintf(fileName, "%s%d.%s", SLOT_SEED, slotNumber,"xml");
 	 if ( loadGameFromFile(game, fileName) == 0) {
