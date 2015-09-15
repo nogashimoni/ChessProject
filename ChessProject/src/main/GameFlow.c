@@ -88,6 +88,7 @@ void setupGameByConsole(Game* game) {
 		} else {
 			print_message(ILLEGAL_COMMAND);
 		}
+		printf(ENTER_SETTINGS);
 	}
 	setIsComputerTurn(game);
 

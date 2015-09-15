@@ -1,15 +1,9 @@
-/*
- * ChessDefinitions.c
- *
- *  Created on: Sep 5, 2015
- *      Author: noaleibo1
- */
 
 #include "ChessDefinitions.h"
 
 void print_line() {
 	int i;
-	printf("  |");
+	printf(" |");
 	for (i = 1; i < BOARD_SIZE * 4; i++) {
 		printf("-");
 	}
