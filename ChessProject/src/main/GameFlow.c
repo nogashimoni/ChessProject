@@ -165,7 +165,8 @@ void computerTurn(Game* game){
 	printf("Computer: move ");
 	minmax(game,game->minmaxDepth, INT_MIN, INT_MAX, 1, game->isWhiteTurn); //updates game->move
 	doMove(game, game->minmaxMove, 1, EMPTY);
-	freeMove(game->minmaxMove);
+	freeMinmaxMove(game->minmaxMove);
+	game->minmaxMove = NULL;
 
 	print_board(game->board);
 //	freeNullAndRemove(game->minmaxMove); // all other moves on tree will be freed only when quit
@@ -251,8 +252,8 @@ void userTurn(Game* game){
 				print_message(ILLEGAL_COMMAND);
 				continue;
 			}
-			getBestMoveForUser(game);
-
+			Move* tempMove = getBestMoveForUser(game);
+			freeMove(tempMove);
 		}
 		else if (!strncmp(cmd,"get_score",9)){
 			int d = (int)strtol(cmd+9,(char**)NULL,10);
