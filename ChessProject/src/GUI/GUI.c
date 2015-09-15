@@ -94,8 +94,8 @@ int GUIMain(Game* game) {
 
 		activeWindow.stop(&activeWindow);
 		free(memory);
-		quit();
-return 1;
+
+		return 1;
 
 }
 
