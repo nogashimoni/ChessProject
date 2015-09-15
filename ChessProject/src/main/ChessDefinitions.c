@@ -1,6 +1,7 @@
 
 #include "ChessDefinitions.h"
 
+/*Helper function for print board.*/
 void print_line() {
 	int i;
 	printf(" |");
@@ -29,5 +30,7 @@ int jToY(int j) {
 	return j + 1;
 }
 
+
+/*Global variables*/
 Moves* moves = NULL;
 Moves* movesTemp = NULL;
