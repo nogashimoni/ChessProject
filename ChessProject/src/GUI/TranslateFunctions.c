@@ -25,6 +25,7 @@ EventID translateEventGeneralSetup(Window* window, SDL_Event event,
 		if (continueButton->isButtonPressed(continueButton, event)) {
 			memory->commandType = NO_COMMAND;
 			memory->isScreenUpdated = 0;
+			return LOADED_GAME;
 		}
 		return NOTHING_HAPPANED;
 	}

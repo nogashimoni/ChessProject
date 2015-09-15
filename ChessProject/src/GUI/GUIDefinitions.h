@@ -14,7 +14,6 @@
 //macros for files
 #define WELCOME_BACKGROUND "images/welcome_background.png"
 #define PLAYER_SELECTION_BACKGROUND "images/player_selection_background.png"
-#define SET_DIFFICULTY_AND_COLOR_BACKGROUND "images/welcome_background.png"
 #define TO_SET_WHO_STARTS_BACKGROUND "images/to_set_who_starts_background.png"
 #define TO_SET_BOARD_BACKGROUND "images/to_set_board_background.png"
 #define SET_WHO_STARTS_BACKGROUND "images/set_who_starts_background.png"
@@ -47,7 +46,7 @@
 #define SET_BOARD_BUTTONS_SPRITE "images/set_board_sprite.png"
 #define GAME_MENU_BUTTONS_SPRITE "images/game_menu_sprite.png"
 #define GET_BEST_MOVE_SPRITE "images/get_best_move_sprite.png"
-#define CONTINUE_IMAGE_SPRITE "images/cancel.png"
+#define CONTINUE_IMAGE_SPRITE "images/continue_sprite.png"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -62,7 +61,7 @@
 #define SIZE_OF_SLOT_SQUARE 45
 #define WIDTH_OF_COLOR_BUTTON 90
 #define HEIGHT_OF_COLOR_BUTTON 45
-#define AI_SETTINGS_BUTTONS_X 400
+#define AI_SETTINGS_BUTTONS_X 500
 #define AI_SETTINGS_BUTTONS_FIRST_Y 200
 
 #define X_FOR_PANEL 30
@@ -80,7 +79,7 @@
 
 #define BUBBLE_X 550
 #define BUBBLE_Y 360
-#define BUBBLE_TIME 1150
+#define BUBBLE_TIME 1300
 
 #define BOARD_MATRIX_TOP_LEFT_X 49
 #define BOARD_MATRIX_TOP_LEFT_Y 55
@@ -128,7 +127,8 @@ typedef enum {
 
 	SOME_SQUARE_PRESSED, // relevant in windows with matrix widget
 	CHOSE_PIECE, // relevant in setup's add piece or game's promotion
-	CHOSE_MINMAX_DEPTH
+	CHOSE_MINMAX_DEPTH,
+	LOADED_GAME
 } EventID;
 
 typedef enum {

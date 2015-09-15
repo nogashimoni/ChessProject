@@ -18,6 +18,8 @@ int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game,
 		return WELCOME;
 	case (QUIT_EVENT):
 		return QUIT_WINDOW;
+	case (LOADED_GAME):
+		return TO_SET_WHO_STARTS;
 	}
 	return WELCOME;
 }
@@ -421,12 +423,12 @@ int updateWelcomeWindow(Window* activeWindow,Game* game, GUIMemory* memory) {
 			// continue button
 			drawButtons(activeWindow->UITreeHead->child->child->child->child->widget, activeWindow->screen);
 	}
-
 	else {
-//		// remove choose slot panel
-//		Background* Background = (Background*) (activeWindow->UITreeHead->child->widget);
-//		applySurface(0,0,Background->image, activeWindow->screen,NULL);
-//		drawButtons(activeWindow->UITreeHead->child->widget, activeWindow->screen);
+		// remove choose slot panel
+		UITreeNode* backgroundNode =  activeWindow->UITreeHead;
+		Background* background = (Background*)backgroundNode->widget;
+		applySurface(0,0,background->image, activeWindow->screen,NULL);
+		drawButtons(activeWindow->UITreeHead->child->widget, activeWindow->screen);
 	}
 
 	return 1;

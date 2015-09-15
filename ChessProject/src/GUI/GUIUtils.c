@@ -111,7 +111,7 @@ Background* createBackground(WindowId windowID) {
 		imagePath = PLAYER_SELECTION_BACKGROUND;
 		break;
 	case (SET_DIFFICULTY_AND_COLOR):
-		imagePath = SET_DIFFICULTY_AND_COLOR_BACKGROUND;
+		imagePath = AI_SETTINGS_BACKGROUND;
 		break;
 	case (TO_SET_WHO_STARTS):
 		imagePath = TO_SET_WHO_STARTS_BACKGROUND;
