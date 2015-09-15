@@ -108,15 +108,12 @@ int handleEventToSetWhoStarts(Window* window, EventID eventID, Game* game,
 		GUIMemory* memory) {
 	switch (eventID) {
 	case (FIRST_PRESSED): //set who starts
-		printf("first pressed\n");
 		return SET_WHO_STARTS;
 		break;
 	case (SECOND_PRESSED): //continue
-		printf("2nd pressed\n");
 		return TO_SET_BOARD;
 		break;
 	case (THIRD_PRESSED): //cancel
-		printf("3rd pressed\n");
 		initGameFields(game, 1);
 		return WELCOME;
 	case (NOTHING_HAPPANED):

@@ -13,6 +13,7 @@
 #include <SDL.h>
 #include <SDL_video.h>
 #include <SDL/SDL_image.h>
+//#include </usr/local/lib/SDL_image-1.2.12/include/SDL/SDL_image.h>
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
 #include "../main/ChessLogic.h"
