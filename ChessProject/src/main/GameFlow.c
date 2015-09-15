@@ -231,7 +231,7 @@ void userTurn(Game* game){
 						peice = (game->isWhiteTurn == 1 ? WHITE_B : BLACK_B);
 					}
 				}
-				doMove(game, move, 1, peice);
+				doMove(game, move, 0, peice);
 				isStillCurrentUserTurn = 0;
 			}
 			freeMove(move);
