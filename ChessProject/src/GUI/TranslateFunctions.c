@@ -307,7 +307,7 @@ EventID translateEventGameWindow(Window* window, SDL_Event event,
 		}
 	}
 
-	if (memory->isMate || memory->isTie) {
+	if (memory->isMate || memory->isTie) { // || memory->isInitialEvent
 		return NOTHING_HAPPANED;
 	}
 

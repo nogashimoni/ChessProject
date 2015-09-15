@@ -320,6 +320,7 @@ int handleEventToSetBoard(Window* window, EventID eventID, Game* game,
 
 int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 		GUIMemory* memory) {
+
 	if (memory->isInitialEvent) {
 		memory->isScreenUpdated = 0;
 		updateWindow(window, game, memory);
@@ -749,7 +750,7 @@ int isPromotionMove(Game* game, int i1, int j1, int i2, int j2) {
 }
 
 void updateComputerTurnIfNeeded(Window* window, Game* game , GUIMemory* memory) {
-	if (memory->isMate || memory->isTie) {
+	if (memory->isInitialEvent || memory->isTie || memory->isMate) {
 		return;
 	}
 	if ( (!game->isTwoPlayersMode) && game->isComputerTurn && !(memory->isMate) && !(memory->isTie)) {

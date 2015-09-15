@@ -587,6 +587,7 @@ void initMemory(GUIMemory* memory) {
 	memory->pathOfBubbleToShow = NULL;
 	memory->isMate=0;
 	memory->isTie = 0;
+	memory->isInitialEvent = 0;
 	memory->isScreenUpdated = 1;
 
 }
