@@ -313,7 +313,10 @@ Move* getBestMoveForUser(Game* game){
 		printMove(currMove);
 		currMove = currMove->next;
 	}
+	Move* tempMove = cloneMove(game->minmaxMove);
+	freeMinmaxMove(game->minmaxMove);
+	game->minmaxMove = NULL; //just in case
 	game->minmaxScore = INT_MIN;
-	return game->minmaxMove;
+	return tempMove;
 
 }
