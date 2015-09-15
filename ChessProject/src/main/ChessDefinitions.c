@@ -29,5 +29,5 @@ int jToY(int j) {
 	return j + 1;
 }
 
-extern Moves* moves = NULL;
-extern Moves* movesTemp = NULL;
+Moves* moves = NULL;
+Moves* movesTemp = NULL;
