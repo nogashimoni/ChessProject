@@ -20,7 +20,7 @@ XMLFileHandler.o: src/services/XMLFileHandler.c src/services/XMLFileHandler.c sr
 GUIDefinitions.o: src/GUI/GUIDefinitions.c src/GUI/GUIDefinitions.h src/main/ChessDefinitions.h
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 
-GUIUtils.o: src/GUI/GUIUtils.c src/GUI/GUIUtils.h src/GUI/GUIDefinitions.h
+GUIUtils.o: src/GUI/GUIUtils.c src/GUI/GUIUtils.h src/GUI/GUIDefinitions.h src/services/ErrorHandling.h
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 
 StartFunctions.o: src/GUI/StartFunctions.c src/GUI/StartFunctions.h src/GUI/GUIUtils.h src/services/ErrorHandling.h

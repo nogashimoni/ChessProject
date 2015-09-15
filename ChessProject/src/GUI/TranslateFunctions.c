@@ -186,7 +186,6 @@ EventID translateEventSetBoard(Window* window, SDL_Event event,
 		for (int j = 0; j < BOARD_SIZE; j++) {
 			Matrix* matrix = (Matrix*) window->UITreeHead->child->child->widget;
 			if (matrix->isIJPressed(event, matrix, i, j)) {
-				printf("%d %d pressed!\n", i, j);
 				memory->oldI = memory->newI;
 				memory->oldJ = memory->newJ;
 				memory->newI = i;

@@ -1,12 +1,16 @@
 #include "GUIUtils.h"
 
 
-Button** createVerticalButtonsArrayAndApplyToScreen(int numOfButtons,
+Button** createVerticalButtonsArrayAndApplyToScreen( int numOfButtons,
 		int xForButtons, int yFirstButton, int weidth, int height, SDL_Surface* buttonsImages,
 		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen) {
 	/** For general setup screens **/
 
 	Button** buttons = (Button**) malloc(sizeof(Button*) * numOfButtons);
+	if (buttons==NULL) {
+		notifyFunctionFailure("createVerticalButtonsArrayAndApplyToScreen");
+		return NULL;
+	}
 	int i;
 	for (i = 0; i < numOfButtons; i++) {
 		Button* button = NULL;
@@ -17,7 +21,8 @@ Button** createVerticalButtonsArrayAndApplyToScreen(int numOfButtons,
 				buttonsImages, screen, &clipArray[i]);
 
 		if (button == NULL) {
-			//quitGUI(); TODO
+			notifyFunctionFailure("createVerticalButtonsArrayAndApplyToScreen");
+			return NULL;
 		}
 		buttons[i] = button;
 	}
@@ -26,12 +31,16 @@ Button** createVerticalButtonsArrayAndApplyToScreen(int numOfButtons,
 
 
 
-Button** createHorizontalButtonsArrayAndApplyToScreen(int numOfButtons,
+Button** createHorizontalButtonsArrayAndApplyToScreen( int numOfButtons,
 		int xFirsButton, int yForButtons, int buttonWidth, SDL_Surface* buttonsImage,
 		SDL_Rect* clipArray, int relevantFirstClipIndex, SDL_Surface* screen, int toApply) {
 	/** For difficulty screen **/
 
 	Button** buttons = (Button**) malloc(sizeof(Button*) * numOfButtons);
+	if (buttons == NULL) {
+		notifyFunctionFailure("createHorizontalButtonsArrayAndApplyToScreen");
+		return NULL;
+	}
 	int i;
 	for (i = 0; i < numOfButtons; i++) {
 		Button* button = NULL;
@@ -41,7 +50,8 @@ Button** createHorizontalButtonsArrayAndApplyToScreen(int numOfButtons,
 			applySurface(xFirsButton + i*buttonWidth, yForButtons, buttonsImage, screen, &clipArray[i]);
 		}
 		if (button == NULL) {
-				//quitGUI(); TODO
+			notifyFunctionFailure("createHorizontalButtonsArrayAndApplyToScreen");
+			return NULL;
 		}
 		buttons[i] = button;
 	}
@@ -73,7 +83,6 @@ SDL_Surface* loadImage(char* imagePath) {
 	} else {
 		return loadedImage; // returns NULL
 	}
-	//TODO make image transparent
 	//Return the optimized image
 	return optimizedImage;
 }
@@ -98,9 +107,7 @@ Background* createBackground(WindowId windowID) {
 	Background* background = NULL;
 	background = (Background*) malloc(sizeof(background));
 	if (background == NULL) {
-		//TODO
-		printf("error loading background");
-		exit(0);
+		notifyFunctionFailure("error loading background");
 	}
 	char* imagePath;
 	switch (windowID) {
@@ -134,7 +141,8 @@ Background* createBackground(WindowId windowID) {
 
 	background->image = loadImage(imagePath);
 	if (background->image == NULL) {
-		//TODO
+		notifyFunctionFailure("createBackground - load image");
+		return NULL;
 	}
 	return background;
 }
@@ -146,7 +154,9 @@ void showBubble(GUIMemory* memory, SDL_Surface* screen) {
 	}
 	SDL_Surface* image = loadImage(memory->pathOfBubbleToShow);
 	applySurface(BUBBLE_X, BUBBLE_Y, image, screen, NULL);
-	SDL_Flip(screen);
+	if ( SDL_Flip(screen) == -1 ) {
+		notifyFunctionFailure("SDL's flip failed - did not show a message needed");
+	}
 	SDL_Delay(BUBBLE_TIME);
 	memory->pathOfBubbleToShow = NULL;
 	SDL_FreeSurface(image);
@@ -157,14 +167,15 @@ Panel* createPanel(SDL_Rect relevantArea, char* backgroundPath) {
 
 	panel = (Panel*) malloc(sizeof(Panel));
 	if (panel == NULL) {
-		//TODO standardFunctionFailure("malloc"); /* exit unavoidable */
+		notifyFunctionFailure("malloc");
 		return NULL;
 	}
 	panel->widgetType = PANEL;
 	panel->relevantArea = relevantArea;
 	panel->panelBackground = loadImage(backgroundPath);
 	if (panel->panelBackground == NULL) {
-		//TODO
+		notifyFunctionFailure("malloc");
+		return NULL;
 	}
 	panel->applyOnPanel = applyOnPanel;
 	return panel;
@@ -180,7 +191,7 @@ Button* createButton(SDL_Rect relevantArea) {
 
 	button = (Button*) malloc(sizeof(Button));
 	if (button == NULL) {
-		//TODO standardFunctionFailure("malloc"); /* exit unavoidable */
+		notifyFunctionFailure("malloc in createButton");
 		return NULL;
 	}
 	button->clip = NULL;
@@ -192,8 +203,16 @@ Button* createButton(SDL_Rect relevantArea) {
 Button*** createButtonsForMatrix(int matrixTopLeftX, int matrixTopLeftY,
 		int squareSize, int n, int m) {
 	Button*** buttons = (Button***) malloc(sizeof(Button**) * n);
+	if (buttons == NULL) {
+		notifyFunctionFailure("malloc in createButtonsForMatrix");
+		return NULL;
+	}
 	for (int i = 0; i < n; i++) {
 		buttons[i] = (Button**) malloc(sizeof(Button*) * n);
+		if (buttons[i] == NULL) {
+			notifyFunctionFailure("malloc in createButtonsForMatrix");
+			return NULL;
+		}
 		for (int j = 0; j < n; j++) {
 			SDL_Rect box = { matrixTopLeftX + j * squareSize, matrixTopLeftY
 					+ i * squareSize, squareSize, squareSize };
@@ -206,6 +225,10 @@ Button*** createButtonsForMatrix(int matrixTopLeftX, int matrixTopLeftY,
 
 Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip, Game* game) {
 	Matrix* matrix = (Matrix*) malloc(sizeof(Matrix));
+	if (matrix == NULL) {
+		notifyFunctionFailure("malloc in createChessBoardMatrix");
+		return NULL;
+	}
 	matrix->buttonsMatrix = createButtonsForMatrix(BOARD_MATRIX_TOP_LEFT_X,
 			BOARD_MATRIX_TOP_LEFT_Y, BOARD_MATRIX_SQUARE_SIZE, BOARD_SIZE,
 			BOARD_SIZE);
@@ -214,13 +237,10 @@ Matrix* createChessBoardMatrix(Panel* fatherPanel, SDL_Rect* clip, Game* game) {
 	matrix->highlightImage = loadImage(HIGHLIGHT_CELL);
 	matrix->m = BOARD_SIZE;
 	matrix->n = BOARD_SIZE;
-//	matrix->drawIJ
 	matrix->isIJPressed = isIJPressed;
 
 	updateMatrixByGame(matrix, game);
 
-//	matrix->fatherPanel
-//	int (*drawIJ)(Panel* panel, Matrix* matrix, PieceID PIECEType, int i, int j);
 	return matrix;
 }
 
@@ -283,7 +303,9 @@ void drawMatrix(Matrix* matrix, SDL_Surface* screen) {
 			}
 		}
 	}
-	SDL_Flip(screen);
+	if ( SDL_Flip(screen) == -1 ){
+		notifyFunctionFailure("SDL_Flip failed - board matrix isn't updated");
+	}
 }
 
 int getBoardJ(int j) {
@@ -307,7 +329,7 @@ Buttons* createButtons(Button** buttonsArray, SDL_Surface* image,
 
 	buttons = (Buttons*) malloc(sizeof(Buttons));
 	if (buttons == NULL) {
-		//TODO standardFunctionFailure("malloc"); /* exit unavoidable */
+		notifyFunctionFailure("malloc in createButtons failed");
 		return NULL;
 	}
 	buttons->widgetType = BUTTONS;
@@ -353,7 +375,7 @@ void drawGUI(Window* window) {
 		return;
 
 	if (SDL_Flip(window->screen) != 0) {
-		// todo print error
+		notifyFunctionFailure("sdl flip in draw gui");
 		return;
 	}
 }
@@ -366,10 +388,10 @@ int drawNode(UITreeNode* UITreeNode, SDL_Surface* screen) {
 				((Panel*) widget)->relevantArea.y,
 				((Panel*) widget)->panelBackground, screen, NULL);
 		break;
-//		case(MATRIX):
-//			drawMatrix();
 	case (BACKGROUND):
 		applySurface(0, 0, ((Background*) widget)->image, screen, NULL);
+		break;
+	default:
 		break;
 	}
 	return 1;
@@ -380,7 +402,7 @@ int drawNode(UITreeNode* UITreeNode, SDL_Surface* screen) {
 UITreeNode* createNode(void* widget, TreeWidgetType widgetType) {
 	UITreeNode* newNode = (UITreeNode*) malloc(sizeof(UITreeNode));
 	if (newNode == NULL) {
-//		perrorPrint("malloc"); TODO
+		notifyFunctionFailure("create node");
 		return NULL;
 	}
 
@@ -422,10 +444,7 @@ UITreeNode* addChildNode(UITreeNode* parent, void * widget,
 	if (childNode == NULL) { /* failed to create the list node */
 		return NULL;
 	}
-//	if (isEmpty(parent)) {
-//		printf("Do not use this function for an empty list!\n");
-//		exit(0); //TODO delete this condition
-//	}
+
 	if (parent->child == NULL) { /* parent has no children */
 		parent->child = childNode;
 	} else {
