@@ -187,6 +187,7 @@ struct GUIMemory {
 	int minmaxDepthChosen; // relevant in game's get best move
 	char pieceChosen; //relevant in setup's add
 
+	int isInitialEvent; //is tie or mate before game started
 	int isMate;
 	int isTie;
 };

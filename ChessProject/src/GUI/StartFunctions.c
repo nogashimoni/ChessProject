@@ -284,7 +284,8 @@ int startSetBoard(Window* window, Game* game, GUIMemory* memory) {
 
 int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 
-	initMemory(memory);
+	if ( !( memory->isTie || memory->isMate ) )
+		initMemory(memory);
 
 	// create background widget, which is Tree head, apply it to screen and add to UITree
 	Background* background = createBackground(window->windowId);

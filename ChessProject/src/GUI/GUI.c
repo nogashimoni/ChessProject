@@ -76,7 +76,8 @@ int GUIMain(Game* game) {
 
 				/* if state has changed, stop the active GUI and move to the next one: */
 				if (activeWindow.windowId != nextWindowId) {
-					initMemory(memory);
+					if ( !( (nextWindowId == GAME_WINDOW && memory->isTie) || (nextWindowId == GAME_WINDOW && memory->isMate)) )
+						initMemory(memory);
 					if (nextWindowId == QUIT_WINDOW) {
 						break;
 					}

@@ -311,6 +311,7 @@ EventID translateEventGameWindow(Window* window, SDL_Event event,
 		return NOTHING_HAPPANED;
 	}
 
+
 	// is matrix pressed
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {

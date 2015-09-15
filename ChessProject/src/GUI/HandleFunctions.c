@@ -185,6 +185,24 @@ int handleEventSetBoard(Window* window, EventID eventID, Game* game,
 	case (SIXTH_PRESSED): //start game
 		if ( (countPeices(game, WHITE_K) == 1) && (countPeices(game, BLACK_K) == 1) ) {
 			setIsComputerTurn(game);
+			// check if the game starts with mate/ tie
+			memory->isTie = isTie(game);
+			if (memory->isTie) {
+				memory->pathOfBubbleToShow = TIE_BUBBLE;
+				memory->isInitialEvent = 1;
+			}
+			int isWhiteOrBlackWin = initializedMate(game);// 1 white wins, 2 black wins
+			if ( isWhiteOrBlackWin == 1 ) {
+				memory->isMate = 1;
+				memory->pathOfBubbleToShow = MATE_WHITE_WON_BUBBLE;
+				memory->isInitialEvent = 1;
+			}
+			if ( isWhiteOrBlackWin == 2 ) {
+				memory->isMate = 1;
+				memory->pathOfBubbleToShow = MATE_BLACK_WON_BUUBLE;
+				memory->isInitialEvent = 1;
+			}
+
 			return GAME_WINDOW;
 		} else {
 			memory->pathOfBubbleToShow = WRONG_INIT_BUBBLE;
@@ -266,27 +284,25 @@ int handleEventToSetBoard(Window* window, EventID eventID, Game* game,
 	case (FIRST_PRESSED): //set board
 		return SET_BOARD;
 		break;
-	case (SECOND_PRESSED): //continue
+	case (SECOND_PRESSED): //continue (start game)
 		setIsComputerTurn(game);
-//		// check if a check / mate/ tie event
-//		int isCheckBubbleNeeded = isCheck(game);
-//		if  ( isCheckBubbleNeeded ) {
-//			memory->pathOfBubbleToShow = CHECK_BUUBLE_IMAGE;
-//		}
-//		memory->isTie = isTie(game);
-//		if (memory->isTie) {
-//			memory->pathOfBubbleToShow = TIE_BUBBLE;
-//		}
-//
-//		int isMate = isCurrentPlayerLose(game);
-//		if ( isMate ) {
-//			memory->isMate = 1;
-//			if (game->isWhiteTurn) {
-//				memory->pathOfBubbleToShow = MATE_BLACK_WON_BUUBLE;
-//			} else {
-//				memory->pathOfBubbleToShow = MATE_WHITE_WON_BUBBLE;
-//			}
-//		}
+		// check if the game starts with mate/ tie
+		memory->isTie = isTie(game);
+		if (memory->isTie) {
+			memory->isInitialEvent = 1;
+			memory->pathOfBubbleToShow = TIE_BUBBLE;
+		}
+		int isWhiteOrBlackWin = initializedMate(game);// 1 white wins, 2 black wins
+		if ( isWhiteOrBlackWin == 1 ) {
+			memory->isMate = 1;
+			memory->pathOfBubbleToShow = MATE_WHITE_WON_BUBBLE;
+			memory->isInitialEvent = 1;
+		}
+		if ( isWhiteOrBlackWin == 2 ) {
+			memory->isMate = 1;
+			memory->pathOfBubbleToShow = MATE_BLACK_WON_BUUBLE;
+			memory->isInitialEvent = 1;
+		}
 
 		return GAME_WINDOW; //Start game! (continue)
 		break;
@@ -304,6 +320,10 @@ int handleEventToSetBoard(Window* window, EventID eventID, Game* game,
 
 int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 		GUIMemory* memory) {
+	if (memory->isInitialEvent) {
+		memory->isScreenUpdated = 0;
+		updateWindow(window, game, memory);
+	}
 	switch (eventID) {
 	case (QUIT_EVENT):
 		return QUIT_WINDOW;
@@ -441,6 +461,10 @@ int updateWindow(Window* activeWindow, Game* game, GUIMemory* memory) {
 		isError = !updateSetBoard(activeWindow, game, memory);
 	}
 
+	if (activeWindow->windowId == TO_SET_BOARD) {
+		return 1;
+	}
+
 	if (activeWindow->windowId == GAME_WINDOW) {
 		isError = !updateGameBoard(activeWindow, game, memory);
 	}
@@ -449,6 +473,7 @@ int updateWindow(Window* activeWindow, Game* game, GUIMemory* memory) {
 		notifyFunctionFailure("updateWindow");
 		return 0;
 	}
+	memory->isInitialEvent = 0;
 	memory->isScreenUpdated = 1;
 
 	return 1;
@@ -538,7 +563,6 @@ int updateSetBoard(Window* activeWindow, Game* game, GUIMemory* memory) {
 }
 
 int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
-
 	// redraw matrix by game
 	Matrix* matrix = (Matrix*) activeWindow->UITreeHead->child->child->widget;
 	updateMatrixByGame(matrix, game);
@@ -725,6 +749,9 @@ int isPromotionMove(Game* game, int i1, int j1, int i2, int j2) {
 }
 
 void updateComputerTurnIfNeeded(Window* window, Game* game , GUIMemory* memory) {
+	if (memory->isMate || memory->isTie) {
+		return;
+	}
 	if ( (!game->isTwoPlayersMode) && game->isComputerTurn && !(memory->isMate) && !(memory->isTie)) {
 		computerTurn(game);
 
