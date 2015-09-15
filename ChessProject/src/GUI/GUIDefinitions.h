@@ -36,7 +36,7 @@
 #define WELCOME_SPRITE "images/main_menu_sprite.png"
 #define PLAYER_SELECTION_SPRITE "images/player_selection_sprite.png"
 #define DIFFICULTY_SPRITE "images/difficulty_sprite.png"
-#define SLOTS_IMAGE_SPRITE "images/difficulty_sprite.png"
+#define SLOTS_IMAGE_SPRITE "images/slots_sprite.png"
 #define USER_COLOR_SPRITE "images/user_color_sprite.png"
 #define CANCEL_CONTINUE_SPRITE "images/cancel_continue_sprite.png"
 #define TO_SET_WHO_STARTS_SPRITE "images/to_set_who_starts_sprite.png"
@@ -92,9 +92,11 @@
 #define FIRST_X_FOR_DIFFICULTY_ON_PANEL 150
 #define Y_FOR_DIFFICULTY_ON_PANEL 210
 
-#define FIRST_X_FOR_SLOTS_ON_PANEL 150
+#define X_FOR_SLOTS_PANEL 200
+#define Y_FOR_SLOTS_PANEL 100
+#define FIRST_X_FOR_SLOTS_ON_PANEL 230
 #define Y_FOR_SLOTS_ON_PANEL 210
-#define X_FOR_CONTINUE_BUTTON_ON_PANEL 220
+#define X_FOR_CONTINUE_BUTTON_ON_PANEL 285
 #define Y_FOR_CONTINUE_BUTTON_ON_PANEL 300
 
 #define WINDOWS_COUNT 8
@@ -126,8 +128,10 @@ typedef enum {
 	EIGHTH_PRESSED,
 
 	SOME_SQUARE_PRESSED, // relevant in windows with matrix widget
+
 	CHOSE_PIECE, // relevant in setup's add piece or game's promotion
 	CHOSE_MINMAX_DEPTH,
+	SOME_SLOT_CHOSEN, // relevant in save and load game
 	LOADED_GAME
 } EventID;
 

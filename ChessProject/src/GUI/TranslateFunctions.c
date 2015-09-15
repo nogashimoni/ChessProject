@@ -18,6 +18,7 @@ EventID translateEventGeneralSetup(Window* window, SDL_Event event,
 			Button* button = slotsButtons->buttonArray[i];
 			if (button->isButtonPressed(button,event)) {
 				memory->numOfSlotPressed = i;
+				return SOME_SLOT_CHOSEN;
 			}
 		}
 		Buttons* continueButtons = (Buttons*)window->UITreeHead->child->child->child->child->widget;

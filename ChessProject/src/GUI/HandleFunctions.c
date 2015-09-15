@@ -18,8 +18,21 @@ int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game,
 		return WELCOME;
 	case (QUIT_EVENT):
 		return QUIT_WINDOW;
+	case (SOME_SLOT_CHOSEN):
+		if (memory->numOfSlotPressed != -1) {
+			memory->isScreenUpdated = 0; // will draw yellow mark
+		}
+		return WELCOME;
 	case (LOADED_GAME):
-		return TO_SET_WHO_STARTS;
+		if (!doesSlotContainFile(memory->numOfSlotPressed)) {//TODO don't make it yellow ? DEBUG!
+			printf("Slot is empty\n");
+			return WELCOME;
+		}
+		else {
+			loadFromAFullSlot(game, memory->numOfSlotPressed);
+			return TO_SET_WHO_STARTS;
+		}
+
 	}
 	return WELCOME;
 }
@@ -398,10 +411,6 @@ int updateWindow(Window* activeWindow, Game* game, GUIMemory* memory) {
 		updateSetBoard(activeWindow, game, memory);
 	}
 
-	if (activeWindow->windowId == SET_BOARD) {
-		updateSetBoard(activeWindow, game, memory);
-	}
-
 	if (activeWindow->windowId == GAME_WINDOW) {
 		updateGameBoard(activeWindow, game, memory);
 	}
@@ -422,6 +431,14 @@ int updateWelcomeWindow(Window* activeWindow,Game* game, GUIMemory* memory) {
 			drawButtons(activeWindow->UITreeHead->child->child->child->widget, activeWindow->screen);
 			// continue button
 			drawButtons(activeWindow->UITreeHead->child->child->child->child->widget, activeWindow->screen);
+			if (memory->numOfSlotPressed != -1) {
+				Buttons* slotsButtons = (Buttons*)activeWindow->UITreeHead->child->child->child->widget;
+				Button* pressedButton = (slotsButtons)->buttonArray[memory->numOfSlotPressed];
+				if (doesSlotContainFile(memory->numOfSlotPressed)) {
+					applySurface(pressedButton->relevantArea.x, pressedButton->relevantArea.y, slotsButtons->buttonsImages, activeWindow->screen, &(slotsButtons->clipArray[memory->numOfSlotPressed+NUM_OF_SLOTS]));
+
+				}
+			}
 	}
 	else {
 		// remove choose slot panel

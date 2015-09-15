@@ -556,7 +556,7 @@ void freeMatrix(Matrix* matrix) {
 void initMemory(GUIMemory* memory) {
 	memory->commandType = NO_COMMAND;
 
-	memory->numOfSlotPressed;
+	memory->numOfSlotPressed = -1;
 	memory->newI = -1;
 	memory->newJ = -1;
 	memory->oldI = -1;

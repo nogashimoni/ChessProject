@@ -37,7 +37,10 @@
 
 int saveGameToFile(Game* game, char* path);
 int loadGameFromFile(Game* game, char* path);
+
+/* For GUI usage */
 int doesSlotContainFile(int i);
 int saveToSlot(Game* game, int i);
+int loadFromAFullSlot(Game* game, int slotNumber);
 
 #endif /* XMLFILEHANDLER_H_ */

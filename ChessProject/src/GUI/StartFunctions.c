@@ -31,13 +31,13 @@ int startGeneralSetup(Window* window, Game* game, GUIMemory* memory) {
 	// add a panel and buttons nodes for load game from slots
 	if (window->windowId == WELCOME) {
 		// create panel for load game - we will only show it later
-		SDL_Rect box = { X_FOR_ADD_PANEL, Y_FOR_ADD_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };
+		SDL_Rect box = { X_FOR_SLOTS_PANEL, Y_FOR_SLOTS_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };
 		Panel* panel = createPanel(box, CHOOSE_SLOT_PANEL_BACKGROUND);
 		appendChild(window->UITreeHead, panel, PANEL);
 
 
-		// create buttons for load game panel - we will only show it later
-		SDL_Rect* slotsClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * NUM_OF_SLOTS);
+		// create buttons for load game panel - we will only show it later. 2* NUM_OF_SLOTS because of the yellow marks
+		SDL_Rect* slotsClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 2* NUM_OF_SLOTS);
 		clipISlots(slotsClip, NUM_OF_SLOTS);
 		SDL_Surface* slotsImage = NULL;
 		slotsImage = loadImage(SLOTS_IMAGE_SPRITE);
@@ -473,6 +473,13 @@ void clipISlots(SDL_Rect* clip, int numOfSlots) {
 		clip[i].y = 0;
 		clip[i].w = SIZE_OF_SLOT_SQUARE;
 		clip[i].h = SIZE_OF_SLOT_SQUARE;
+	}
+
+	for (int i=0; i<numOfSlots; i++) {
+		clip[i+numOfSlots].x = i * SIZE_OF_SLOT_SQUARE;
+		clip[i+numOfSlots].y = SIZE_OF_SLOT_SQUARE;
+		clip[i+numOfSlots].w = SIZE_OF_SLOT_SQUARE;
+		clip[i+numOfSlots].h = SIZE_OF_SLOT_SQUARE;
 	}
 }
 

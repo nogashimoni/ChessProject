@@ -118,7 +118,7 @@ int doesSlotContainFile(int i) {
 	 FILE* file;
 	 char fileName[10];
 	 sprintf(fileName, "%s%d.%s", SLOT_SEED, i,"xml");
-	 if  ( (file = fopen(fileName, "r")) == NULL )   {
+	 if  ( (file = fopen(fileName, "r")) != NULL )   {
 	        fclose(file);
 	        return 1;
 	  }
