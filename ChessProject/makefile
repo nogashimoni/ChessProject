@@ -29,7 +29,7 @@ StartFunctions.o: src/GUI/StartFunctions.c src/GUI/StartFunctions.h src/GUI/GUIU
 TranslateFunctions.o: src/GUI/TranslateFunctions.c src/GUI/TranslateFunctions.h src/GUI/GUIUtils.h
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 	
-HandleFunctions.o: src/GUI/HandleFunctions.c src/GUI/HandleFunctions.h src/GUI/GUIUtils.h src/main/ChessLogic.h src/main/Minmax.h
+HandleFunctions.o: src/GUI/HandleFunctions.c src/GUI/HandleFunctions.h src/GUI/GUIUtils.h src/main/ChessLogic.h src/main/Minmax.h src/services/ErrorHandling.h
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 	
 StopFunctions.o: src/GUI/StopFunctions.c src/GUI/StopFunctions.h src/GUI/GUIUtils.h
@@ -38,7 +38,7 @@ StopFunctions.o: src/GUI/StopFunctions.c src/GUI/StopFunctions.h src/GUI/GUIUtil
 ChessDefinitions.o: src/main/ChessDefinitions.c src/main/ChessDefinitions.h
 	gcc -c $(CFLAGS) src/main/$*.c $(SDL_C) -lSDL_image
 
-ChessLogic.o: src/main/ChessLogic.c src/main/ChessLogic.h src/main/ChessDefinitions.h src/services/XMLFileHandler.h #src/GUI/GUI.h src/services/ErrorHandling.h src/main/Minmax.h src/main/ChessDefinitions.h
+ChessLogic.o: src/main/ChessLogic.c src/main/ChessLogic.h src/main/ChessDefinitions.h src/services/XMLFileHandler.h 
 	gcc -c $(CFLAGS) src/main/$*.c $(SDL_C) -lSDL_image
 
 Minmax.o: src/main/Minmax.c src/main/Minmax.h src/main/ChessDefinitions.h src/main/ChessLogic.h src/services/ErrorHandling.h

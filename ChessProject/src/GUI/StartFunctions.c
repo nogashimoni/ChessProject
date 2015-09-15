@@ -376,7 +376,6 @@ int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 		notifyFunctionFailure("window's start function");
 		return 0;
 	}
-	// we call the next function with a flag saying not to apply on screen
 	Button** difficultyButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(5,
 				FIRST_X_FOR_DIFFICULTY_ON_PANEL, Y_FOR_DIFFICULTY_ON_PANEL, SIZE_OF_DIFFICULTY_SQUARE,
 				difficultyImage, difficaltyClip, 0, window->screen, 0);
@@ -402,7 +401,6 @@ int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 		notifyFunctionFailure("window's start function");
 		return 0;
 	}
-	// we call the next function with a flag saying not to apply on screen
 	Button** blackPeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
 			FIRST_X_FOR_PEICES_ON_PANEL+20, FIRST_Y_FOR_PEICES_ON_PANEL+BOARD_MATRIX_SQUARE_SIZE/2, BOARD_MATRIX_SQUARE_SIZE,
 			blackButtonsImage, blackPiecesClip, 0, window->screen, 0);
@@ -421,12 +419,40 @@ int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 		notifyFunctionFailure("window's start function");
 		return 0;
 	}
-	// we call the next function with a flag saying not to apply on screen
 	Button** whitePeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
 			FIRST_X_FOR_PEICES_ON_PANEL+20, FIRST_Y_FOR_PEICES_ON_PANEL+BOARD_MATRIX_SQUARE_SIZE/2, BOARD_MATRIX_SQUARE_SIZE,
 			whiteButtonsImage, whitePiecesClip, 0, window->screen, 0);
 	Buttons* whitePeicesButtons = createButtons(whitePeicesButtonsArray, whiteButtonsImage, 4, whitePiecesClip);
 	appendChild(window->UITreeHead, whitePeicesButtons, BUTTONS);
+
+
+	// add a panel and buttons nodes for save game to slots
+	// create panel for load game - we will only show it later
+	SDL_Rect box_for_slots = { X_FOR_SLOTS_PANEL -120 , Y_FOR_SLOTS_PANEL, ADD_PANEL_WIDTH, ADD_PANEL_HEIGHT };
+	Panel* slotsPanel = createPanel(box_for_slots, CHOOSE_SLOT_PANEL_BACKGROUND);
+	appendChild(window->UITreeHead, slotsPanel, PANEL);
+
+
+	// create buttons for load game panel - we will only show it later. 2* NUM_OF_SLOTS because of the yellow marks
+	SDL_Rect* slotsClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 2* NUM_OF_SLOTS);
+	if (slotsClip==NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
+	clipISlots(slotsClip, NUM_OF_SLOTS);
+	SDL_Surface* slotsImage = NULL;
+	slotsImage = loadImage(SLOTS_IMAGE_SPRITE);
+	if (slotsImage == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
+	Button** slotButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(NUM_OF_SLOTS,
+			FIRST_X_FOR_SLOTS_ON_PANEL-120, Y_FOR_SLOTS_ON_PANEL, SIZE_OF_SLOT_SQUARE,
+			slotsImage, slotsClip, 0, window->screen, 0);
+	// create buttons widget and add to UITree
+	Buttons* slotsButtons = createButtons(slotButtonsArray, slotsImage, NUM_OF_SLOTS, slotsClip);
+	appendChild(window->UITreeHead, slotsButtons, BUTTONS);
+
 
 	if (SDL_Flip(window->screen) == -1) {
 		notifyFunctionFailure("window's start function");

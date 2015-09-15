@@ -46,8 +46,12 @@ int GUIMain(Game* game) {
 		}
 		initMemory(memory);
 
-		activeWindow.start(&activeWindow, game, memory);
+		int isError = !activeWindow.start(&activeWindow, game, memory);
 
+		if (isError) {
+			activeWindow.stop(&activeWindow);
+			quit();
+		}
 
 
 		while (!isError && nextWindowId != QUIT_WINDOW) {
@@ -81,7 +85,7 @@ int GUIMain(Game* game) {
 						if (isError) /* stop function may result in an error */
 							break;
 						activeWindow = windows[nextWindowId];
-						activeWindow.start(&activeWindow, game, memory);
+						isError = !activeWindow.start(&activeWindow, game, memory);
 					}
 				}
 			}
@@ -90,6 +94,7 @@ int GUIMain(Game* game) {
 
 		activeWindow.stop(&activeWindow);
 		free(memory);
+		quit();
 return 1;
 
 }

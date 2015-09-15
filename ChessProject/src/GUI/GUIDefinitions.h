@@ -38,7 +38,7 @@
 #define DIFFICULTY_SPRITE "images/difficulty_sprite.png"
 #define SLOTS_IMAGE_SPRITE "images/slots_sprite.png"
 #define USER_COLOR_SPRITE "images/user_color_sprite.png"
-#define CANCEL_CONTINUE_SPRITE "images/cancel_continue_sprite.png"
+#define CANCEL_CONTINUE_SPRITE "images/continue_cancel_sprite.png"
 #define TO_SET_WHO_STARTS_SPRITE "images/to_set_who_starts_sprite.png"
 #define TO_SET_BOARD_SPRITE "images/to_set_who_starts_sprite.png"
 #define SET_WHO_STARTS_SPRITE "images/set_who_starts_sprite.png"
@@ -59,7 +59,7 @@
 
 #define SIZE_OF_DIFFICULTY_SQUARE 45
 #define SIZE_OF_SLOT_SQUARE 45
-#define WIDTH_OF_COLOR_BUTTON 90
+#define WIDTH_OF_COLOR_BUTTON 112.5
 #define HEIGHT_OF_COLOR_BUTTON 45
 #define AI_SETTINGS_BUTTONS_X 500
 #define AI_SETTINGS_BUTTONS_FIRST_Y 200

@@ -229,6 +229,19 @@ EventID translateEventGameWindow(Window* window, SDL_Event event,
 		return QUIT_EVENT;
 	}
 
+	if (memory->commandType == SAVE) {
+		UITreeNode* minmaxPanelNode = getMinmaxPanelNodeGameWindow(window->UITreeHead);
+		UITreeNode* savePanelNode = minmaxPanelNode->child->child->child->child->child;
+		Buttons* slotsButtons = (Buttons*)savePanelNode->child->widget;
+		for (int i=0; i<NUM_OF_SLOTS; i++) {
+			Button* slotButton = slotsButtons->buttonArray[i];
+			if (slotButton->isButtonPressed(slotButton, event)) {
+				memory->numOfSlotPressed = i;
+				return SOME_SLOT_CHOSEN;
+			}
+		}
+		return NOTHING_HAPPANED;
+	}
 
 	if (memory->commandType == GET_BEST_MOVE
 			&& memory->minmaxDepthChosen == 0) {

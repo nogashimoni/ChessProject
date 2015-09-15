@@ -17,6 +17,7 @@
 #include "GUIDefinitions.h"
 #include "../main/ChessLogic.h"
 #include "../main/Minmax.h"
+#include "../services/ErrorHandling.h"
 
 extern Moves* moves;
 extern Moves* tmpMoves;

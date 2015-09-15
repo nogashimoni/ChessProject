@@ -24,7 +24,7 @@ int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game,
 		}
 		return WELCOME;
 	case (LOADED_GAME):
-		if (!doesSlotContainFile(memory->numOfSlotPressed)) {//TODO don't make it yellow ? DEBUG!
+		if (!doesSlotContainFile(memory->numOfSlotPressed)) {
 			printf("Slot is empty\n");
 			return WELCOME;
 		}
@@ -43,16 +43,13 @@ int handleEventSelectionWindow(Window* window, EventID eventID, Game* game,
 		GUIMemory* memory) {
 	switch (eventID) {
 	case (FIRST_PRESSED): //player vs. player
-		printf("first pressed\n");
 		game->isTwoPlayersMode = 1;
 		return TO_SET_WHO_STARTS;
 	case (SECOND_PRESSED): //player vs. computer
 		game->isTwoPlayersMode = 0;
-		printf("2nd pressed\n");
 		return SET_DIFFICULTY_AND_COLOR;
 	case (THIRD_PRESSED): //cancel
 		initGameFields(game, 1);
-		printf("3rd pressed\n");
 		return WELCOME;
 	case (NOTHING_HAPPANED):
 		return PLAYER_SELECTION;
@@ -93,7 +90,7 @@ int handleEventSetDiffAndColor(Window* window, EventID eventID, Game* game,
 		return SET_DIFFICULTY_AND_COLOR;
 		break;
 	case (SEVENTH_PRESSED): //continue
-		return TO_SET_WHO_STARTS; //TODO the user should understand that there are default values
+		return TO_SET_WHO_STARTS;
 	case (EIGHTH_PRESSED): //cancel
 		initGameFields(game, 1);
 		return WELCOME;
@@ -136,17 +133,14 @@ int handleEventSetWhoStarts(Window* window, EventID eventID, Game* game,
 		GUIMemory* memory) {
 	switch (eventID) {
 	case (FIRST_PRESSED): //white
-		printf("first pressed\n");
 		game->isWhiteTurn = 1;
 		return TO_SET_BOARD;
 		break;
 	case (SECOND_PRESSED): //black
 		game->isWhiteTurn = 0;
-		printf("2nd pressed\n");
 		return TO_SET_BOARD;
 		break;
 	case (THIRD_PRESSED): //back
-		printf("3rd pressed\n");
 		return TO_SET_WHO_STARTS;
 	case (NOTHING_HAPPANED):
 		return SET_WHO_STARTS;
@@ -316,6 +310,11 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 		memory->isScreenUpdated = 0;
 		return GAME_WINDOW;
 
+	case (SOME_SLOT_CHOSEN):
+		saveToSlot(game,memory->numOfSlotPressed);
+		memory->commandType = NO_COMMAND;
+		memory->isScreenUpdated = 0;
+		return GAME_WINDOW;
 	case (CHOSE_PIECE):
 		if (game->isWhiteTurn) {
 			switchChosenPieceToWhite(memory);
@@ -400,7 +399,6 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 		}
 
 		break;
-//		printf("%d, %d\n", memory->newI, memory->newJ);
 
 
 	case (NOTHING_HAPPANED):
@@ -416,20 +414,24 @@ int handleEventGameWindow(Window* window, EventID eventID, Game* game,
 int updateWindow(Window* activeWindow, Game* game, GUIMemory* memory) {
 	if (memory->isScreenUpdated == 1)
 		return 1;
+	int isError;
 
 	if (activeWindow->windowId == WELCOME) {
-		updateWelcomeWindow(activeWindow, game, memory);
+		isError = !updateWelcomeWindow(activeWindow, game, memory);
 	}
 
 	if (activeWindow->windowId == SET_BOARD) {
-		updateSetBoard(activeWindow, game, memory);
+		isError = !updateSetBoard(activeWindow, game, memory);
 	}
 
 	if (activeWindow->windowId == GAME_WINDOW) {
-		updateGameBoard(activeWindow, game, memory);
+		isError = !updateGameBoard(activeWindow, game, memory);
 	}
 
-	SDL_Flip(activeWindow->screen);
+	if ( (SDL_Flip(activeWindow->screen) == -1) || isError ) {
+		notifyFunctionFailure("updateWindow");
+		return 0;
+	}
 	memory->isScreenUpdated = 1;
 
 	return 1;
@@ -529,14 +531,15 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 			activeWindow->screen, NULL);
 	drawMatrix(matrix, activeWindow->screen);
 
-//	// draw save game panel and buttons if needed
-//	if ( (memory->commandType == SAVE) && (memory->pressedSquarsNum == 0) ){
-//		Panel* panel = (Panel*) activeWindow->UITreeHead->child->child->child->child->widget;
-//		applySurface(panel->relevantArea.x, panel->relevantArea.y, panel->panelBackground,
-//				activeWindow->screen, NULL);
-//		drawButtons(activeWindow->UITreeHead->child->child->child->child->child->widget, activeWindow->screen);
-//		drawButtons(activeWindow->UITreeHead->child->child->child->child->child->child->widget, activeWindow->screen);
-//	}
+	// draw save game panel and buttons if needed
+	if ( memory->commandType == SAVE ){
+		UITreeNode* minmaxPanelNode = getMinmaxPanelNodeGameWindow(activeWindow->UITreeHead);
+		UITreeNode* savePanelNode = minmaxPanelNode->child->child->child->child->child;
+		Panel* savePanel = (Panel*) savePanelNode->widget;
+		applySurface(savePanel->relevantArea.x, savePanel->relevantArea.y, savePanel->panelBackground,
+				activeWindow->screen, NULL);
+		drawButtons(savePanelNode->child->widget, activeWindow->screen);
+	}
 
 	// draw choose minmax depth panel if needed
 	if ( (memory->commandType == GET_BEST_MOVE) && (memory->minmaxDepthChosen == 0) ){
@@ -590,7 +593,11 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 		memory->minmaxDepthChosen = 0;
 	}
 
-	SDL_Flip(activeWindow->screen);
+	if ( SDL_Flip(activeWindow->screen) == -1 ){
+		notifyFunctionFailure("window's update function");
+		return 0;
+	}
+
 
 	if ( memory->pathOfBubbleToShow != NULL ) {
 		showBubble(memory, activeWindow->screen);
@@ -618,7 +625,11 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 		applySurface(GET_BEST_MOVE_BUTTON_X, GET_BEST_MOVE_BUTTON_Y,
 					getBestMoveButton->buttonsImages, activeWindow->screen,
 					&getBestMoveButton->clipArray[0]);
-		SDL_Flip(activeWindow->screen);
+
+		if ( SDL_Flip(activeWindow->screen) == -1 ){
+			notifyFunctionFailure("window's update function");
+			return 0;
+		}
 	}
 	return 1;
 }
@@ -637,11 +648,13 @@ void displayAllPossibleMoves(Matrix* matrix,GUIMemory* memory, Game* game, SDL_S
 				clip.y = 0;
 				clip.w = BOARD_MATRIX_SQUARE_SIZE;
 				clip.h = BOARD_MATRIX_SQUARE_SIZE;
-				applySurface(button->relevantArea.x, button->relevantArea.y, matrix->highlightImage, screen, &clip);
+				applySurface(button->relevantArea.x, button->relevantArea.y+1, matrix->highlightImage, screen, &clip);
 			}
 		}
 	}
-	SDL_Flip(screen);
+	if ( SDL_Flip(screen) == -1 ){
+		notifyFunctionFailure("displayAllPossibleMoves function");
+	}
 }
 
 void displayBestMove(Matrix* matrix,GUIMemory* memory, Game* game, SDL_Surface* screen) {
@@ -661,10 +674,12 @@ void displayBestMove(Matrix* matrix,GUIMemory* memory, Game* game, SDL_Surface* 
 
 	Button* button1 = matrix->buttonsMatrix[getBoardJ(j1)][i1];
 	Button* button2 = matrix->buttonsMatrix[getBoardJ(j2)][i2];
-	applySurface(button1->relevantArea.x, button1->relevantArea.y, matrix->highlightImage, screen, &clip);
-	applySurface(button2->relevantArea.x, button2->relevantArea.y, matrix->highlightImage, screen, &clip);
+	applySurface(button1->relevantArea.x, button1->relevantArea.y+1, matrix->highlightImage, screen, &clip);
+	applySurface(button2->relevantArea.x, button2->relevantArea.y+1, matrix->highlightImage, screen, &clip);
 
-	SDL_Flip(screen);
+	if ( SDL_Flip(screen) == -1 ){
+		notifyFunctionFailure("displayBestMove function");
+	}
 }
 
 void switchChosenPieceToWhite(GUIMemory* memory) {
