@@ -5,7 +5,7 @@ int saveGameToFile(Game* game, char* path) {
 	if ( (fp = fopen(path, "w")) == NULL )
 		return 0;
 
-	char* nextTurn = (game->isWhiteTurn ? NEXT_IS_BLACK: NEXT_IS_WHITE);
+	char* nextTurn = (game->isWhiteTurn ? NEXT_IS_WHITE: NEXT_IS_BLACK);
 	char* gameMode = (game->isTwoPlayersMode ? GAME_MODE_USER_USER : GAME_MODE_USER_COMPUTER);
 	char* userColor = (game->isUserWhite ? USER_COLOR_WHITE : USER_COLOR_BLACK);
 	char* minmaxDepth;
