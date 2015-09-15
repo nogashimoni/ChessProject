@@ -23,7 +23,7 @@ GUIDefinitions.o: src/GUI/GUIDefinitions.c src/GUI/GUIDefinitions.h src/main/Che
 GUIUtils.o: src/GUI/GUIUtils.c src/GUI/GUIUtils.h src/GUI/GUIDefinitions.h
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 
-StartFunctions.o: src/GUI/StartFunctions.c src/GUI/StartFunctions.h src/GUI/GUIUtils.h
+StartFunctions.o: src/GUI/StartFunctions.c src/GUI/StartFunctions.h src/GUI/GUIUtils.h src/services/ErrorHandling.h
 	gcc -c $(CFLAGS) src/GUI/$*.c $(SDL_C) -lSDL_image
 
 TranslateFunctions.o: src/GUI/TranslateFunctions.c src/GUI/TranslateFunctions.h src/GUI/GUIUtils.h

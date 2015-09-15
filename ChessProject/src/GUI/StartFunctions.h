@@ -15,6 +15,7 @@
 #include <SDL/SDL_image.h>
 #include "GUIUtils.h"
 #include "GUIDefinitions.h"
+#include "../services/ErrorHandling.h"
 
 int startGeneralSetup (Window* window, Game* game, GUIMemory* memory);
 int startSetDifficultyAndColor(Window* window, Game* game, GUIMemory* memory);

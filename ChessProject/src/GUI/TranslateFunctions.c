@@ -116,7 +116,6 @@ EventID translateEventSetBoard(Window* window, SDL_Event event,
 				(Buttons*) window->UITreeHead->child->child->child->child->child->widget;
 		Buttons* whiteButtons =
 				(Buttons*) window->UITreeHead->child->child->child->child->child->child->widget;
-		// TODO add cancel button
 
 		for (int i = 0; i < blackButtons->numOfButtons; i++) {
 			Button* blackButton = blackButtons->buttonArray[i];
@@ -235,7 +234,7 @@ EventID translateEventGameWindow(Window* window, SDL_Event event,
 			&& memory->minmaxDepthChosen == 0) {
 		Buttons* difficultyButtons = (Buttons*) (getMinmaxPanelNodeGameWindow(
 				window->UITreeHead)->child->widget);
-		// TODO add cancel button
+
 		for (int i = 0; i < difficultyButtons->numOfButtons; i++) {
 			Button* button = difficultyButtons->buttonArray[i];
 			if (button->isButtonPressed(button, event)) {

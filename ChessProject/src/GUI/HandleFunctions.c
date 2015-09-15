@@ -32,6 +32,8 @@ int handleEventWelcomeWindow(Window* window, EventID eventID, Game* game,
 			loadFromAFullSlot(game, memory->numOfSlotPressed);
 			return TO_SET_WHO_STARTS;
 		}
+	default:
+		break;
 
 	}
 	return WELCOME;
@@ -124,6 +126,8 @@ int handleEventToSetWhoStarts(Window* window, EventID eventID, Game* game,
 		return TO_SET_WHO_STARTS;
 	case (QUIT_EVENT):
 		return QUIT_WINDOW;
+	default:
+		return PLAYER_SELECTION;
 	}
 	return PLAYER_SELECTION;
 }
@@ -148,6 +152,8 @@ int handleEventSetWhoStarts(Window* window, EventID eventID, Game* game,
 		return SET_WHO_STARTS;
 	case (QUIT_EVENT):
 		return QUIT_WINDOW;
+	default:
+		break;
 	}
 	return SET_WHO_STARTS;
 }
@@ -250,6 +256,9 @@ int handleEventSetBoard(Window* window, EventID eventID, Game* game,
 				}
 				memory->pieceChosen = -1;
 				break;
+
+			default:
+				break;
 		}
 		break;
 
@@ -276,6 +285,8 @@ int handleEventToSetBoard(Window* window, EventID eventID, Game* game,
 		return TO_SET_BOARD;
 	case (QUIT_EVENT):
 		return QUIT_WINDOW;
+	default:
+		break;
 	}
 	return TO_SET_BOARD;
 }
@@ -603,6 +614,10 @@ int updateGameBoard(Window* activeWindow,Game* game,GUIMemory* memory) {
 		applySurface(X_FOR_PANEL, Y_FOR_PANEL, panel->panelBackground,
 				activeWindow->screen, NULL);
 		drawMatrix(matrix, activeWindow->screen);
+		// redraw get best move button
+		applySurface(GET_BEST_MOVE_BUTTON_X, GET_BEST_MOVE_BUTTON_Y,
+					getBestMoveButton->buttonsImages, activeWindow->screen,
+					&getBestMoveButton->clipArray[0]);
 		SDL_Flip(activeWindow->screen);
 	}
 	return 1;

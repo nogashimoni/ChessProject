@@ -9,12 +9,17 @@ int GUIMain(Game* game) {
 			notifyFunctionFailure("GUIMain");
 			return 0;
 		}
+		atexit(SDL_Quit);
+
 		SDL_Surface* screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP,
 				SDL_SWSURFACE);
-		if (screen == NULL)
-			//TODO error
+		if (screen == NULL) {
+			notifyFunctionFailure("GUIMain");
+			quit();
+			return 0;
+		}
 		SDL_WM_SetCaption("Noa and Noga's World Of Fun!", NULL);
-		atexit(SDL_Quit);
+
 
 		// init windows
 		Window windows[WINDOWS_COUNT];
@@ -34,6 +39,11 @@ int GUIMain(Game* game) {
 		WindowId nextWindowId = WELCOME;
 
 		GUIMemory* memory = (GUIMemory*)malloc(sizeof(GUIMemory));
+		if (memory == NULL) {
+			notifyFunctionFailure("GUIMain");
+			quit();
+			return 0;
+		}
 		initMemory(memory);
 
 		activeWindow.start(&activeWindow, game, memory);
@@ -67,7 +77,7 @@ int GUIMain(Game* game) {
 						break;
 					}
 					else {
-						void* nextWindowInitData = activeWindow.stop(&activeWindow);
+						activeWindow.stop(&activeWindow);
 						if (isError) /* stop function may result in an error */
 							break;
 						activeWindow = windows[nextWindowId];

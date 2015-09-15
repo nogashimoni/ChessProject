@@ -8,19 +8,26 @@ int startGeneralSetup(Window* window, Game* game, GUIMemory* memory) {
 	window->UITreeHead = NULL;
 	window->UITreeHead = createNode(background, BACKGROUND);
 	if (window->UITreeHead == NULL) {
-		//TODO
+		notifyFunctionFailure("window's start function");
+		return 0;
 	}
 
 	// create arguments for buttons creation
 	SDL_Rect* clip = (SDL_Rect*) malloc(3 * sizeof(SDL_Rect));
+	if (clip == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipGeneralSetup(clip);
 	int xForButtons = 0.5 * SCREEN_WIDTH - 0.5 * BUTTON_WIDTH;
 	int yFirstButton = 0.5 * SCREEN_HEIGHT - 1.5 * BUTTON_HEIGHT - 30;
 	SDL_Surface* buttonsImages = NULL;
 	char* imagePath = getSpriteByWindowID(window->windowId);
 	buttonsImages = loadImage(imagePath);
-	if (buttonsImages == NULL)
-		return 0; //TOODO
+	if (buttonsImages == NULL) {
+		notifyFunctionFailure("window's start function");
+			return 0;
+	}
 	Button** buttonsArray = createVerticalButtonsArrayAndApplyToScreen(3,
 			xForButtons, yFirstButton, BUTTON_WIDTH, BUTTON_HEIGHT,
 			buttonsImages, clip, 0, window->screen);
@@ -38,11 +45,17 @@ int startGeneralSetup(Window* window, Game* game, GUIMemory* memory) {
 
 		// create buttons for load game panel - we will only show it later. 2* NUM_OF_SLOTS because of the yellow marks
 		SDL_Rect* slotsClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 2* NUM_OF_SLOTS);
+		if (slotsClip==NULL) {
+			notifyFunctionFailure("window's start function");
+			return 0;
+		}
 		clipISlots(slotsClip, NUM_OF_SLOTS);
 		SDL_Surface* slotsImage = NULL;
 		slotsImage = loadImage(SLOTS_IMAGE_SPRITE);
-		if (slotsImage == NULL)
-			return 0; //TODO
+		if (slotsImage == NULL) {
+			notifyFunctionFailure("window's start function");
+			return 0;
+		}
 		Button** slotButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(NUM_OF_SLOTS,
 				FIRST_X_FOR_SLOTS_ON_PANEL, Y_FOR_SLOTS_ON_PANEL, SIZE_OF_SLOT_SQUARE,
 				slotsImage, slotsClip, 0, window->screen, 0);
@@ -52,11 +65,17 @@ int startGeneralSetup(Window* window, Game* game, GUIMemory* memory) {
 
 		// create button for continue button on panel - we will only show it later
 		SDL_Rect* continueClip = (SDL_Rect*) malloc(sizeof(SDL_Rect));
+		if ( continueClip == NULL ) {
+			notifyFunctionFailure("window's start function");
+			return 0;
+		}
 		clipIContinue(continueClip);
 		SDL_Surface* continueImage = NULL;
 		continueImage = loadImage(CONTINUE_IMAGE_SPRITE);
-		if (continueImage == NULL)
-			return 0; //TODO
+		if (continueImage == NULL) {
+			notifyFunctionFailure("window's start function");
+			return 0;
+		}
 		// we call the next function with a flag saying not to apply on screen
 		Button** continueButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(1,
 				X_FOR_CONTINUE_BUTTON_ON_PANEL, Y_FOR_CONTINUE_BUTTON_ON_PANEL, BUTTON_WIDTH,
@@ -67,7 +86,7 @@ int startGeneralSetup(Window* window, Game* game, GUIMemory* memory) {
 	}
 	// Update what we see on screen
 	if (SDL_Flip(window->screen) == -1) {
-//		notifyFunctionFailure("startGeneralSetup");
+		notifyFunctionFailure("startGeneralSetup");
 		return 0;
 	}
 	return 1;
@@ -81,18 +100,24 @@ int startSetDifficultyAndColor(Window* window, Game* game, GUIMemory* memory) {
 	window->UITreeHead = NULL;
 	window->UITreeHead = createNode(background, BACKGROUND);
 	if (window->UITreeHead == NULL) {
-		//TODO
+		notifyFunctionFailure("window's start function");
+		return 0;
 	}
-
 	// create arguments for difficulty buttons creation
 	SDL_Rect* difficultyClip = (SDL_Rect*) malloc(5 * sizeof(SDL_Rect));
+	if (difficultyClip == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipDifficulty(difficultyClip);
 	int xFirstButton = AI_SETTINGS_BUTTONS_X;
 	int yForButtons = AI_SETTINGS_BUTTONS_FIRST_Y;
 	SDL_Surface* difficultyButtonsImage = NULL;
 	difficultyButtonsImage = loadImage(DIFFICULTY_SPRITE);
-	if (difficultyButtonsImage == NULL)
-		return 0; //TOODO
+	if (difficultyButtonsImage == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	Button** buttonsArrayDifficulty =
 			createHorizontalButtonsArrayAndApplyToScreen(5, xFirstButton,
 					yForButtons, SIZE_OF_DIFFICULTY_SQUARE,
@@ -104,13 +129,19 @@ int startSetDifficultyAndColor(Window* window, Game* game, GUIMemory* memory) {
 
 	// create arguments for user color buttons creation
 	SDL_Rect* userColorClip = (SDL_Rect*) malloc(2 * sizeof(SDL_Rect));
+	if( userColorClip == NULL ) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipUserColor(userColorClip);
 	int yForColorButtons = AI_SETTINGS_BUTTONS_FIRST_Y
 			+ SIZE_OF_DIFFICULTY_SQUARE;
 	SDL_Surface* buttonsImageColor = NULL;
 	buttonsImageColor = loadImage(USER_COLOR_SPRITE);
-	if (buttonsImageColor == NULL)
-		return 0; //TOODO
+	if (buttonsImageColor == NULL){
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	Button** buttonsArrayColor = createHorizontalButtonsArrayAndApplyToScreen(
 			2, xFirstButton, yForColorButtons, WIDTH_OF_COLOR_BUTTON,
 			buttonsImageColor, userColorClip, 0, window->screen, 1);
@@ -121,13 +152,19 @@ int startSetDifficultyAndColor(Window* window, Game* game, GUIMemory* memory) {
 
 	// create arguments for cancel and continue buttons
 	SDL_Rect* cancelContinueClip = (SDL_Rect*) malloc(2 * sizeof(SDL_Rect));
+	if (cancelContinueClip == NULL){
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipCancelContinue(cancelContinueClip);
 	int yForCancelButtons = AI_SETTINGS_BUTTONS_FIRST_Y
 			+ 2 * SIZE_OF_DIFFICULTY_SQUARE;
 	SDL_Surface* buttonsImageCancelContinue = NULL;
 	buttonsImageCancelContinue = loadImage(CANCEL_CONTINUE_SPRITE);
-	if (buttonsImageCancelContinue == NULL)
-		return 0; //TOODO
+	if (buttonsImageCancelContinue == NULL){
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	Button** buttonsArray = createVerticalButtonsArrayAndApplyToScreen(2,
 			xFirstButton, yForCancelButtons, 2 * WIDTH_OF_COLOR_BUTTON,
 			SIZE_OF_DIFFICULTY_SQUARE, buttonsImageCancelContinue,
@@ -140,7 +177,7 @@ int startSetDifficultyAndColor(Window* window, Game* game, GUIMemory* memory) {
 
 	// Update what we see on screen
 	if (SDL_Flip(window->screen) == -1) {
-		printf("ERROR \n");
+		notifyFunctionFailure("window's start function");
 		return 0;
 	}
 	return 1;
@@ -154,7 +191,8 @@ int startSetBoard(Window* window, Game* game, GUIMemory* memory) {
 	window->UITreeHead = NULL;
 	window->UITreeHead = createNode(background, BACKGROUND);
 	if (window->UITreeHead == NULL) {
-		//TODO
+		notifyFunctionFailure("window's start function");
+		return 0;
 	}
 
 	// create panel (containing the game matrix)
@@ -166,6 +204,10 @@ int startSetBoard(Window* window, Game* game, GUIMemory* memory) {
 
 	// create matrix
 	SDL_Rect* clip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 12);
+	if (clip == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipPeices(clip);
 	Matrix* matrix = createChessBoardMatrix(panel, clip, game);
 	appendChild(window->UITreeHead, matrix, MATRIX);
@@ -175,11 +217,17 @@ int startSetBoard(Window* window, Game* game, GUIMemory* memory) {
 	int xForGameButtons = SET_BOARD_MENU_X;
 	int yFirstButtonGame = SET_BOARD_MENU_Y;
 	SDL_Rect* menuClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 9);
+	if (menuClip == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipSetBoard(menuClip);
 	SDL_Surface* buttonsImages = NULL;
 	buttonsImages = loadImage(SET_BOARD_BUTTONS_SPRITE);
-	if (buttonsImages == NULL)
-		return 0; //TOODO
+	if (buttonsImages == NULL){
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	Button** buttonsArray = createVerticalButtonsArrayAndApplyToScreen(6,
 			xForGameButtons, yFirstButtonGame, BUTTON_WIDTH, BUTTON_HEIGHT,
 			buttonsImages, menuClip, 0, window->screen);
@@ -198,8 +246,10 @@ int startSetBoard(Window* window, Game* game, GUIMemory* memory) {
 	clipSixPeices(blackPiecesClip, 0);
 	SDL_Surface* blackButtonsImage = NULL;
 	blackButtonsImage = loadImage(PIECES_SPRITE);
-	if (blackButtonsImage == NULL)
-		return 0; //TODO
+	if (blackButtonsImage == NULL){
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	// we call the next function with a flag saying not to apply on screen
 	Button** blackPeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(6,
 			FIRST_X_FOR_PEICES_ON_PANEL, FIRST_Y_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE,
@@ -212,8 +262,10 @@ int startSetBoard(Window* window, Game* game, GUIMemory* memory) {
 	clipSixPeices(whitePiecesClip, 1);
 	SDL_Surface* whiteButtonsImage = NULL;
 	whiteButtonsImage = loadImage(PIECES_SPRITE);
-	if (whiteButtonsImage == NULL)
-		return 0; //TOODO
+	if (whiteButtonsImage == NULL){
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	// we call the next function with a flag saying not to apply on screen
 	Button** whitePeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(6,
 			FIRST_X_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE +FIRST_Y_FOR_PEICES_ON_PANEL, BOARD_MATRIX_SQUARE_SIZE,
@@ -222,7 +274,11 @@ int startSetBoard(Window* window, Game* game, GUIMemory* memory) {
 	Buttons* whitePeicesButtons = createButtons(whitePeicesButtonsArray, whiteButtonsImage, 6, whitePiecesClip);
 	appendChild(window->UITreeHead, whitePeicesButtons, BUTTONS);
 
-	SDL_Flip(window->screen);
+	if (SDL_Flip(window->screen) == -1) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
+
 	return 1;
 }
 
@@ -236,7 +292,8 @@ int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 	window->UITreeHead = NULL;
 	window->UITreeHead = createNode(background, BACKGROUND);
 	if (window->UITreeHead == NULL) {
-		//TODO
+		notifyFunctionFailure("window's start function");
+		return 0;
 	}
 
 	// create panel (containing the game matrix)
@@ -248,6 +305,10 @@ int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 
 	// create matrix
 	SDL_Rect* clip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 12);
+	if (clip ==NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipPeices(clip);
 	Matrix* matrix = createChessBoardMatrix(panel, clip, game);
 	appendChild(window->UITreeHead, matrix, MATRIX);
@@ -257,11 +318,17 @@ int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 	int xForGameButtons = SET_BOARD_MENU_X;
 	int yFirstButtonGame = SET_BOARD_MENU_Y;
 	SDL_Rect* gameMenuClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 3);
+	if (gameMenuClip == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipGeneralSetup(gameMenuClip);
 	SDL_Surface* menuButtonsImage = NULL;
 	menuButtonsImage = loadImage(GAME_MENU_BUTTONS_SPRITE);
-	if (menuButtonsImage == NULL)
-		return 0; //TODO
+	if (menuButtonsImage == NULL){
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	Button** buttonsArray = createVerticalButtonsArrayAndApplyToScreen(3,
 			xForGameButtons, yFirstButtonGame, BUTTON_WIDTH, BUTTON_HEIGHT,
 			menuButtonsImage, gameMenuClip, 0, window->screen);
@@ -272,11 +339,17 @@ int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 	int xForBestMoveButton = GET_BEST_MOVE_BUTTON_X;
 	int yForBestMoveButton = GET_BEST_MOVE_BUTTON_Y;
 	SDL_Rect* bestMovelip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 2);
+	if (bestMovelip == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipBestMove(bestMovelip);
 	SDL_Surface* bestMoveImage = NULL;
 	bestMoveImage = loadImage(GET_BEST_MOVE_SPRITE);
-	if (bestMoveImage == NULL)
-		return 0; //TODO
+	if (bestMoveImage == NULL){
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	Button** bestMoveButtonsArray = createVerticalButtonsArrayAndApplyToScreen(1,
 			xForBestMoveButton, yForBestMoveButton, BUTTON_WIDTH, BUTTON_HEIGHT,
 			bestMoveImage, bestMovelip, 0, window->screen);
@@ -292,11 +365,17 @@ int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 
 	// create buttons for choose minmax depth - we will only show it later
 	SDL_Rect* difficaltyClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 5);
+	if (difficaltyClip == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipDifficulty(difficaltyClip);
 	SDL_Surface* difficultyImage = NULL;
 	difficultyImage = loadImage(DIFFICULTY_SPRITE);
-	if (difficultyImage == NULL)
-		return 0; //TOODO
+	if (difficultyImage == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	// we call the next function with a flag saying not to apply on screen
 	Button** difficultyButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(5,
 				FIRST_X_FOR_DIFFICULTY_ON_PANEL, Y_FOR_DIFFICULTY_ON_PANEL, SIZE_OF_DIFFICULTY_SQUARE,
@@ -312,11 +391,17 @@ int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 	// create buttons for promotion panel - we will only show it later
 	// black buttons
 	SDL_Rect* blackPiecesClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
+	if (blackPiecesClip == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipPromotionPeices(blackPiecesClip, 0);
 	SDL_Surface* blackButtonsImage = NULL;
 	blackButtonsImage = loadImage(PIECES_SPRITE);
-	if (blackButtonsImage == NULL)
-		return 0; //TODO
+	if (blackButtonsImage == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	// we call the next function with a flag saying not to apply on screen
 	Button** blackPeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
 			FIRST_X_FOR_PEICES_ON_PANEL+20, FIRST_Y_FOR_PEICES_ON_PANEL+BOARD_MATRIX_SQUARE_SIZE/2, BOARD_MATRIX_SQUARE_SIZE,
@@ -325,19 +410,29 @@ int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 	appendChild(window->UITreeHead, blackPeicesButtons, BUTTONS);
 	// white buttons
 	SDL_Rect* whitePiecesClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
+	if (whitePiecesClip == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
 	clipPromotionPeices(whitePiecesClip, 1);
 	SDL_Surface* whiteButtonsImage = NULL;
 	whiteButtonsImage = loadImage(PIECES_SPRITE);
-	if (whiteButtonsImage == NULL)
-		return 0; //TODO
-		// we call the next function with a flag saying not to apply on screen
+	if (whiteButtonsImage == NULL) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
+	// we call the next function with a flag saying not to apply on screen
 	Button** whitePeicesButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
 			FIRST_X_FOR_PEICES_ON_PANEL+20, FIRST_Y_FOR_PEICES_ON_PANEL+BOARD_MATRIX_SQUARE_SIZE/2, BOARD_MATRIX_SQUARE_SIZE,
 			whiteButtonsImage, whitePiecesClip, 0, window->screen, 0);
 	Buttons* whitePeicesButtons = createButtons(whitePeicesButtonsArray, whiteButtonsImage, 4, whitePiecesClip);
 	appendChild(window->UITreeHead, whitePeicesButtons, BUTTONS);
 
-	SDL_Flip(window->screen);
+	if (SDL_Flip(window->screen) == -1) {
+		notifyFunctionFailure("window's start function");
+		return 0;
+	}
+
 	return 1;
 
 
