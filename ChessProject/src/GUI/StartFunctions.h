@@ -1,9 +1,3 @@
-/*
- * StartFunctions.h
- *
- *  Created on: Aug 29, 2015
- *      Author: nogalavi1
- */
 
 #ifndef STARTFUNCTIONS_H_
 #define STARTFUNCTIONS_H_
