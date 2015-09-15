@@ -268,6 +268,26 @@ int handleEventToSetBoard(Window* window, EventID eventID, Game* game,
 		break;
 	case (SECOND_PRESSED): //continue
 		setIsComputerTurn(game);
+//		// check if a check / mate/ tie event
+//		int isCheckBubbleNeeded = isCheck(game);
+//		if  ( isCheckBubbleNeeded ) {
+//			memory->pathOfBubbleToShow = CHECK_BUUBLE_IMAGE;
+//		}
+//		memory->isTie = isTie(game);
+//		if (memory->isTie) {
+//			memory->pathOfBubbleToShow = TIE_BUBBLE;
+//		}
+//
+//		int isMate = isCurrentPlayerLose(game);
+//		if ( isMate ) {
+//			memory->isMate = 1;
+//			if (game->isWhiteTurn) {
+//				memory->pathOfBubbleToShow = MATE_BLACK_WON_BUUBLE;
+//			} else {
+//				memory->pathOfBubbleToShow = MATE_WHITE_WON_BUBBLE;
+//			}
+//		}
+
 		return GAME_WINDOW; //Start game! (continue)
 		break;
 	case (THIRD_PRESSED): //cancel

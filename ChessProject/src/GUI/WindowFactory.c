@@ -1,7 +1,7 @@
 #include "WindowFactory.h"
 
 Window initWindow(WindowId id, SDL_Surface* screen) {
-	Window window; //TODO how is it not released outside?! = malloc(sizeof(window));
+	Window window;
 	window.windowId = id;
 	window.UITreeHead = NULL;
 	window.screen = screen;
