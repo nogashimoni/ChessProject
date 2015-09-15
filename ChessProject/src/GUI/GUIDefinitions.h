@@ -121,11 +121,12 @@ typedef enum {
 	FIRST_PRESSED,
 	SECOND_PRESSED,
 	THIRD_PRESSED,
-	FOURTH_PRESSED, // relevant only in difficulty and color window
+	FOURTH_PRESSED,
 	FIFTH_PRESSED,
 	SIXTH_PRESSED,
 	SEVENTH_PRESSED,
 	EIGHTH_PRESSED,
+	NINTH_PRESSED,
 
 	SOME_SQUARE_PRESSED, // relevant in windows with matrix widget
 

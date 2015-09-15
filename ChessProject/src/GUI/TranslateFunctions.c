@@ -68,6 +68,8 @@ EventID translateEventSetDiffAndColor(Window* window, SDL_Event event,
 				return THIRD_PRESSED;
 			if (buttonNumber == 3)
 				return FOURTH_PRESSED;
+			if (buttonNumber == 4)
+				return NINTH_PRESSED;
 		}
 	}
 	// is user user color button pressed
@@ -237,6 +239,10 @@ EventID translateEventGameWindow(Window* window, SDL_Event event,
 		for (int i = 0; i < difficultyButtons->numOfButtons; i++) {
 			Button* button = difficultyButtons->buttonArray[i];
 			if (button->isButtonPressed(button, event)) {
+				if (i==4) {
+					memory->minmaxDepthChosen = 4;
+					return CHOSE_MINMAX_DEPTH;
+				}
 				memory->minmaxDepthChosen = i + 1;
 				return CHOSE_MINMAX_DEPTH;
 			}

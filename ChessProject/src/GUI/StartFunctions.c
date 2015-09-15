@@ -85,7 +85,7 @@ int startSetDifficultyAndColor(Window* window, Game* game, GUIMemory* memory) {
 	}
 
 	// create arguments for difficulty buttons creation
-	SDL_Rect* difficultyClip = (SDL_Rect*) malloc(4 * sizeof(SDL_Rect));
+	SDL_Rect* difficultyClip = (SDL_Rect*) malloc(5 * sizeof(SDL_Rect));
 	clipDifficulty(difficultyClip);
 	int xFirstButton = AI_SETTINGS_BUTTONS_X;
 	int yForButtons = AI_SETTINGS_BUTTONS_FIRST_Y;
@@ -94,12 +94,12 @@ int startSetDifficultyAndColor(Window* window, Game* game, GUIMemory* memory) {
 	if (difficultyButtonsImage == NULL)
 		return 0; //TOODO
 	Button** buttonsArrayDifficulty =
-			createHorizontalButtonsArrayAndApplyToScreen(4, xFirstButton,
+			createHorizontalButtonsArrayAndApplyToScreen(5, xFirstButton,
 					yForButtons, SIZE_OF_DIFFICULTY_SQUARE,
 					difficultyButtonsImage, difficultyClip, 0, window->screen, 1);
 	// create buttons widget and add to UITree
 	Buttons* difficultyButtons = createButtons(buttonsArrayDifficulty,
-			difficultyButtonsImage, 4, difficultyClip);
+			difficultyButtonsImage, 5, difficultyClip);
 	appendChild(window->UITreeHead, difficultyButtons, BUTTONS);
 
 	// create arguments for user color buttons creation
@@ -291,17 +291,17 @@ int startGameWindow(Window* window, Game* game, GUIMemory* memory) {
 
 
 	// create buttons for choose minmax depth - we will only show it later
-	SDL_Rect* difficaltyClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 4);
+	SDL_Rect* difficaltyClip = (SDL_Rect*) malloc(sizeof(SDL_Rect) * 5);
 	clipDifficulty(difficaltyClip);
 	SDL_Surface* difficultyImage = NULL;
 	difficultyImage = loadImage(DIFFICULTY_SPRITE);
 	if (difficultyImage == NULL)
 		return 0; //TOODO
 	// we call the next function with a flag saying not to apply on screen
-	Button** difficultyButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(4,
+	Button** difficultyButtonsArray = createHorizontalButtonsArrayAndApplyToScreen(5,
 				FIRST_X_FOR_DIFFICULTY_ON_PANEL, Y_FOR_DIFFICULTY_ON_PANEL, SIZE_OF_DIFFICULTY_SQUARE,
 				difficultyImage, difficaltyClip, 0, window->screen, 0);
-	Buttons* difficultyButtons = createButtons(difficultyButtonsArray, difficultyImage, 4, difficaltyClip);
+	Buttons* difficultyButtons = createButtons(difficultyButtonsArray, difficultyImage, 5, difficaltyClip);
 	appendChild(window->UITreeHead, difficultyButtons, BUTTONS);
 
 
@@ -379,7 +379,7 @@ void clipPeices(SDL_Rect* clip) {
 	//Clip range for the top left
 	for (int i = 0; i < 2; i++) {
 		for (int j = 0; j < 6; j++) {
-			clip[i * 6 + j].x = j * BOARD_MATRIX_SQUARE_SIZE;
+			clip[i * 6 + j].x = j * BOARD_MATRIX_SQUARE_SIZE+2;
 			clip[i * 6 + j].y = i * BOARD_MATRIX_SQUARE_SIZE;
 			clip[i * 6 + j].w = BOARD_MATRIX_SQUARE_SIZE;
 			clip[i * 6 + j].h = BOARD_MATRIX_SQUARE_SIZE;
@@ -417,7 +417,7 @@ void clipPromotionPeices(SDL_Rect* clip, int isWhitePieces) {
 }
 
 void clipDifficulty(SDL_Rect* clip) {
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 5; i++) {
 		clip[i].x = i * SIZE_OF_DIFFICULTY_SQUARE;
 		clip[i].y = 0;
 		clip[i].w = SIZE_OF_DIFFICULTY_SQUARE;

@@ -79,6 +79,9 @@ int handleEventSetDiffAndColor(Window* window, EventID eventID, Game* game,
 		game->minmaxDepth = 4;
 		return SET_DIFFICULTY_AND_COLOR;
 		break;
+	case (NINTH_PRESSED): //difficulty best
+		game->minmaxDepth = 4;
+		return SET_DIFFICULTY_AND_COLOR;
 	case (FIFTH_PRESSED): // user color black
 		game->isUserWhite = 0;
 		return SET_DIFFICULTY_AND_COLOR;
