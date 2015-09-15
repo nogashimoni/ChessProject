@@ -1,6 +1,7 @@
 
 #include "ChessLogic.h"
 
+//Setup funtions
 void setDisk(Game* game, char x, int y, char color, char* type) {
 	/* sets a piece in a specified legal position */
 	if (isInvalidXY(x, y)) {
@@ -260,6 +261,60 @@ int isCurrentPlayerLose(Game* game){
 	return 0;
 }
 
+int initializedMate(Game* game){
+	/*Return 1 if white wins, 2 if black wins, and 0 if non wins */
+	if (isCurrentPlayerLose(game) && game->isWhiteTurn){
+		return 2; //black wins.
+	}
+	if (isCurrentPlayerLose(game) && !game->isWhiteTurn){
+		return 1; //white wins.
+	}
+
+	Game* gameCopy = cloneGame(game);
+	switchTurns(gameCopy);
+	if (isCurrentPlayerLose(gameCopy) && !gameCopy->isWhiteTurn){
+		free(gameCopy);
+		gameCopy = NULL;
+		return 1; //it was white turn and black lost. white wins.
+	}
+
+	if (isCurrentPlayerLose(gameCopy) && gameCopy->isWhiteTurn){
+		free(gameCopy);
+		gameCopy = NULL;
+		return 1; //it was black turn and white lost. black wins.
+	}
+
+	if (gameCopy != NULL){
+		free(gameCopy);
+		gameCopy = NULL;
+	}
+
+	return 0;
+}
+
+int isInitializedTie(Game* game){
+	/*Return 1 if tie */
+	if (isTie(game)){
+		return 1;
+	}
+
+	Game* gameCopy = cloneGame(game);
+	switchTurns(gameCopy);
+	if (isTie(gameCopy)){
+		free(gameCopy);
+		gameCopy = NULL;
+		return 1;
+	}
+
+	if (gameCopy != NULL){
+		free(gameCopy);
+		gameCopy = NULL;
+	}
+
+	return 0;
+}
+
+
 int isCurrentPlayerStuck(Game* game){
 
 	for (int i=0; i<BOARD_SIZE; i++){
@@ -329,6 +384,7 @@ int isValidMove(Game* game, Move* move) {
 }
 
 int isValidMoveIJ(Game* game, int i1, int j1, int i2, int j2){
+/*Checks if a move is valid by using i,j of its positions. */
 
 	Move* move = creatNewMove(i1, j1, i2, j2);
 	int result = isValidMove(game, move);
@@ -358,8 +414,11 @@ int comparePositions(Position* p1, Position* p2){
 	return 1;
 }
 
+//Game functions.
+
+
 void doMove(Game* game, Move* move, int isPrintMove, char specialPawn) {
-/*Performs move on the game board. */
+/*Performs move on the game board. Also deals with special pawn move.*/
 	if (isPrintMove){
 		printMove(move);
 	}
@@ -414,11 +473,11 @@ void switchTurns(Game* game) {
 	}
 }
 
-/* Returns all legal moves for a certian piece */
 
 Moves* getMoves(Game* game, int x, int y, int isCheckRelevence ){
+	/* Returns all legal moves for a certian piece */
 
-	if (isCheckRelevence){
+	if (isCheckRelevence){ //This part removes moves that put the king in danger.
 		moves = calloc(sizeof(Moves),1);
 		if ( moves == NULL ) {
 			notifyFunctionFailure("getMoves");
@@ -436,7 +495,7 @@ Moves* getMoves(Game* game, int x, int y, int isCheckRelevence ){
 		return moves;
 	}
 
-	else{
+	else{ //This part DOES NOT check if a move puts the player is check
 		movesTemp = calloc(sizeof(Moves),1);
 		if ( movesTemp == NULL ) {
 			notifyFunctionFailure("getMoves");
@@ -487,7 +546,7 @@ void getMovesForPiece(Game* game, int x, int y, Moves* movesCopy){
 
 
 void removeUnreleventMoves(Game* game, Moves* moves){
-	/* Out of all possible move, removes moves with not enough eats and frees them */
+	/* Out of all possible move, removes moves that put the king in danger and frees them */
 
 	Move* prevMove = moves->first;
 
@@ -752,6 +811,7 @@ void getQueenMoves(Game* game, Moves* movesCopy, int x, int y){
 
 
 Move* creatNewMove(int startX, int startY, int endX, int endY){
+	/*Allocates positions and a move out of a given information. */
 	Position* position = NULL;
 	position = calloc(sizeof(Position), 1);
 	if (position == NULL){

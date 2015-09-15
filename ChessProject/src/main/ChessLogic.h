@@ -80,6 +80,9 @@ void doMove(Game* game, Move* move, int isPrintMove, char specialPawn);
 int isSpecialPawnMove(Game* game, Position* first, Position* last);
 int isCurrentPlayerStuck(Game* game);
 int isCurrentPlayersKingInDanger(Game* game);
+int initializedMate(Game* game);
+int isInitializedTie(Game* game);
+
 //free
 void freeAndNull(void* obj);
 void freeMove(Move* move);

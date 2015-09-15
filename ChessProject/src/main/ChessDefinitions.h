@@ -84,6 +84,7 @@ typedef struct Game {
 	Move* minmaxMove;
 } Game;
 
+//Global variables.
 extern Moves* moves;
 extern Moves* movesTemp;
 

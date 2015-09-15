@@ -99,6 +99,20 @@ void setupGameByConsole(Game* game) {
 
 void playByConsole(Game* game) {
 
+	//Check if game is initialized in losing/tie situation.
+	if (initializedMate(game) == 1){
+		print_message("Mate! White player wins the game\n");
+		return;
+	}
+	if (initializedMate(game) == 2){
+		print_message("Mate! Black player wins the game\n");
+		return;
+	}
+	if (isInitializedTie(game)){
+		print_message("The game ends in a tie\n");
+		return;
+	}
+
 	if (game->isTwoPlayersMode) { //user-user game.
 
 		while ( game->isRunning ) {
@@ -158,6 +172,9 @@ void playByConsole(Game* game) {
 		}
 	}
 }
+
+
+
 
 void computerTurn(Game* game){
 /* Perform computer turn. Note: we enter this function only if
