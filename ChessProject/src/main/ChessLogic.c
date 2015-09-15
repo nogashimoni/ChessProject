@@ -192,6 +192,10 @@ void print_board(char board[BOARD_SIZE][BOARD_SIZE]) {
 	}
 	printf("   ");
 	for (j = 0; j < BOARD_SIZE; j++) {
+		if (j == BOARD_SIZE -1){
+			printf("%c  ", (char) ('a' + j));
+			continue;
+		}
 		printf("%c   ", (char) ('a' + j));
 	}
 	printf("\n");
