@@ -108,10 +108,6 @@ void playByConsole(Game* game) {
 		print_message("Mate! Black player wins the game\n");
 		return;
 	}
-	if (isInitializedTie(game)){
-		print_message("The game ends in a tie\n");
-		return;
-	}
 
 	if (game->isTwoPlayersMode) { //user-user game.
 
