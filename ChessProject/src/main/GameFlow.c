@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv) {
 	Game game;
-	int isGUIMode = ((argc == 2) && (strcmp(argv[0], "gui")) ? 1 : 0);
+	int isGUIMode = ((argc == 2) && (!strcmp(argv[1], "gui")) ? 1 : 0);
 	initGameFields(&game, isGUIMode);
 
 	if (game.isGUIMode) {
