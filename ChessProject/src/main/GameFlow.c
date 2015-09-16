@@ -226,6 +226,23 @@ void userTurn(Game* game){
 		}
 		else if ( !strncmp(cmd,"move",4) ) {
 			Move* move = createMoveFromString(cmd);
+
+			int i1 = move->first->x;
+			int j1 = move->first->y;
+			int i2 = move->first->next->x;
+			int j2 = move->first->next->y;
+
+			if (!isValidIJ(i1 ,j1) || !isValidIJ(i2 ,j2)){
+				print_message(WRONG_POSITION);
+				freeMove(move);
+				continue;
+			}
+			else if (!isCurrentPlayerPeice(game, i1, j1)){
+				print_message("The specified position does not contain your piece\n");
+				freeMove(move);
+				continue;
+			}
+
 			int isValid = isValidMove(game, move); //validMove also prints if invalid
 			if (isValid) {
 				char peice = EMPTY;
@@ -270,18 +287,67 @@ void userTurn(Game* game){
 			freeMove(tempMove);
 		}
 		else if (!strncmp(cmd,"get_score",9)){
-			int d = (int)strtol(cmd+9,(char**)NULL,10);
+
+			int d;
+			Move* move;
+			char peice = EMPTY;
+
+			if (*(cmd+9) == 'b') {
+				d = 4;
+				game->isBest = 1;
+				move = createMoveFromString(cmd+13);
+				if (*(cmd+29) != '\0'){//promotion move.
+					char* type = cmd+29;
+					if (*type == 'k' && *(type + 1) == 'i') {
+						print_message(ILLEGAL_COMMAND);
+						break;
+					} else if (*type == 'k' && *(type + 1) == 'n') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_N : BLACK_N);
+					} else if (*type == 'q') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_Q : BLACK_Q);
+					} else if (*type == 'r') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_R : BLACK_R);
+					} else if (*type == 'b' && *(type + 1) == 'i') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_B : BLACK_B);
+					}
+				}
+			}
+			else {
+				d = (int)strtol(cmd+9,(char**)NULL,10);
+				move = createMoveFromString(cmd+10);
+				if (*(cmd+26) != '\0'){ //promotion move.
+					char* type = cmd+26;
+					if (*type == 'k' && *(type + 1) == 'i') {
+						print_message(ILLEGAL_COMMAND);
+						break;
+					} else if (*type == 'k' && *(type + 1) == 'n') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_N : BLACK_N);
+					} else if (*type == 'q') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_Q : BLACK_Q);
+					} else if (*type == 'r') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_R : BLACK_R);
+					} else if (*type == 'b' && *(type + 1) == 'i') {
+						peice = (game->isWhiteTurn == 1 ? WHITE_B : BLACK_B);
+					}
+				}
+			}
 			if (d == 0){
 				print_message(ILLEGAL_COMMAND);
+				freeMove(move);
+				continue;
+			}
+
+			if (!isValidMove(game, move)){ //isValidMove prints error if move is invalid.
+				freeMove(move);
 				continue;
 			}
 
 			game->minmaxDepth = d;
-			Move* move = createMoveFromString(cmd+10);
-			int moveScore = getScore(game, move ,d);
+			int moveScore = getScore(game, move, d, peice);
 			printf("%d\n",moveScore);
 			freeMove(move);
 		}
+
 		else if (!strncmp(cmd,"save",4)){
 			saveGame(game, cmd+4);
 		}
@@ -299,14 +365,14 @@ void userTurn(Game* game){
 
 
 
-int getScore(Game* game, Move* move, int d){
+int getScore(Game* game, Move* move, int d, char piece){
 
 	Game* gameCopy = cloneGame(game);
 	gameCopy->minmaxDepth = d;
-	doMove(gameCopy, move, 0, EMPTY);
-	switchTurns(gameCopy);
-	int minmaxScore = minmax(gameCopy, d, INT_MIN, INT_MAX, 0, gameCopy->isWhiteTurn);
-	freeMove(gameCopy->minmaxMove);
+	doMove(gameCopy, move, 0, piece);
+	//switchTurns(gameCopy);
+	int minmaxScore = minmax(gameCopy, d-1, INT_MIN, INT_MAX, 1, gameCopy->isWhiteTurn);
+	freeMinmaxMove(gameCopy->minmaxMove);
 	game->minmaxScore = INT_MIN;
 	game->minmaxMove = NULL; //just in case
 	free(gameCopy);
