@@ -23,7 +23,7 @@ void computerTurn(Game* game);
 void userTurn(Game* game);
 Move* createMoveFromString(char* cmd);
 void setDisk(Game* game, char x, int y, char color, char* type);
-int getScore(Game* game, Move* move, int d);
+int getScore(Game* game, Move* move, int d, char piece);
 
 
 
