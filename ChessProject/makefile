@@ -9,7 +9,7 @@ clean:
 	-rm chessprog $(OFILES)
 
 chessprog: $(OFILES)
-	gcc -o $@ $^ $(CFLAGS) $(SDL_L) -lSDL_image
+	gcc -o $@ $^ $(CFLAGS) $(SDL_L) -L/usr/local/lib/SDL_image-1.2.12/lib -lSDL_image
 	
 ErrorHandling.o: src/services/ErrorHandling.c src/services/ErrorHandling.h
 	gcc -c $(CFLAGS) src/services/$*.c $(SDL_C) -lSDL_image
