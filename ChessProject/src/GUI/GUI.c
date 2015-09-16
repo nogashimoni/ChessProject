@@ -62,19 +62,20 @@ int GUIMain(Game* game) {
 				if (activeWindow.windowId == GAME_WINDOW ) {
 					updateComputerTurnIfNeeded(&activeWindow, game, memory);
 				}
-				/* translating the SDL event to a logical event using the view: */
+				/* translating the SDL event to a logical event */
 				EventID eventID = activeWindow.translateEvent(&activeWindow, event, memory);
 				if (isError)
 					break;
 
-				/* Handling the event */
+				/* Handling the event and updating the game */
 				nextWindowId = activeWindow.handleEvent(&activeWindow, eventID, game, memory);
 				if (isError)
 					break;
 
+				/* Update the screen with changes */
 				updateWindow(&activeWindow, game, memory);
 
-				/* if state has changed, stop the active GUI and move to the next one: */
+				/* if we need to change window, stop the active window and move to the next one */
 				if (activeWindow.windowId != nextWindowId) {
 					if ( !( (nextWindowId == GAME_WINDOW && memory->isTie) || (nextWindowId == GAME_WINDOW && memory->isMate)) )
 						initMemory(memory);
