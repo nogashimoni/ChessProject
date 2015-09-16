@@ -226,6 +226,23 @@ void userTurn(Game* game){
 		}
 		else if ( !strncmp(cmd,"move",4) ) {
 			Move* move = createMoveFromString(cmd);
+
+			int i1 = move->first->x;
+			int j1 = move->first->y;
+			int i2 = move->first->next->x;
+			int j2 = move->first->next->y;
+
+			if (!isValidIJ(i1 ,j1) || !isValidIJ(i2 ,j2)){
+				print_message(WRONG_POSITION);
+				freeMove(move);
+				continue;
+			}
+			else if (!isCurrentPlayerPeice(game, i1, j1)){
+				print_message("The specified position does not contain your piece\n");
+				freeMove(move);
+				continue;
+			}
+
 			int isValid = isValidMove(game, move); //validMove also prints if invalid
 			if (isValid) {
 				char peice = EMPTY;
